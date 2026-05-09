@@ -1,288 +1,865 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { T, ResultScreen, Lives } from './GameShared'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import * as THREE from 'three'
 
-const GAME_WIDTH  = 500
-const GAME_HEIGHT = 260
-const LANE_W      = 100
-const LANE_COUNT  = 4
-const LANE_X      = [60, 160, 260, 360]
+const ROAD_W = 10
+const ROAD_SEGS = 30
+const SEG_LEN = 8
+const LANES = 5
+const LANE_W = ROAD_W / LANES
+const LANE_XS = [-4, -2, 0, 2, 4]
 
-const OBSTACLES_POOL = [
-  { emoji: '🚧', avoid: true,  label: 'Obstáculo' },
-  { emoji: '🚦', avoid: false, label: 'Semáforo en verde' },
-  { emoji: '🛑', avoid: true,  label: '¡STOP!' },
-  { emoji: '🚸', avoid: true,  label: 'Peatón cruzando' },
-  { emoji: '⚠️', avoid: true,  label: '¡Peligro!' },
-  { emoji: '🟢', avoid: false, label: '¡Vía libre!' },
+const OBSTACLE_TYPES = [
+  { type: 'hazard', label: 'Barricada', color: 0xff4400, pts: 0 },
+  { type: 'hazard', label: 'Bus', color: 0xcc2200, pts: 0 },
+  { type: 'hazard', label: 'Camión', color: 0xaa1100, pts: 0 },
+  { type: 'bonus', label: 'Nitro', color: 0x00aaff, pts: 25, nitro: true },
+  { type: 'bonus', label: 'Diamante', color: 0xffdd00, pts: 50 },
+  { type: 'bonus', label: 'Vida', color: 0xff3366, pts: 10, heal: true },
+  { type: 'bonus', label: 'Vía libre', color: 0x00ff88, pts: 15 },
 ]
 
+function makeCarMesh(bodyColor, isPlayer, THREE) {
+  const g = new THREE.Group()
+
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(1.6, 0.38, 3.4),
+    new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.25, metalness: 0.9 })
+  )
+  body.position.y = 0.22
+  body.castShadow = true
+  g.add(body)
+
+  const cab = new THREE.Mesh(
+    new THREE.BoxGeometry(1.3, 0.32, 1.7),
+    new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.15, metalness: 0.9 })
+  )
+  cab.position.set(0, 0.55, -0.1)
+  g.add(cab)
+
+  const glass = new THREE.Mesh(
+    new THREE.BoxGeometry(1.1, 0.24, 1.5),
+    new THREE.MeshStandardMaterial({
+      color: 0x223355,
+      roughness: 0.05,
+      metalness: 0.8,
+      opacity: 0.7,
+      transparent: true,
+    })
+  )
+  glass.position.set(0, 0.56, -0.1)
+  g.add(glass)
+
+  const wheelGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.18, 12)
+  const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9, metalness: 0.2 })
+  const rimMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.9 })
+
+  ;[[-0.82, 0.09, 1.1], [0.82, 0.09, 1.1], [-0.82, 0.09, -1.1], [0.82, 0.09, -1.1]].forEach(([wx, wy, wz]) => {
+    const w = new THREE.Mesh(wheelGeo, wheelMat)
+    w.rotation.z = Math.PI / 2
+    w.position.set(wx, wy, wz)
+    g.add(w)
+
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.19, 6), rimMat)
+    rim.rotation.z = Math.PI / 2
+    rim.position.set(wx, wy, wz)
+    g.add(rim)
+  })
+
+  if (isPlayer) {
+    const hlMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff8ee, emissiveIntensity: 3 })
+    ;[-0.5, 0.5].forEach(ox => {
+      const hl = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), hlMat)
+      hl.position.set(ox, 0.22, 1.72)
+      g.add(hl)
+    })
+
+    const spot = new THREE.SpotLight(0xfff8dd, 4, 20, Math.PI / 6, 0.3)
+    spot.position.set(0, 0.8, 2)
+    spot.target.position.set(0, -1, -10)
+    g.add(spot)
+    g.add(spot.target)
+  }
+
+  const tlMat = new THREE.MeshStandardMaterial({ color: 0xff1111, emissive: 0xff0000, emissiveIntensity: 2 })
+  ;[-0.55, 0.55].forEach(ox => {
+    const tl = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.06, 0.04), tlMat)
+    tl.position.set(ox, 0.22, -1.71)
+    g.add(tl)
+  })
+
+  return g
+}
+
 export function VirtualDriver({ onBack }) {
-  const [lane, setLane]           = useState(1)
-  const [obstacles, setObstacles] = useState([])
-  const [score, setScore]         = useState(0)
-  const [distance, setDistance]   = useState(0)
-  const [lives, setLives]         = useState(3)
-  const [playing, setPlaying]     = useState(false)
-  const [gameOver, setGameOver]   = useState(false)
-  const [speed, setSpeed]         = useState(4)
-  const [message, setMessage]     = useState(null)
-  
-  const frameRef   = useRef(null)
-  const obsRef     = useRef([])
-  const laneRef    = useRef(1)
-  const scoreRef   = useRef(0)
-  const distRef    = useRef(0)
-  const livesRef   = useRef(3)
-  const speedRef   = useRef(4)
-  const spawnRef   = useRef(0)
-  const frameCount = useRef(0)
+  const mountRef = useRef(null)
+  const threeRef = useRef(null)
+  const stateRef = useRef(null)
+  const rafRef = useRef(null)
+  const cameraTargetRef = useRef(new THREE.Vector3())
+  const lookTargetRef = useRef(new THREE.Vector3())
+  const shakeTimeoutRef = useRef(null)
+  const floatTimeoutsRef = useRef([])
 
-  const showMsg = (text, color = T.gold) => {
-    setMessage({ text, color })
-    setTimeout(() => setMessage(null), 800)
-  }
+  const [phase, setPhase] = useState('idle')
+  const [hud, setHud] = useState({
+    score: 0,
+    lives: 3,
+    distance: 0,
+    speed: 5,
+    nitroCharge: 0,
+    nitroActive: false,
+    combo: 1,
+  })
+  const [floats, setFloats] = useState([])
 
-  const startGame = () => {
-    obsRef.current   = []
-    laneRef.current  = 1
-    scoreRef.current = 0
-    distRef.current  = 0
-    livesRef.current = 3
-    speedRef.current = 4
-    frameCount.current = 0
-    
-    setLane(1)
-    setObstacles([])
-    setScore(0)
-    setDistance(0)
-    setLives(3)
-    setSpeed(4)
-    setGameOver(false)
-    setPlaying(true)
-    setMessage(null)
-  }
+  const addFloat = useCallback((text, color, screenX) => {
+    const id = Math.random()
+    setFloats(f => [...f, { id, text, color, screenX }])
+    const t = setTimeout(() => {
+      setFloats(f => f.filter(ff => ff.id !== id))
+    }, 900)
+    floatTimeoutsRef.current.push(t)
+  }, [])
+
+  const doShake = useCallback(() => {
+    if (!stateRef.current) return
+    stateRef.current.shakeAmt = 0.12
+    if (shakeTimeoutRef.current) clearTimeout(shakeTimeoutRef.current)
+    shakeTimeoutRef.current = setTimeout(() => {
+      if (stateRef.current) stateRef.current.shakeAmt = 0
+    }, 420)
+  }, [])
 
   useEffect(() => {
-    if (!playing) return
-    const handleKey = (e) => {
-      if (e.key === 'ArrowLeft')  { laneRef.current = Math.max(0, laneRef.current - 1); setLane(laneRef.current) }
-      if (e.key === 'ArrowRight') { laneRef.current = Math.min(LANE_COUNT - 1, laneRef.current + 1); setLane(laneRef.current) }
+    const el = mountRef.current
+    if (!el) return
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    renderer.toneMapping = THREE.ACESFilmicToneMapping
+    renderer.toneMappingExposure = 1.2
+    el.appendChild(renderer.domElement)
+
+    const scene = new THREE.Scene()
+    scene.fog = new THREE.FogExp2(0x0a0d14, 0.018)
+
+    const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 300)
+    camera.position.set(0, 3.5, 9)
+    camera.lookAt(0, 1, -10)
+
+    const resize = () => {
+      const W = el.clientWidth || window.innerWidth
+      const H = el.clientHeight || window.innerHeight
+      renderer.setSize(W, H, false)
+      camera.aspect = W / H
+      camera.updateProjectionMatrix()
     }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [playing])
+
+    resize()
+    const ro = new ResizeObserver(resize)
+    ro.observe(el)
+
+    scene.add(new THREE.AmbientLight(0x223366, 1.2))
+
+    const sun = new THREE.DirectionalLight(0xfff0cc, 2.0)
+    sun.position.set(30, 40, 20)
+    sun.castShadow = true
+    sun.shadow.mapSize.set(2048, 2048)
+    sun.shadow.camera.left = -40
+    sun.shadow.camera.right = 40
+    sun.shadow.camera.top = 40
+    sun.shadow.camera.bottom = -40
+    sun.shadow.camera.far = 200
+    scene.add(sun)
+
+    const rim = new THREE.DirectionalLight(0x0055ff, 0.5)
+    rim.position.set(-10, 5, 10)
+    scene.add(rim)
+
+    const roadSegments = []
+    for (let i = 0; i < ROAD_SEGS; i++) {
+      const m = new THREE.Mesh(
+        new THREE.PlaneGeometry(ROAD_W, SEG_LEN),
+        new THREE.MeshStandardMaterial({ color: 0x111520, roughness: 0.85, metalness: 0.05 })
+      )
+      m.rotation.x = -Math.PI / 2
+      m.position.set(0, -0.01, -i * SEG_LEN)
+      m.receiveShadow = true
+      scene.add(m)
+      roadSegments.push(m)
+    }
+
+    ;[-ROAD_W / 2 + 0.18, ROAD_W / 2 - 0.18].forEach(x => {
+      const m = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.35, ROAD_SEGS * SEG_LEN),
+        new THREE.MeshStandardMaterial({ color: 0xff6600, roughness: 0.9 })
+      )
+      m.rotation.x = -Math.PI / 2
+      m.position.set(x, 0, -ROAD_SEGS * SEG_LEN / 2)
+      scene.add(m)
+    })
+
+    const laneLines = []
+    for (let l = 1; l < LANES; l++) {
+      const lx = -ROAD_W / 2 + l * LANE_W
+      for (let s = 0; s < ROAD_SEGS * 3; s++) {
+        const m = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.06, 2.8),
+          new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8, opacity: 0.3, transparent: true })
+        )
+        m.rotation.x = -Math.PI / 2
+        m.position.set(lx, 0.002, -s * 4.8)
+        scene.add(m)
+        laneLines.push(m)
+      }
+    }
+
+    const makeEdge = (x, color) => {
+      const m = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.08, ROAD_SEGS * SEG_LEN * 4),
+        new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 2, roughness: 0.1 })
+      )
+      m.rotation.x = -Math.PI / 2
+      m.position.set(x, 0.003, -ROAD_SEGS * SEG_LEN * 2)
+      scene.add(m)
+      return m
+    }
+
+    const leftEdge = makeEdge(-ROAD_W / 2, 0x00ff88)
+    const rightEdge = makeEdge(ROAD_W / 2, 0x00ff88)
+
+    const buildings = []
+    const bColors = [0x1a2035, 0x131828, 0x1c1a2a, 0x0f1520]
+    for (let i = 0; i < 40; i++) {
+      const side = i % 2 === 0 ? 1 : -1
+      const x = side * (ROAD_W / 2 + 3 + Math.random() * 6)
+      const z = -i * 15 - 10
+      const h = 4 + Math.random() * 18
+      const color = bColors[Math.floor(Math.random() * bColors.length)]
+      const bm = new THREE.Mesh(
+        new THREE.BoxGeometry(2 + Math.random() * 3, h, 2 + Math.random() * 3),
+        new THREE.MeshStandardMaterial({ color, roughness: 0.8, metalness: 0.3 })
+      )
+      bm.position.set(x, h / 2, z)
+      bm.castShadow = true
+      scene.add(bm)
+      buildings.push({ mesh: bm })
+    }
+
+    const lamps = []
+    const makeLamp = (x, z) => {
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 4, 6), new THREE.MeshStandardMaterial({ color: 0x334455 }))
+      pole.position.set(x, 2, z)
+      scene.add(pole)
+
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), new THREE.MeshStandardMaterial({ color: 0xffffaa, emissive: 0xffee88, emissiveIntensity: 2 }))
+      head.position.set(x, 4.1, z)
+      scene.add(head)
+
+      const pl = new THREE.PointLight(0xffee88, 1.2, 12)
+      pl.position.set(x, 4, z)
+      scene.add(pl)
+
+      lamps.push({ pole, head, pl })
+    }
+
+    for (let i = 0; i < 30; i++) {
+      makeLamp(-ROAD_W / 2 - 0.6, -i * 14 - 5)
+      makeLamp(ROAD_W / 2 + 0.6, -i * 14 - 5)
+    }
+
+    const playerCar = makeCarMesh(0xe8251a, true, THREE)
+    playerCar.position.set(0, 0.13, 4)
+    playerCar.rotation.y = Math.PI
+    scene.add(playerCar)
+
+    const flame = new THREE.Mesh(
+      new THREE.ConeGeometry(0.15, 1.2, 8),
+      new THREE.MeshStandardMaterial({ color: 0x00ccff, emissive: 0x00aaff, emissiveIntensity: 3, opacity: 0.8, transparent: true })
+    )
+    flame.position.set(0, 0.18, -2.1)
+    flame.rotation.x = Math.PI / 2
+    flame.visible = false
+    playerCar.add(flame)
+
+    const nitroLight = new THREE.PointLight(0x00aaff, 0, 8)
+    nitroLight.position.set(0, 0.5, 4)
+    scene.add(nitroLight)
+
+    const particles = []
+    const activeObstacles = []
+
+    const spawnParticles = (pos, color, count) => {
+      for (let i = 0; i < count; i++) {
+        const mat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 2, transparent: true, opacity: 1 })
+        const m = new THREE.Mesh(new THREE.SphereGeometry(0.07, 4, 4), mat)
+        m.position.copy(pos)
+        scene.add(m)
+        const vel = new THREE.Vector3((Math.random() - 0.5) * 0.3, Math.random() * 0.25, (Math.random() - 0.5) * 0.3)
+        particles.push({ mesh: m, vel, life: 1, mat })
+      }
+    }
+
+    const spawnObstacle = (def, lane) => {
+      const laneX = -ROAD_W / 2 + LANE_W * 0.5 + lane * LANE_W
+      let mesh
+      if (def.type === 'hazard') {
+        mesh = makeCarMesh(def.color, false, THREE)
+        mesh.rotation.y = 0
+        mesh.position.set(laneX, 0.13, -80)
+        mesh.castShadow = true
+        scene.add(mesh)
+      } else {
+        mesh = new THREE.Mesh(
+          new THREE.BoxGeometry(0.6, 0.6, 0.6),
+          new THREE.MeshStandardMaterial({ color: def.color, emissive: def.color, emissiveIntensity: 1.5 })
+        )
+        mesh.position.set(laneX, 0.5, -80)
+        scene.add(mesh)
+        const gl = new THREE.PointLight(def.color, 1.5, 4)
+        gl.position.copy(mesh.position)
+        scene.add(gl)
+        mesh._light = gl
+      }
+      return { mesh, lane, laneX, def }
+    }
+
+    threeRef.current = {
+      renderer,
+      scene,
+      camera,
+      roadSegments,
+      laneLines,
+      buildings,
+      lamps,
+      playerCar,
+      flame,
+      nitroLight,
+      leftEdge,
+      rightEdge,
+      activeObstacles,
+      particles,
+      spawnParticles,
+      spawnObstacle,
+      clock: new THREE.Clock(),
+      cameraTarget: cameraTargetRef.current,
+      lookTarget: lookTargetRef.current,
+    }
+
+    return () => {
+      ro.disconnect()
+      cancelAnimationFrame(rafRef.current)
+      if (shakeTimeoutRef.current) clearTimeout(shakeTimeoutRef.current)
+      floatTimeoutsRef.current.forEach(clearTimeout)
+      floatTimeoutsRef.current = []
+
+      const disposeObject = obj => {
+        if (!obj) return
+        obj.traverse?.(child => {
+          if (child.geometry) child.geometry.dispose()
+          if (child.material) {
+            if (Array.isArray(child.material)) child.material.forEach(m => m.dispose?.())
+            else child.material.dispose?.()
+          }
+        })
+      }
+
+      disposeObject(scene)
+      renderer.dispose()
+      if (renderer.domElement.parentNode === el) el.removeChild(renderer.domElement)
+      threeRef.current = null
+    }
+  }, [])
 
   useEffect(() => {
-    if (!playing) return
+    if (phase !== 'playing') return
+
+    stateRef.current = {
+      lane: 2,
+      carX: 0,
+      carTargetX: 0,
+      driftAngle: 0,
+      score: 0,
+      lives: 3,
+      distance: 0,
+      speed: 5,
+      maxSpeed: 5,
+      nitroCharge: 0,
+      nitroActive: false,
+      nitroFuel: 0,
+      combo: 1,
+      comboTimer: 0,
+      frameCount: 0,
+      spawnTimer: 0,
+      shakeAmt: 0,
+    }
+
+    const T = threeRef.current
+    if (!T) return
+
+    T.activeObstacles.forEach(o => {
+      T.scene.remove(o.mesh)
+      if (o.mesh._light) T.scene.remove(o.mesh._light)
+    })
+    T.activeObstacles.length = 0
 
     const loop = () => {
-      frameCount.current++
+      rafRef.current = requestAnimationFrame(loop)
+      const T = threeRef.current
+      const g = stateRef.current
+      if (!T || !g) return
 
-      // Aumentar distancia (simulando kilómetros)
-      distRef.current += speedRef.current / 100
+      const dt = Math.min(T.clock.getDelta(), 0.05)
+      const t = T.clock.elapsedTime
+      const sm = g.nitroActive ? 2.2 : 1
 
-      // Mover obstáculos
-      obsRef.current = obsRef.current
-        .map(o => ({ ...o, y: o.y + speedRef.current }))
-        .filter(o => {
-          if (o.y > GAME_HEIGHT + 20) {
-            scoreRef.current += 5
-            setScore(scoreRef.current)
-            return false
-          }
-          return true
-        })
+      g.frameCount++
+      g.distance += g.speed * sm * dt * 0.007
+      if (g.speed < 18) g.speed += dt * 0.2
+      g.maxSpeed = Math.max(g.maxSpeed, g.speed)
 
-      // Spawn
-      spawnRef.current++
-      const spawnRate = Math.max(28, 70 - frameCount.current / 8)
-      if (spawnRef.current >= spawnRate) {
-        spawnRef.current = 0
-        const pool = OBSTACLES_POOL[Math.floor(Math.random() * OBSTACLES_POOL.length)]
-        const laneIdx = Math.floor(Math.random() * LANE_COUNT)
-        obsRef.current.push({ ...pool, lane: laneIdx, y: -30, id: Date.now() + Math.random() })
-      }
-
-      // Colisiones
-      const carY = GAME_HEIGHT - 60
-      let hitDetected = false
-      
-      obsRef.current = obsRef.current.filter(o => {
-        // Mejorar la caja de colisión para que no sea tan punitiva
-        const hit = o.lane === laneRef.current && o.y > carY - 25 && o.y < carY + 30
-        if (hit && !hitDetected) {
-          hitDetected = true
-          if (o.avoid) {
-            livesRef.current--
-            setLives(livesRef.current)
-            showMsg(`💥 ${o.label}`, T.red)
-            if (livesRef.current <= 0) {
-              setGameOver(true); setPlaying(false);
-            }
-          } else {
-            scoreRef.current += 10
-            setScore(scoreRef.current)
-            showMsg(`+10 ${o.label}`, T.green)
-          }
-          return false
-        }
-        return true
+      T.roadSegments.forEach(s => {
+        s.position.z += g.speed * sm * dt * 4
+        if (s.position.z > SEG_LEN) s.position.z -= ROAD_SEGS * SEG_LEN
       })
 
-      if (frameCount.current % 120 === 0) {
-        speedRef.current = Math.min(14, speedRef.current + .5) // Aumentamos velocidad max un poco
-        setSpeed(speedRef.current)
+      T.laneLines.forEach(ll => {
+        ll.position.z += g.speed * sm * dt * 4
+        if (ll.position.z > 2) ll.position.z -= ROAD_SEGS * SEG_LEN * 4
+      })
+
+      T.lamps.forEach(l => {
+        l.pole.position.z += g.speed * sm * dt * 4
+        l.head.position.z += g.speed * sm * dt * 4
+        l.pl.position.z += g.speed * sm * dt * 4
+        if (l.pole.position.z > 16) {
+          const back = -(ROAD_SEGS * SEG_LEN + 10)
+          l.pole.position.z += back
+          l.head.position.z += back
+          l.pl.position.z += back
+        }
+      })
+
+      T.buildings.forEach(b => {
+        b.mesh.position.z += g.speed * sm * dt * 1.5
+        if (b.mesh.position.z > 40) b.mesh.position.z -= 700
+      })
+
+      if (g.nitroActive) {
+        g.nitroFuel -= dt * 60
+        T.flame.visible = true
+        T.flame.scale.y = 0.8 + Math.sin(t * 20) * 0.25
+        T.nitroLight.intensity = 4 + Math.sin(t * 15)
+        T.leftEdge.material.color.setHex(0x00aaff)
+        T.leftEdge.material.emissive.setHex(0x00aaff)
+        T.rightEdge.material.color.setHex(0x00aaff)
+        T.rightEdge.material.emissive.setHex(0x00aaff)
+        if (g.nitroFuel <= 0) {
+          g.nitroActive = false
+          g.nitroFuel = 0
+          T.flame.visible = false
+          T.nitroLight.intensity = 0
+          T.leftEdge.material.color.setHex(0x00ff88)
+          T.leftEdge.material.emissive.setHex(0x00ff88)
+          T.rightEdge.material.color.setHex(0x00ff88)
+          T.rightEdge.material.emissive.setHex(0x00ff88)
+        }
+      } else {
+        g.nitroCharge = Math.min(100, g.nitroCharge + dt * 18)
+        T.flame.visible = false
+        T.nitroLight.intensity = 0
       }
 
-      setObstacles([...obsRef.current])
-      setDistance(distRef.current)
-
-      if (!hitDetected || livesRef.current > 0) {
-        frameRef.current = requestAnimationFrame(loop)
+      if (g.comboTimer > 0) {
+        g.comboTimer -= dt
+        if (g.comboTimer <= 0) g.combo = 1
       }
+
+      g.carX += (g.carTargetX - g.carX) * Math.min(1, dt * 9)
+      g.driftAngle *= Math.pow(0.1, dt)
+      T.playerCar.position.x = g.carX
+      T.playerCar.rotation.z = g.driftAngle
+
+      g.spawnTimer += dt
+      const spawnRate = Math.max(0.5, 2.5 - g.frameCount * 0.0008)
+      if (g.spawnTimer >= spawnRate) {
+        g.spawnTimer = 0
+        const def = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)]
+        const lane = Math.floor(Math.random() * LANES)
+        T.activeObstacles.push(T.spawnObstacle(def, lane))
+      }
+
+      const carPos = T.playerCar.position
+      for (let i = T.activeObstacles.length - 1; i >= 0; i--) {
+        const o = T.activeObstacles[i]
+        o.mesh.position.z += g.speed * sm * dt * 4
+        if (o.mesh._light) o.mesh._light.position.z = o.mesh.position.z
+
+        if (o.def.type === 'bonus') {
+          o.mesh.rotation.y += dt * 2.5
+          o.mesh.rotation.x += dt * 1.5
+          o.mesh.position.y = 0.5 + Math.sin(t * 3 + i) * 0.12
+        }
+
+        if (o.mesh.position.z > 12) {
+          T.scene.remove(o.mesh)
+          if (o.mesh._light) T.scene.remove(o.mesh._light)
+          T.activeObstacles.splice(i, 1)
+          continue
+        }
+
+        const dx = Math.abs(o.mesh.position.x - carPos.x)
+        const dz = Math.abs(o.mesh.position.z - carPos.z)
+        if (dx < 1.1 && dz < 2.0) {
+          T.spawnParticles(o.mesh.position.clone(), o.def.type === 'hazard' ? 0xff3300 : 0xffdd00, 10)
+
+          if (o.def.type === 'hazard') {
+            if (!g.nitroActive) {
+              g.lives--
+              doShake()
+              addFloat(`💥 ${o.def.label}`, '#ff4444', o.laneX / ROAD_W)
+              if (g.lives <= 0) {
+                setPhase('dead')
+                setHud(h => ({ ...h, lives: 0 }))
+              }
+            }
+          } else {
+            const comboBefore = g.combo
+            const bonus = o.def.pts * comboBefore
+            g.score += bonus
+            g.combo = Math.min(8, g.combo + 1)
+            g.comboTimer = 2.5
+            if (o.def.nitro) g.nitroCharge = 100
+            if (o.def.heal && g.lives < 3) g.lives++
+            addFloat(`+${bonus}${comboBefore > 1 ? ` ×${comboBefore}` : ''}`, o.def.nitro ? '#00ccff' : '#ffd700', o.laneX / ROAD_W)
+          }
+
+          T.scene.remove(o.mesh)
+          if (o.mesh._light) T.scene.remove(o.mesh._light)
+          T.activeObstacles.splice(i, 1)
+        }
+      }
+
+      for (let i = T.particles.length - 1; i >= 0; i--) {
+        const p = T.particles[i]
+        p.mesh.position.add(p.vel)
+        p.vel.y -= dt * 0.3
+        p.life -= dt * 1.8
+        p.mat.opacity = p.life
+        if (p.life <= 0) {
+          T.scene.remove(p.mesh)
+          T.particles.splice(i, 1)
+        }
+      }
+
+      T.cameraTarget.set(g.carX * 0.35, 3.5 + g.speed * 0.03, 9 + g.speed * 0.05)
+      T.lookTarget.set(g.carX * 0.1, 0.8, -10)
+      T.camera.position.lerp(T.cameraTarget, dt * 5)
+      T.camera.lookAt(T.lookTarget)
+
+      if (g.shakeAmt > 0) {
+        T.camera.position.x += (Math.random() - 0.5) * g.shakeAmt
+        T.camera.position.y += (Math.random() - 0.5) * g.shakeAmt
+        g.shakeAmt *= 0.88
+        if (g.shakeAmt < 0.002) g.shakeAmt = 0
+      }
+
+      T.camera.fov = g.nitroActive ? THREE.MathUtils.lerp(T.camera.fov, 80, dt * 5) : THREE.MathUtils.lerp(T.camera.fov, 65, dt * 3)
+      T.camera.updateProjectionMatrix()
+
+      if (g.frameCount % 3 === 0) {
+        setHud({
+          score: g.score,
+          lives: g.lives,
+          distance: g.distance,
+          speed: g.speed,
+          nitroCharge: g.nitroCharge,
+          nitroActive: g.nitroActive,
+          combo: g.combo,
+        })
+      }
+
+      T.renderer.render(T.scene, T.camera)
     }
 
-    frameRef.current = requestAnimationFrame(loop)
-    return () => cancelAnimationFrame(frameRef.current)
-  }, [playing])
+    T.clock.start()
+    rafRef.current = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [phase, addFloat, doShake])
 
-  const moveLane = (dir) => {
-    if (!playing) return
-    laneRef.current = Math.max(0, Math.min(LANE_COUNT - 1, laneRef.current + dir))
-    setLane(laneRef.current)
-  }
+  const moveLane = useCallback((dir) => {
+    const g = stateRef.current
+    if (!g) return
+    g.lane = Math.max(0, Math.min(LANES - 1, g.lane + dir))
+    g.carTargetX = LANE_XS[g.lane]
+    g.driftAngle = dir * 0.06
+  }, [])
 
-  if (gameOver) {
+  const activateNitro = useCallback(() => {
+    const g = stateRef.current
+    if (!g || g.nitroCharge < 100 || g.nitroActive) return
+    g.nitroActive = true
+    g.nitroFuel = 100
+    g.nitroCharge = 0
+  }, [])
+
+  useEffect(() => {
+    const onKey = e => {
+      if (e.key === 'ArrowLeft') moveLane(-1)
+      if (e.key === 'ArrowRight') moveLane(1)
+      if (e.key === ' ') {
+        e.preventDefault()
+        activateNitro()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [moveLane, activateNitro])
+
+  const startGame = useCallback(() => {
+    setPhase('playing')
+    setFloats([])
+    setHud({
+      score: 0,
+      lives: 3,
+      distance: 0,
+      speed: 5,
+      nitroCharge: 0,
+      nitroActive: false,
+      combo: 1,
+    })
+  }, [])
+
+  if (phase === 'dead') {
+    const g = stateRef.current || {}
     return (
-      <ResultScreen
-        score={score * 3} maxScore={Math.max(300, score * 3)}
-        title="Conductor Virtual"
-        messages={[
-          { text: `Recorriste: ${distance.toFixed(1)} kilómetros 🛣️`, ok: true },
-          { text: `Puntaje final: ${score} puntos`, ok: score > 30 },
-          { text: 'Sigue practicando para llegar más lejos', ok: true },
-        ]}
-        onRetry={startGame}
-        onHome={onBack}
-      />
+      <div style={styles.overlay}>
+        <div style={styles.gameOverTitle}>GAME OVER</div>
+        <div style={styles.resStat}>Puntaje: <span style={styles.gold}>{g.score ?? 0}</span></div>
+        <div style={styles.resStat}>Distancia: <span style={styles.gold}>{(g.distance ?? 0).toFixed(1)} km</span></div>
+        <div style={styles.resStat}>Velocidad máx: <span style={styles.gold}>{Math.round((g.maxSpeed ?? 5) * 14)} km/h</span></div>
+        <button style={styles.startBtn} onClick={startGame}>▶ REINTENTAR</button>
+        {onBack && (
+          <button style={{ ...styles.startBtn, marginTop: 12, fontSize: 12, padding: '10px 32px', borderColor: 'rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.5)' }} onClick={onBack}>
+            ← MENÚ
+          </button>
+        )}
+      </div>
     )
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
-      {/* Stats */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: GAME_WIDTH }}>
-        <Lives lives={lives} max={3} />
-        <span className="mono" style={{ fontSize: 14, color: T.cyan, fontWeight: 'bold' }}>🛣️ {distance.toFixed(1)} km</span>
-        <span className="mono" style={{ fontSize: 13, color: T.gold }}>⚡ {score} pts</span>
-      </div>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100vh',
+        background: '#000',
+        overflow: 'hidden',
+        userSelect: 'none',
+      }}
+    >
+      <div ref={mountRef} style={{ position: 'absolute', inset: 0 }} />
 
-      {/* Pantalla del juego */}
-      <div style={{
-        width: '100%', maxWidth: GAME_WIDTH, height: GAME_HEIGHT, position: 'relative',
-        background: '#0d1117', borderRadius: 14, overflow: 'hidden',
-        border: `2px solid ${playing ? T.green : T.border}`,
-        boxShadow: playing ? `0 0 32px rgba(0,230,118,.12)` : 'none',
-        transition: 'all .3s',
-      }}>
-        {/* Carretera */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: `
-            repeating-linear-gradient(180deg,
-              transparent 0px, transparent 22px,
-              rgba(255,215,64,.12) 22px, rgba(255,215,64,.12) 24px
-            )`,
-          animation: playing ? 'road-scroll .3s linear infinite' : 'none',
-        }}/>
-
-        {/* Carriles */}
-        {LANE_X.map((x, i) => (
-          <div key={i} style={{
-            position: 'absolute', top: 0, bottom: 0,
-            left: x, width: LANE_W,
-            borderLeft: i > 0 ? '1px dashed rgba(255,255,255,.05)' : 'none',
-          }}/>
-        ))}
-
-        {/* Obstáculos */}
-        {obstacles.map(o => (
-          <div key={o.id} className="obstacle" style={{
-            position: 'absolute', // Asegurar posicionamiento
-            fontSize: 28,
-            left: LANE_X[o.lane] + LANE_W / 2 - 14,
-            top: o.y,
-            transition: 'none', // Quitar transición de CSS para evitar lag de animaciones al actualizar frame por frame
-            zIndex: 5,
-          }}>
-            {o.emoji}
-          </div>
-        ))}
-
-        {/* Coche */}
-        <div className="car" style={{
-          position: 'absolute', // Asegurar posicionamiento
-          fontSize: 32,
-          left: LANE_X[lane] + LANE_W / 2 - 16,
-          top: GAME_HEIGHT - 62,
-          filter: `drop-shadow(0 0 8px ${T.blue}88)`,
-          transition: 'left 0.1s ease-out', // Suavizar movimiento lateral
-          zIndex: 5,
-        }}>🚗</div>
-
-        {/* Mensaje flotante */}
-        {message && (
-          <div style={{
-            position: 'absolute', top: '30%', left: '50%',
-            transform: 'translateX(-50%)',
-            color: message.color, fontSize: 16, fontWeight: 700,
-            fontFamily: 'Space Mono, monospace',
-            animation: 'float-up .8s ease forwards',
-            pointerEvents: 'none', whiteSpace: 'nowrap',
-            zIndex: 20,
-          }}>
-            {message.text}
-          </div>
-        )}
-
-        {/* Pantalla inicio */}
-        {!playing && !gameOver && (
-          <div style={{
-            position: 'absolute', inset: 0, background: 'rgba(7,9,15,.85)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            gap: 12, zIndex: 10,
-          }}>
-            <div style={{ fontSize: 40 }}>🚗</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: T.text }}>Conductor Virtual</div>
-            <div style={{ fontSize: 12, color: T.muted, textAlign: 'center', maxWidth: 260 }}>
-              Recorre kilómetros infinitos. Evita obstáculos y recoge vías libres.
-            </div>
-            <button className="btn-game primary" style={{ marginTop: 8 }} onClick={startGame}>
-              ▶ Iniciar Viaje
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Controles táctiles */}
-      {playing && (
-        <div style={{ display: 'flex', gap: 16, marginTop: 10 }}>
-          <button
-            className="btn-game secondary"
-            style={{ padding: '14px 32px', fontSize: 20, borderRadius: 14 }}
-            onClick={() => moveLane(-1)}
-          >←</button>
-          <button
-            className="btn-game secondary"
-            style={{ padding: '14px 32px', fontSize: 20, borderRadius: 14 }}
-            onClick={() => moveLane(1)}
-          >→</button>
+      {phase === 'idle' && (
+        <div style={styles.overlay}>
+          <div style={{ fontSize: 56, marginBottom: 8 }}>🏎️</div>
+          <div style={styles.bigTitle}>GTX RACING</div>
+          <div style={styles.subtitle}>Next-Gen Street Racing</div>
+          <button style={styles.startBtn} onClick={startGame}>▶ ARRANCAR</button>
+          <div style={styles.hint}>← → cambiar carril &nbsp;•&nbsp; ESPACIO = nitro</div>
         </div>
       )}
 
-      <div style={{ fontSize: 12, color: T.faint, textAlign: 'center' }}>
-        🟢 Recoge vía libre • 🚧 Evita obstáculos • ← → para moverse
-      </div>
+      {phase === 'playing' && (
+        <>
+          <div style={styles.topBar}>
+            <div>
+              <div style={{ ...styles.scoreVal, color: hud.nitroActive ? '#00ffff' : '#ffffff', textShadow: `0 0 30px ${hud.nitroActive ? '#00ffff' : 'rgba(255,200,0,0.8)'}` }}>
+                {hud.score}
+              </div>
+              <div style={styles.label}>PTS</div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8 }}>
+              {[1, 2, 3].map(i => (
+                <span key={i} style={{ fontSize: 20, filter: i <= hud.lives ? 'drop-shadow(0 0 6px #ff4040)' : 'none', opacity: i <= hud.lives ? 1 : 0.2, transition: 'all 0.3s' }}>
+                  ♥
+                </span>
+              ))}
+            </div>
+
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: 'monospace', fontSize: 18, color: '#00e676' }}>{hud.distance.toFixed(1)} km</div>
+              <div style={styles.label}>{Math.round(hud.speed * 14)} km/h</div>
+            </div>
+          </div>
+
+          {hud.combo > 1 && <div style={styles.comboBadge}>×{hud.combo} COMBO</div>}
+
+          <div style={styles.nitroWrap}>
+            <div style={styles.nitroLabel}>⚡ NITRO</div>
+            <div style={styles.nitroBarBg}>
+              <div style={{ ...styles.nitroBarFill, width: `${hud.nitroActive ? (stateRef.current?.nitroFuel ?? 0) : hud.nitroCharge}%` }} />
+            </div>
+            {hud.nitroCharge >= 100 && !hud.nitroActive && (
+              <button style={styles.nitroBtn} onPointerDown={activateNitro}>⚡ BOOST</button>
+            )}
+          </div>
+
+          {floats.map(f => (
+            <div key={f.id} style={{ ...styles.floatText, color: f.color, left: `${(f.screenX * 0.5 + 0.5) * 100}%` }}>
+              {f.text}
+            </div>
+          ))}
+
+          <div style={styles.mobileControls}>
+            <button style={styles.mobBtn} onPointerDown={() => moveLane(-1)}>◀</button>
+            <button style={{ ...styles.mobBtn, borderColor: hud.nitroCharge >= 100 ? 'rgba(0,200,255,0.7)' : 'rgba(255,255,255,0.15)', color: hud.nitroCharge >= 100 ? '#0af' : '#fff' }} onPointerDown={activateNitro}>⚡</button>
+            <button style={styles.mobBtn} onPointerDown={() => moveLane(1)}>▶</button>
+          </div>
+        </>
+      )}
+
+      <style>{`
+        @keyframes floatUp {
+          0% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+          100% { opacity: 0; transform: translateX(-50%) translateY(-80px) scale(1.5); }
+        }
+      `}</style>
     </div>
   )
+}
+
+const styles = {
+  overlay: {
+    position: 'absolute',
+    inset: 0,
+    zIndex: 50,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'rgba(0,0,0,0.88)',
+    gap: 12,
+  },
+  bigTitle: {
+    fontFamily: 'monospace',
+    fontSize: 48,
+    fontWeight: 800,
+    color: '#fff',
+    letterSpacing: 10,
+    textTransform: 'uppercase',
+    textShadow: '0 0 40px rgba(255,200,0,0.6)',
+  },
+  subtitle: { fontSize: 12, letterSpacing: 5, color: 'rgba(255,255,255,0.35)', marginBottom: 32 },
+  startBtn: {
+    padding: '16px 56px',
+    border: '2px solid rgba(255,200,0,0.8)',
+    background: 'transparent',
+    color: '#ffd700',
+    fontSize: 15,
+    letterSpacing: 6,
+    cursor: 'pointer',
+    textTransform: 'uppercase',
+    fontWeight: 700,
+    fontFamily: 'monospace',
+  },
+  hint: { fontSize: 10, letterSpacing: 3, color: 'rgba(255,255,255,0.2)', marginTop: 8 },
+  gameOverTitle: {
+    fontFamily: 'monospace',
+    fontSize: 40,
+    fontWeight: 800,
+    color: '#fff',
+    letterSpacing: 8,
+    marginBottom: 32,
+  },
+  resStat: { fontSize: 14, letterSpacing: 3, color: 'rgba(255,255,255,0.55)', marginBottom: 8, fontFamily: 'monospace' },
+  gold: { color: '#ffd700' },
+  topBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '16px 24px',
+    background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)',
+  },
+  scoreVal: { fontFamily: 'monospace', fontSize: 40, fontWeight: 700, lineHeight: 1, transition: 'color 0.3s, text-shadow 0.3s' },
+  label: { fontSize: 9, letterSpacing: 4, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginTop: 2 },
+  comboBadge: {
+    position: 'absolute',
+    top: 80,
+    right: 24,
+    zIndex: 20,
+    fontFamily: 'monospace',
+    fontSize: 26,
+    fontWeight: 700,
+    color: '#ffd700',
+    textShadow: '0 0 20px rgba(255,200,0,0.9)',
+  },
+  nitroWrap: {
+    position: 'absolute',
+    bottom: 100,
+    left: 24,
+    zIndex: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 6,
+    width: 180,
+  },
+  nitroLabel: { fontSize: 10, letterSpacing: 4, color: 'rgba(0,200,255,0.7)', textTransform: 'uppercase', fontFamily: 'monospace' },
+  nitroBarBg: { width: '100%', height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden' },
+  nitroBarFill: { height: '100%', background: 'linear-gradient(90deg,#0af,#07f)', borderRadius: 3, transition: 'width 0.1s' },
+  nitroBtn: {
+    padding: '10px 20px',
+    border: '1px solid #0af',
+    background: 'rgba(0,100,200,0.2)',
+    color: '#0af',
+    fontSize: 12,
+    letterSpacing: 3,
+    cursor: 'pointer',
+    borderRadius: 6,
+    textTransform: 'uppercase',
+    fontFamily: 'monospace',
+    boxShadow: '0 0 20px rgba(0,170,255,0.3)',
+  },
+  floatText: {
+    position: 'absolute',
+    top: '40%',
+    zIndex: 100,
+    fontFamily: 'monospace',
+    fontSize: 22,
+    fontWeight: 700,
+    pointerEvents: 'none',
+    whiteSpace: 'nowrap',
+    textShadow: '0 0 20px currentColor',
+    animation: 'floatUp 0.9s ease-out forwards',
+    transform: 'translateX(-50%)',
+  },
+  mobileControls: {
+    position: 'absolute',
+    bottom: 24,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    gap: 12,
+    zIndex: 20,
+  },
+  mobBtn: {
+    width: 70,
+    height: 56,
+    border: '1px solid rgba(255,255,255,0.15)',
+    background: 'rgba(255,255,255,0.06)',
+    color: '#fff',
+    fontSize: 22,
+    cursor: 'pointer',
+    borderRadius: 10,
+    WebkitTapHighlightColor: 'transparent',
+  },
 }
