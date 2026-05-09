@@ -20,6 +20,7 @@ export function VirtualDriver({ onBack }) {
   const [lane, setLane]           = useState(1)
   const [obstacles, setObstacles] = useState([])
   const [score, setScore]         = useState(0)
+  const [distance, setDistance]   = useState(0)
   const [lives, setLives]         = useState(3)
   const [playing, setPlaying]     = useState(false)
   const [gameOver, setGameOver]   = useState(false)
@@ -30,6 +31,7 @@ export function VirtualDriver({ onBack }) {
   const obsRef     = useRef([])
   const laneRef    = useRef(1)
   const scoreRef   = useRef(0)
+  const distRef    = useRef(0)
   const livesRef   = useRef(3)
   const speedRef   = useRef(4)
   const spawnRef   = useRef(0)
@@ -44,6 +46,7 @@ export function VirtualDriver({ onBack }) {
     obsRef.current   = []
     laneRef.current  = 1
     scoreRef.current = 0
+    distRef.current  = 0
     livesRef.current = 3
     speedRef.current = 4
     frameCount.current = 0
@@ -51,6 +54,7 @@ export function VirtualDriver({ onBack }) {
     setLane(1)
     setObstacles([])
     setScore(0)
+    setDistance(0)
     setLives(3)
     setSpeed(4)
     setGameOver(false)
@@ -73,6 +77,9 @@ export function VirtualDriver({ onBack }) {
 
     const loop = () => {
       frameCount.current++
+
+      // Aumentar distancia (simulando kilómetros)
+      distRef.current += speedRef.current / 100
 
       // Mover obstáculos
       obsRef.current = obsRef.current
@@ -101,7 +108,8 @@ export function VirtualDriver({ onBack }) {
       let hitDetected = false
       
       obsRef.current = obsRef.current.filter(o => {
-        const hit = o.lane === laneRef.current && o.y > carY - 20 && o.y < carY + 40
+        // Mejorar la caja de colisión para que no sea tan punitiva
+        const hit = o.lane === laneRef.current && o.y > carY - 25 && o.y < carY + 30
         if (hit && !hitDetected) {
           hitDetected = true
           if (o.avoid) {
@@ -122,11 +130,13 @@ export function VirtualDriver({ onBack }) {
       })
 
       if (frameCount.current % 120 === 0) {
-        speedRef.current = Math.min(12, speedRef.current + .5)
+        speedRef.current = Math.min(14, speedRef.current + .5) // Aumentamos velocidad max un poco
         setSpeed(speedRef.current)
       }
 
       setObstacles([...obsRef.current])
+      setDistance(distRef.current)
+
       if (!hitDetected || livesRef.current > 0) {
         frameRef.current = requestAnimationFrame(loop)
       }
@@ -148,8 +158,9 @@ export function VirtualDriver({ onBack }) {
         score={score * 3} maxScore={Math.max(300, score * 3)}
         title="Conductor Virtual"
         messages={[
+          { text: `Recorriste: ${distance.toFixed(1)} kilómetros 🛣️`, ok: true },
           { text: `Puntaje final: ${score} puntos`, ok: score > 30 },
-          { text: 'Sigue practicando para mejorar tus reflejos', ok: true },
+          { text: 'Sigue practicando para llegar más lejos', ok: true },
         ]}
         onRetry={startGame}
         onHome={onBack}
@@ -162,7 +173,7 @@ export function VirtualDriver({ onBack }) {
       {/* Stats */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: GAME_WIDTH }}>
         <Lives lives={lives} max={3} />
-        <span className="mono" style={{ fontSize: 13, color: T.cyan }}>Vel. {speed.toFixed(1)}x</span>
+        <span className="mono" style={{ fontSize: 14, color: T.cyan, fontWeight: 'bold' }}>🛣️ {distance.toFixed(1)} km</span>
         <span className="mono" style={{ fontSize: 13, color: T.gold }}>⚡ {score} pts</span>
       </div>
 
@@ -197,8 +208,12 @@ export function VirtualDriver({ onBack }) {
         {/* Obstáculos */}
         {obstacles.map(o => (
           <div key={o.id} className="obstacle" style={{
+            position: 'absolute', // Asegurar posicionamiento
+            fontSize: 28,
             left: LANE_X[o.lane] + LANE_W / 2 - 14,
             top: o.y,
+            transition: 'none', // Quitar transición de CSS para evitar lag de animaciones al actualizar frame por frame
+            zIndex: 5,
           }}>
             {o.emoji}
           </div>
@@ -206,9 +221,13 @@ export function VirtualDriver({ onBack }) {
 
         {/* Coche */}
         <div className="car" style={{
+          position: 'absolute', // Asegurar posicionamiento
+          fontSize: 32,
           left: LANE_X[lane] + LANE_W / 2 - 16,
           top: GAME_HEIGHT - 62,
           filter: `drop-shadow(0 0 8px ${T.blue}88)`,
+          transition: 'left 0.1s ease-out', // Suavizar movimiento lateral
+          zIndex: 5,
         }}>🚗</div>
 
         {/* Mensaje flotante */}
@@ -220,6 +239,7 @@ export function VirtualDriver({ onBack }) {
             fontFamily: 'Space Mono, monospace',
             animation: 'float-up .8s ease forwards',
             pointerEvents: 'none', whiteSpace: 'nowrap',
+            zIndex: 20,
           }}>
             {message.text}
           </div>
@@ -230,15 +250,15 @@ export function VirtualDriver({ onBack }) {
           <div style={{
             position: 'absolute', inset: 0, background: 'rgba(7,9,15,.85)',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            gap: 12,
+            gap: 12, zIndex: 10,
           }}>
             <div style={{ fontSize: 40 }}>🚗</div>
             <div style={{ fontSize: 16, fontWeight: 700, color: T.text }}>Conductor Virtual</div>
             <div style={{ fontSize: 12, color: T.muted, textAlign: 'center', maxWidth: 260 }}>
-              Evita obstáculos, respeta señales. Usa ← → o los botones.
+              Recorre kilómetros infinitos. Evita obstáculos y recoge vías libres.
             </div>
             <button className="btn-game primary" style={{ marginTop: 8 }} onClick={startGame}>
-              ▶ Iniciar
+              ▶ Iniciar Viaje
             </button>
           </div>
         )}

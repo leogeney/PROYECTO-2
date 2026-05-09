@@ -13,28 +13,28 @@ export const SIGNS_DB = [
     name: 'Pare',
     desc: 'Detención completa obligatoria antes de cruzar la intersección.',
     cat: 'reglamentaria',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/1/18/Vienna_Convention_sign_B2a.svg'
+    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdhDvmzUwVjen0McmZcowaHuVommCOixXKpw&s'
   },
   {
     id: 'r2',
     name: 'Ceda el paso',
     desc: 'Reducir la velocidad y ceder el paso a los vehículos de la vía principal.',
     cat: 'reglamentaria',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Vienna_Convention_sign_B1.svg'
+    img: 'https://jopavisos.com/wp-content/uploads/2021/04/Transito-rojas2-02.png'
   },
   {
     id: 'r3',
     name: 'Prohibido el paso',
     desc: 'Indica que ningún vehículo debe entrar en la vía o calle.',
     cat: 'reglamentaria',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Vienna_Convention_sign_C1a.svg'
+    img: 'https://static.vecteezy.com/system/resources/thumbnails/008/506/476/small/no-entry-for-people-non-staff-icon-free-png.png'
   },
   {
     id: 'r4',
     name: 'No gire a la izquierda',
     desc: 'Prohíbe a los conductores efectuar un giro hacia la izquierda.',
     cat: 'reglamentaria',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/b/b5/Vienna_Convention_sign_C11a.svg'
+    img: 'https://jopavisos.com/wp-content/uploads/2021/04/Transito-rojas2-06.png'
   },
   {
     id: 'r5',
@@ -64,7 +64,7 @@ export const SIGNS_DB = [
     cat: 'reglamentaria',
     img: 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Vienna_Convention_sign_D1b.svg'
   },
-  
+
   // PREVENTIVAS
   {
     id: 'p1',
@@ -152,7 +152,7 @@ export const SIGNS_DB = [
     cat: 'informativa',
     img: 'https://upload.wikimedia.org/wikipedia/commons/2/23/Vienna_Convention_sign_F6.svg'
   },
-  
+
   // TRANSITORIAS
   {
     id: 't1',
