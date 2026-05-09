@@ -3,7 +3,14 @@ import { useProgress } from '../context/ProgressContext'
 import { LessonRow } from '../components/ui/LessonRow'
 import { XpBar } from '../components/ui/XpBar'
 import { T } from '../styles/tokens'
-import { LESSONS } from '../data/lessons'
+
+const LESSONS = [
+  { id: 1, icon: '⛔', title: 'Señales reglamentarias',  diff: 'fácil',   time: '5 min',  xp: 50,  locked: false },
+  { id: 2, icon: '⚠️', title: 'Señales preventivas',     diff: 'fácil',   time: '6 min',  xp: 60,  locked: false },
+  { id: 3, icon: '🚦', title: 'Semáforos y prioridades', diff: 'medio',   time: '8 min',  xp: 80,  locked: false },
+  { id: 4, icon: '🏎️', title: 'Velocidades máximas',     diff: 'fácil',   time: '7 min',  xp: 70,  locked: false },
+  { id: 5, icon: '🛡️', title: 'Conducción defensiva',    diff: 'difícil', time: '10 min', xp: 100, locked: false },
+]
 
 export function PageLecciones() {
   const { completedLessons } = useProgress()
@@ -35,10 +42,10 @@ export function PageLogros() {
     { icon: '🔥', title: 'Racha de 7 días',     desc: 'Mantuviste 7 días consecutivos',  done: streak >= 7 },
     { icon: '⚡', title: '1000 XP',              desc: 'Alcanzaste 1000 puntos',          done: xp >= 1000 },
     { icon: '🏆', title: 'Súper progreso',       desc: 'Llegaste al Nivel 5',             done: xp >= 1500 },
-    { icon: '📚', title: 'Módulo completo',      desc: 'Completaste 3 pruebas',         done: completedLessons.length >= 3 },
-    { icon: '🌟', title: 'Maestro del tránsito', desc: 'Completaste todas las pruebas', done: completedLessons.length >= 5 },
+    { icon: '📚', title: 'Módulo completo',      desc: 'Completaste 3 pruebas',           done: completedLessons.length >= 3 },
+    { icon: '🌟', title: 'Maestro del tránsito', desc: 'Completaste todas las pruebas',   done: completedLessons.length >= 5 },
   ]
-  
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div className="anim-fade">
@@ -94,7 +101,7 @@ export function PagePerfil({ user }) {
           {[
             { val: `${level}`, lbl: 'Nivel', color: T.gold   },
             { val: `${xp}`,    lbl: 'XP',    color: T.green  },
-            { val: `${streak}`,lbl: 'Racha', color: T.orange },
+            { val: `${streak}`,lbl: 'Racha',  color: T.orange },
           ].map((s, i) => (
             <div key={i} style={{ textAlign: 'center' }}>
               <div className="mono" style={{ fontSize: 22, fontWeight: 700, color: s.color }}>{s.val}</div>

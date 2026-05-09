@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { useProgress } from '../context/ProgressContext'
 import { ModuleCard } from '../components/ui/Cards'
 import { T } from '../styles/tokens'
-import { MODULES, LESSONS } from '../data/lessons'
+import { MODULES } from '../data/lessons'
 
 export function PageHome({ user }) {
   const { xp, streak, levelInfo, completedLessons } = useProgress()
@@ -42,7 +42,7 @@ export function PageHome({ user }) {
               { val: `Nv.${level}`,                       lbl: 'Nivel',     color: T.gold   },
               { val: xp,                                   lbl: 'XP',        color: T.green  },
               { val: `${streak}🔥`,                       lbl: 'Racha',     color: T.orange },
-              { val: `${completed}/${LESSONS.length}`,    lbl: 'Lecciones', color: T.cyan   },
+              { val: `${completed}/5`,                     lbl: 'Lecciones', color: T.cyan   },
             ].map((s, i) => (
               <div key={i}>
                 <div className="mono" style={{ fontSize: 24, fontWeight: 700, color: s.color, lineHeight: 1 }}>{s.val}</div>

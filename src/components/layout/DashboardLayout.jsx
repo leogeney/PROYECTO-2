@@ -1,6 +1,8 @@
 // línea 1 de DashboardLayout.jsx
 import { Routes, Route, Navigate, NavLink } from 'react-router-dom'
 
+import { PageModulo } from '../../pages/PageModulo'
+
 import { GameHub } from '../../games/GameHub'
 import { LessonHub } from '../../lessons/LessonHub'
 import { PageBiblioteca } from '../../components/PageBiblioteca'
@@ -99,6 +101,7 @@ export function DashboardLayout({ user, onLogout }) {
             <Route path="biblioteca"  element={<PageBiblioteca />} />
             <Route path="leccion/:id" element={<LessonHub />} />
             <Route path="juegos"      element={<GameHub />} />
+            <Route path="modulo/:id" element={<PageModulo />} />
           </Routes>
         </main>
       </div>

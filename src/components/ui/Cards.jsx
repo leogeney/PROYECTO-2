@@ -1,5 +1,5 @@
 import { T } from '../../styles/tokens'
-
+import { useNavigate } from 'react-router-dom'
 export function StatChip({ icon, value, label, color = T.muted }) {
   return (
     <div style={{
@@ -19,11 +19,17 @@ export function StatChip({ icon, value, label, color = T.muted }) {
 }
 
 export function ModuleCard({ mod }) {
+  const navigate = useNavigate()
   const pct = Math.round((mod.done / mod.lessons) * 100)
-
+ 
+  const handleClick = () => {
+    if (mod.unlocked) navigate(`/dashboard/modulo/${mod.id}`)
+  }
+ 
   return (
     <div
       className="card card-hover"
+      onClick={handleClick}
       style={{
         padding: '16px', position: 'relative', overflow: 'hidden',
         opacity: mod.unlocked ? 1 : 0.35,

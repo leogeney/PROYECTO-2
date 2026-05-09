@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../context/ProgressContext'
-import { LESSONS } from '../data/lessons'
-import { T } from '../games/GameShared'
+import { MODULES } from '../data/lessons'
+import { T } from '../styles/tokens'
 
 export function LessonRunner({ lessonId, allQuestions }) {
   const navigate = useNavigate()
-  const lesson = LESSONS.find(l => l.id === lessonId)
+  const lesson = MODULES.find(l => l.id === lessonId)
   
   const { addXp, completeLesson } = useProgress()
   const [step, setStep] = useState(0)
@@ -16,7 +16,6 @@ export function LessonRunner({ lessonId, allQuestions }) {
   const [quizPool, setQuizPool] = useState([])
 
   useEffect(() => {
-    // Shuffle and pick 5 on mount
     const shuffled = [...allQuestions].sort(() => Math.random() - 0.5)
     setQuizPool(shuffled.slice(0, 5))
   }, [allQuestions])
@@ -52,7 +51,7 @@ export function LessonRunner({ lessonId, allQuestions }) {
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="btn-ghost" onClick={() => navigate('/dashboard/lecciones')}>← Lecciones</button>
           <button className="btn-primary" onClick={() => { 
-            setStep(0); setSelected(null); setResults([]); setFinished(false);
+            setStep(0); setSelected(null); setResults([]); setFinished(false)
             const shuffled = [...allQuestions].sort(() => Math.random() - 0.5)
             setQuizPool(shuffled.slice(0, 5))
           }}>Reintentar</button>
@@ -71,8 +70,10 @@ export function LessonRunner({ lessonId, allQuestions }) {
       const xpEarned = Math.round((correctCount / quizPool.length) * lesson.xp)
       addXp(xpEarned)
       completeLesson(lesson.id)
+    } else {
+      setStep(step + 1)
+      setSelected(null)
     }
-    else { setStep(step + 1); setSelected(null) }
   }
 
   return (
