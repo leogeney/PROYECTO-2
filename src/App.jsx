@@ -4,7 +4,8 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from './config/firebase'
 import Login from './components/Login/Login'
-import { DashboardLayout } from './dashboard'
+
+import { DashboardLayout } from './components/layout/DashboardLayout'
 
 const T = {
   bg: '#07090f', surface: '#0e1118', card: '#131720',
