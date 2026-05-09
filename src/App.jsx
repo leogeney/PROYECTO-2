@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from './config/firebase'
 import Login from './components/Login/Login'
+import { AchievementsProvider } from './games/GameAchievements'
 
 import { DashboardLayout } from './components/layout/DashboardLayout'
 
