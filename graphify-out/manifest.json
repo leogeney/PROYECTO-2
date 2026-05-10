@@ -1,0 +1,174 @@
+{
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\eslint.config.js": {
+    "mtime": 1777940520.5326731,
+    "hash": "c15fd0f45c689a8b77c8ff6fe6fada9b"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\vite.config.js": {
+    "mtime": 1777940520.5804908,
+    "hash": "199e1221ae03d6974fdc8b5e23787b98"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\App.jsx": {
+    "mtime": 1778294134.7345483,
+    "hash": "4ff41f38a0311e21337f53a2c988549a"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\main.jsx": {
+    "mtime": 1777940520.57849,
+    "hash": "4668df1c49689f3990a7dfcb864dddde"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\PageBiblioteca.jsx": {
+    "mtime": 1777940520.5539484,
+    "hash": "328d5a306c2598867fe2e78ebb570a39"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\layout\\DashboardLayout.jsx": {
+    "mtime": 1778298220.2687254,
+    "hash": "604a1b4d61cf9083e1d8b641f4e4166b"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\layout\\DashboardStyles.jsx": {
+    "mtime": 1778291248.0762846,
+    "hash": "f9d473084ca8e2d5cf689827c4cae3ea"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\Login\\index.js": {
+    "mtime": 1777940520.5519488,
+    "hash": "dd86ad856a4a48940a749e9b5329ee10"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\Login\\Login.jsx": {
+    "mtime": 1777940520.550951,
+    "hash": "e27af326e8718ffc467141404fbaba32"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\Login\\useLogin.js": {
+    "mtime": 1777940520.5529482,
+    "hash": "e4086b6937b588b5350d6f39b1d04e45"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\ui\\Cards.jsx": {
+    "mtime": 1778298187.8210642,
+    "hash": "74e31397e17dc27d1beca55cbdc48dd8"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\ui\\LessonRow.jsx": {
+    "mtime": 1778291309.5431821,
+    "hash": "d38d7cbf10ad8053c50354f3d1610cce"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\ui\\Logo.jsx": {
+    "mtime": 1778291280.575282,
+    "hash": "1548421ddffe68a4732fa6530b8ea0d6"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\components\\ui\\XpBar.jsx": {
+    "mtime": 1778291290.3510914,
+    "hash": "9550de06b1d4bd524cea29cdcb718889"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\config\\firebase.js": {
+    "mtime": 1777940520.5549526,
+    "hash": "5163eb325f307569358e0e3b6ae01c6f"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\context\\ProgressContext.jsx": {
+    "mtime": 1777940520.5569496,
+    "hash": "d05c3ed2246d9750237d65473b11c343"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\data\\lessons.js": {
+    "mtime": 1778338111.6435983,
+    "hash": "ff6f76c53b20d58119a7bbb2339f4ddb"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\data\\signsData.js": {
+    "mtime": 1778339582.802817,
+    "hash": "d5d3114c339882bdb5d6d947d5659940"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\games\\GameAchievements.jsx": {
+    "mtime": 1778293979.653746,
+    "hash": "6124f42196d42bdffd75d19448e62e11"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\games\\GameHub.jsx": {
+    "mtime": 1778294650.6613467,
+    "hash": "6b4d141aecda7f1f474721d86a1811b3"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\games\\GameShared.jsx": {
+    "mtime": 1777940520.5654626,
+    "hash": "67d55cb5d373040358875d83f2710db9"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\games\\MemoryMatch.jsx": {
+    "mtime": 1777940520.5664623,
+    "hash": "dae415405fbb533cb10bdbe50aad37f3"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\games\\SignsQuiz.jsx": {
+    "mtime": 1778295734.7237895,
+    "hash": "4127a3b63836b37b0f15786cb005cf9d"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\games\\VirtualDriver.jsx": {
+    "mtime": 1778344221.9238572,
+    "hash": "0ae21ef029996b297184ddeff4f160a2"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\games\\WordSearch.jsx": {
+    "mtime": 1777940520.5689776,
+    "hash": "8df16b16ed89234b002a802273802115"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\lessons\\Lesson1.jsx": {
+    "mtime": 1777940520.571488,
+    "hash": "45129398727dc4b56686ef5209c4c160"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\lessons\\Lesson2.jsx": {
+    "mtime": 1777940520.5724998,
+    "hash": "91f28b05ff5f8773fff731587f2625d6"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\lessons\\Lesson3.jsx": {
+    "mtime": 1777940520.5734935,
+    "hash": "486cf8c867c302f90014896756381d19"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\lessons\\Lesson4.jsx": {
+    "mtime": 1777940520.5744908,
+    "hash": "010c249b22d987f9120c24223a418af7"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\lessons\\Lesson5.jsx": {
+    "mtime": 1777940520.5754907,
+    "hash": "8dfeecd18bb33d0a9552caf70ea357c9"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\lessons\\LessonHub.jsx": {
+    "mtime": 1777940520.5764904,
+    "hash": "540e89593dd0a0f352cfc4b3b84dafd7"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\lessons\\LessonShared.jsx": {
+    "mtime": 1778338121.611556,
+    "hash": "89cc8933616d5455bcb56193f91922a4"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\pages\\PageHome.jsx": {
+    "mtime": 1778338428.6140444,
+    "hash": "6072e97349eb88531eb61b8cb9e13571"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\pages\\PageLeccionesLogrosPeril.jsx": {
+    "mtime": 1778345070.615796,
+    "hash": "ac41ca45be7ed799458ba510c975f582"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\pages\\PageModulo.jsx": {
+    "mtime": 1778297929.4591305,
+    "hash": "4767be0bcbc77dbfb564d045e3effb62"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\utils\\firebaseErrors.js": {
+    "mtime": 1777940520.5804908,
+    "hash": "97f53230e4ef206d7ace876760d9358f"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\index.html": {
+    "mtime": 1777940520.5346718,
+    "hash": "00ebfbaa1949495df5f0a81b7809fb03"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\README.md": {
+    "mtime": 1777940520.5316608,
+    "hash": "abfa161e3e5434e3e85394bf03d387a4"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\public\\favicon.svg": {
+    "mtime": 1777940520.5412016,
+    "hash": "7e840862161341271697daa99a40d76b"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\public\\icons.svg": {
+    "mtime": 1777940520.5422032,
+    "hash": "21c7473c592c67dc87223d49892c8f0a"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\assets\\hero.png": {
+    "mtime": 1777940520.5454552,
+    "hash": "5cf2b0762834cdddc0dd3ec1397b5011"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\assets\\react.svg": {
+    "mtime": 1777940520.5464344,
+    "hash": "f0402b67b6ce880f65666bb49e841696"
+  },
+  "C:\\Users\\Usuario\\Desktop\\PROYECTO-2\\src\\assets\\vite.svg": {
+    "mtime": 1777940520.5474372,
+    "hash": "6d5180a782d64c8cf51ba01c2a2184d8"
+  }
+}

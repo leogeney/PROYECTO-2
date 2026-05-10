@@ -1,0 +1,3702 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "eslint.config.js",
+      "file_type": "code",
+      "source_file": "eslint.config.js",
+      "source_location": "L1",
+      "id": "eslint_config_js",
+      "community": 7,
+      "norm_label": "eslint.config.js"
+    },
+    {
+      "label": "vite.config.js",
+      "file_type": "code",
+      "source_file": "vite.config.js",
+      "source_location": "L1",
+      "id": "vite_config_js",
+      "community": 8,
+      "norm_label": "vite.config.js"
+    },
+    {
+      "label": "App.jsx",
+      "file_type": "code",
+      "source_file": "src/App.jsx",
+      "source_location": "L1",
+      "id": "src_app_jsx",
+      "community": 1,
+      "norm_label": "app.jsx"
+    },
+    {
+      "label": "T",
+      "file_type": "code",
+      "source_file": "src/App.jsx",
+      "source_location": "L11",
+      "id": "src_app_t",
+      "community": 1,
+      "norm_label": "t"
+    },
+    {
+      "label": "GlobalStyles()",
+      "file_type": "code",
+      "source_file": "src/App.jsx",
+      "source_location": "L27",
+      "id": "src_app_globalstyles",
+      "community": 1,
+      "norm_label": "globalstyles()"
+    },
+    {
+      "label": "Logo()",
+      "file_type": "code",
+      "source_file": "src/App.jsx",
+      "source_location": "L31",
+      "id": "src_app_logo",
+      "community": 1,
+      "norm_label": "logo()"
+    },
+    {
+      "label": "Loader()",
+      "file_type": "code",
+      "source_file": "src/App.jsx",
+      "source_location": "L50",
+      "id": "src_app_loader",
+      "community": 1,
+      "norm_label": "loader()"
+    },
+    {
+      "label": "App()",
+      "file_type": "code",
+      "source_file": "src/App.jsx",
+      "source_location": "L70",
+      "id": "src_app_app",
+      "community": 1,
+      "norm_label": "app()"
+    },
+    {
+      "label": "main.jsx",
+      "file_type": "code",
+      "source_file": "src/main.jsx",
+      "source_location": "L1",
+      "id": "src_main_jsx",
+      "community": 0,
+      "norm_label": "main.jsx"
+    },
+    {
+      "label": "PageBiblioteca.jsx",
+      "file_type": "code",
+      "source_file": "src/components/PageBiblioteca.jsx",
+      "source_location": "L1",
+      "id": "src_components_pagebiblioteca_jsx",
+      "community": 6,
+      "norm_label": "pagebiblioteca.jsx"
+    },
+    {
+      "label": "T",
+      "file_type": "code",
+      "source_file": "src/components/PageBiblioteca.jsx",
+      "source_location": "L4",
+      "id": "components_pagebiblioteca_t",
+      "community": 6,
+      "norm_label": "t"
+    },
+    {
+      "label": "PageBiblioteca()",
+      "file_type": "code",
+      "source_file": "src/components/PageBiblioteca.jsx",
+      "source_location": "L16",
+      "id": "components_pagebiblioteca_pagebiblioteca",
+      "community": 6,
+      "norm_label": "pagebiblioteca()"
+    },
+    {
+      "label": "DashboardLayout.jsx",
+      "file_type": "code",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L1",
+      "id": "src_components_layout_dashboardlayout_jsx",
+      "community": 0,
+      "norm_label": "dashboardlayout.jsx"
+    },
+    {
+      "label": "NAV_ITEMS",
+      "file_type": "code",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L22",
+      "id": "layout_dashboardlayout_nav_items",
+      "community": 0,
+      "norm_label": "nav_items"
+    },
+    {
+      "label": "DashboardLayout()",
+      "file_type": "code",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L31",
+      "id": "layout_dashboardlayout_dashboardlayout",
+      "community": 0,
+      "norm_label": "dashboardlayout()"
+    },
+    {
+      "label": "DashboardStyles.jsx",
+      "file_type": "code",
+      "source_file": "src/components/layout/DashboardStyles.jsx",
+      "source_location": "L1",
+      "id": "src_components_layout_dashboardstyles_jsx",
+      "community": 0,
+      "norm_label": "dashboardstyles.jsx"
+    },
+    {
+      "label": "DashboardStyles()",
+      "file_type": "code",
+      "source_file": "src/components/layout/DashboardStyles.jsx",
+      "source_location": "L63",
+      "id": "layout_dashboardstyles_dashboardstyles",
+      "community": 0,
+      "norm_label": "dashboardstyles()"
+    },
+    {
+      "label": "index.js",
+      "file_type": "code",
+      "source_file": "src/components/Login/index.js",
+      "source_location": "L1",
+      "id": "src_components_login_index_js",
+      "community": 9,
+      "norm_label": "index.js"
+    },
+    {
+      "label": "Login.jsx",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L1",
+      "id": "src_components_login_login_jsx",
+      "community": 1,
+      "norm_label": "login.jsx"
+    },
+    {
+      "label": "C",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L5",
+      "id": "login_login_c",
+      "community": 1,
+      "norm_label": "c"
+    },
+    {
+      "label": "inp",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L18",
+      "id": "login_login_inp",
+      "community": 1,
+      "norm_label": "inp"
+    },
+    {
+      "label": "Login()",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L28",
+      "id": "login_login_login",
+      "community": 1,
+      "norm_label": "login()"
+    },
+    {
+      "label": "Field()",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L264",
+      "id": "login_login_field",
+      "community": 1,
+      "norm_label": "field()"
+    },
+    {
+      "label": "PasswordInput()",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L274",
+      "id": "login_login_passwordinput",
+      "community": 1,
+      "norm_label": "passwordinput()"
+    },
+    {
+      "label": "ErrorMsg()",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L297",
+      "id": "login_login_errormsg",
+      "community": 1,
+      "norm_label": "errormsg()"
+    },
+    {
+      "label": "SubmitBtn()",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L309",
+      "id": "login_login_submitbtn",
+      "community": 1,
+      "norm_label": "submitbtn()"
+    },
+    {
+      "label": "GoogleBtn()",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L323",
+      "id": "login_login_googlebtn",
+      "community": 1,
+      "norm_label": "googlebtn()"
+    },
+    {
+      "label": "Divider()",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L351",
+      "id": "login_login_divider",
+      "community": 1,
+      "norm_label": "divider()"
+    },
+    {
+      "label": "Spinner()",
+      "file_type": "code",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L361",
+      "id": "login_login_spinner",
+      "community": 1,
+      "norm_label": "spinner()"
+    },
+    {
+      "label": "useLogin.js",
+      "file_type": "code",
+      "source_file": "src/components/Login/useLogin.js",
+      "source_location": "L1",
+      "id": "src_components_login_uselogin_js",
+      "community": 1,
+      "norm_label": "uselogin.js"
+    },
+    {
+      "label": "useLogin()",
+      "file_type": "code",
+      "source_file": "src/components/Login/useLogin.js",
+      "source_location": "L13",
+      "id": "login_uselogin_uselogin",
+      "community": 1,
+      "norm_label": "uselogin()"
+    },
+    {
+      "label": "Cards.jsx",
+      "file_type": "code",
+      "source_file": "src/components/ui/Cards.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_cards_jsx",
+      "community": 0,
+      "norm_label": "cards.jsx"
+    },
+    {
+      "label": "StatChip()",
+      "file_type": "code",
+      "source_file": "src/components/ui/Cards.jsx",
+      "source_location": "L3",
+      "id": "ui_cards_statchip",
+      "community": 0,
+      "norm_label": "statchip()"
+    },
+    {
+      "label": "ModuleCard()",
+      "file_type": "code",
+      "source_file": "src/components/ui/Cards.jsx",
+      "source_location": "L21",
+      "id": "ui_cards_modulecard",
+      "community": 0,
+      "norm_label": "modulecard()"
+    },
+    {
+      "label": "LessonRow.jsx",
+      "file_type": "code",
+      "source_file": "src/components/ui/LessonRow.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_lessonrow_jsx",
+      "community": 0,
+      "norm_label": "lessonrow.jsx"
+    },
+    {
+      "label": "LessonRow()",
+      "file_type": "code",
+      "source_file": "src/components/ui/LessonRow.jsx",
+      "source_location": "L4",
+      "id": "ui_lessonrow_lessonrow",
+      "community": 0,
+      "norm_label": "lessonrow()"
+    },
+    {
+      "label": "Logo.jsx",
+      "file_type": "code",
+      "source_file": "src/components/ui/Logo.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_logo_jsx",
+      "community": 0,
+      "norm_label": "logo.jsx"
+    },
+    {
+      "label": "Logo()",
+      "file_type": "code",
+      "source_file": "src/components/ui/Logo.jsx",
+      "source_location": "L3",
+      "id": "ui_logo_logo",
+      "community": 0,
+      "norm_label": "logo()"
+    },
+    {
+      "label": "XpBar.jsx",
+      "file_type": "code",
+      "source_file": "src/components/ui/XpBar.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_xpbar_jsx",
+      "community": 0,
+      "norm_label": "xpbar.jsx"
+    },
+    {
+      "label": "XpBar()",
+      "file_type": "code",
+      "source_file": "src/components/ui/XpBar.jsx",
+      "source_location": "L4",
+      "id": "ui_xpbar_xpbar",
+      "community": 0,
+      "norm_label": "xpbar()"
+    },
+    {
+      "label": "firebase.js",
+      "file_type": "code",
+      "source_file": "src/config/firebase.js",
+      "source_location": "L1",
+      "id": "src_config_firebase_js",
+      "community": 1,
+      "norm_label": "firebase.js"
+    },
+    {
+      "label": "firebaseConfig",
+      "file_type": "code",
+      "source_file": "src/config/firebase.js",
+      "source_location": "L5",
+      "id": "config_firebase_firebaseconfig",
+      "community": 1,
+      "norm_label": "firebaseconfig"
+    },
+    {
+      "label": "app",
+      "file_type": "code",
+      "source_file": "src/config/firebase.js",
+      "source_location": "L16",
+      "id": "config_firebase_app",
+      "community": 1,
+      "norm_label": "app"
+    },
+    {
+      "label": "auth",
+      "file_type": "code",
+      "source_file": "src/config/firebase.js",
+      "source_location": "L19",
+      "id": "config_firebase_auth",
+      "community": 1,
+      "norm_label": "auth"
+    },
+    {
+      "label": "googleProvider",
+      "file_type": "code",
+      "source_file": "src/config/firebase.js",
+      "source_location": "L22",
+      "id": "config_firebase_googleprovider",
+      "community": 1,
+      "norm_label": "googleprovider"
+    },
+    {
+      "label": "ProgressContext.jsx",
+      "file_type": "code",
+      "source_file": "src/context/ProgressContext.jsx",
+      "source_location": "L1",
+      "id": "src_context_progresscontext_jsx",
+      "community": 0,
+      "norm_label": "progresscontext.jsx"
+    },
+    {
+      "label": "getLevelInfo()",
+      "file_type": "code",
+      "source_file": "src/context/ProgressContext.jsx",
+      "source_location": "L3",
+      "id": "context_progresscontext_getlevelinfo",
+      "community": 0,
+      "norm_label": "getlevelinfo()"
+    },
+    {
+      "label": "ProgressContext",
+      "file_type": "code",
+      "source_file": "src/context/ProgressContext.jsx",
+      "source_location": "L25",
+      "id": "context_progresscontext_progresscontext",
+      "community": 0,
+      "norm_label": "progresscontext"
+    },
+    {
+      "label": "ProgressProvider()",
+      "file_type": "code",
+      "source_file": "src/context/ProgressContext.jsx",
+      "source_location": "L27",
+      "id": "context_progresscontext_progressprovider",
+      "community": 0,
+      "norm_label": "progressprovider()"
+    },
+    {
+      "label": "useProgress()",
+      "file_type": "code",
+      "source_file": "src/context/ProgressContext.jsx",
+      "source_location": "L77",
+      "id": "context_progresscontext_useprogress",
+      "community": 0,
+      "norm_label": "useprogress()"
+    },
+    {
+      "label": "lessons.js",
+      "file_type": "code",
+      "source_file": "src/data/lessons.js",
+      "source_location": "L1",
+      "id": "src_data_lessons_js",
+      "community": 3,
+      "norm_label": "lessons.js"
+    },
+    {
+      "label": "MODULES",
+      "file_type": "code",
+      "source_file": "src/data/lessons.js",
+      "source_location": "L1",
+      "id": "data_lessons_modules",
+      "community": 3,
+      "norm_label": "modules"
+    },
+    {
+      "label": "signsData.js",
+      "file_type": "code",
+      "source_file": "src/data/signsData.js",
+      "source_location": "L1",
+      "id": "src_data_signsdata_js",
+      "community": 6,
+      "norm_label": "signsdata.js"
+    },
+    {
+      "label": "SIGN_CATEGORIES",
+      "file_type": "code",
+      "source_file": "src/data/signsData.js",
+      "source_location": "L1",
+      "id": "data_signsdata_sign_categories",
+      "community": 6,
+      "norm_label": "sign_categories"
+    },
+    {
+      "label": "SIGNS_DB",
+      "file_type": "code",
+      "source_file": "src/data/signsData.js",
+      "source_location": "L9",
+      "id": "data_signsdata_signs_db",
+      "community": 6,
+      "norm_label": "signs_db"
+    },
+    {
+      "label": "GameAchievements.jsx",
+      "file_type": "code",
+      "source_file": "src/games/GameAchievements.jsx",
+      "source_location": "L1",
+      "id": "src_games_gameachievements_jsx",
+      "community": 4,
+      "norm_label": "gameachievements.jsx"
+    },
+    {
+      "label": "AchievementsContext",
+      "file_type": "code",
+      "source_file": "src/games/GameAchievements.jsx",
+      "source_location": "L3",
+      "id": "games_gameachievements_achievementscontext",
+      "community": 4,
+      "norm_label": "achievementscontext"
+    },
+    {
+      "label": "AchievementsProvider()",
+      "file_type": "code",
+      "source_file": "src/games/GameAchievements.jsx",
+      "source_location": "L5",
+      "id": "games_gameachievements_achievementsprovider",
+      "community": 4,
+      "norm_label": "achievementsprovider()"
+    },
+    {
+      "label": "useAchievements()",
+      "file_type": "code",
+      "source_file": "src/games/GameAchievements.jsx",
+      "source_location": "L88",
+      "id": "games_gameachievements_useachievements",
+      "community": 4,
+      "norm_label": "useachievements()"
+    },
+    {
+      "label": "GameHub.jsx",
+      "file_type": "code",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L1",
+      "id": "src_games_gamehub_jsx",
+      "community": 4,
+      "norm_label": "gamehub.jsx"
+    },
+    {
+      "label": "GAMES_CONFIG",
+      "file_type": "code",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L9",
+      "id": "games_gamehub_games_config",
+      "community": 4,
+      "norm_label": "games_config"
+    },
+    {
+      "label": "DIFFICULTY_LEVELS",
+      "file_type": "code",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L61",
+      "id": "games_gamehub_difficulty_levels",
+      "community": 4,
+      "norm_label": "difficulty_levels"
+    },
+    {
+      "label": "DifficultySelector()",
+      "file_type": "code",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L90",
+      "id": "games_gamehub_difficultyselector",
+      "community": 4,
+      "norm_label": "difficultyselector()"
+    },
+    {
+      "label": "AchievementsPanel()",
+      "file_type": "code",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L172",
+      "id": "games_gamehub_achievementspanel",
+      "community": 4,
+      "norm_label": "achievementspanel()"
+    },
+    {
+      "label": "GameCard()",
+      "file_type": "code",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L213",
+      "id": "games_gamehub_gamecard",
+      "community": 4,
+      "norm_label": "gamecard()"
+    },
+    {
+      "label": "GameHubInner()",
+      "file_type": "code",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L319",
+      "id": "games_gamehub_gamehubinner",
+      "community": 4,
+      "norm_label": "gamehubinner()"
+    },
+    {
+      "label": "GameHub()",
+      "file_type": "code",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L505",
+      "id": "games_gamehub_gamehub",
+      "community": 4,
+      "norm_label": "gamehub()"
+    },
+    {
+      "label": "GameShared.jsx",
+      "file_type": "code",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L1",
+      "id": "src_games_gameshared_jsx",
+      "community": 2,
+      "norm_label": "gameshared.jsx"
+    },
+    {
+      "label": "T",
+      "file_type": "code",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L4",
+      "id": "games_gameshared_t",
+      "community": 2,
+      "norm_label": "t"
+    },
+    {
+      "label": "GameStyles()",
+      "file_type": "code",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L149",
+      "id": "games_gameshared_gamestyles",
+      "community": 4,
+      "norm_label": "gamestyles()"
+    },
+    {
+      "label": "Lives()",
+      "file_type": "code",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L153",
+      "id": "games_gameshared_lives",
+      "community": 2,
+      "norm_label": "lives()"
+    },
+    {
+      "label": "ScoreBadge()",
+      "file_type": "code",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L163",
+      "id": "games_gameshared_scorebadge",
+      "community": 2,
+      "norm_label": "scorebadge()"
+    },
+    {
+      "label": "ProgressBar()",
+      "file_type": "code",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L173",
+      "id": "games_gameshared_progressbar",
+      "community": 2,
+      "norm_label": "progressbar()"
+    },
+    {
+      "label": "TimerBar()",
+      "file_type": "code",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L191",
+      "id": "games_gameshared_timerbar",
+      "community": 2,
+      "norm_label": "timerbar()"
+    },
+    {
+      "label": "ResultScreen()",
+      "file_type": "code",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L201",
+      "id": "games_gameshared_resultscreen",
+      "community": 2,
+      "norm_label": "resultscreen()"
+    },
+    {
+      "label": "MemoryMatch.jsx",
+      "file_type": "code",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L1",
+      "id": "src_games_memorymatch_jsx",
+      "community": 2,
+      "norm_label": "memorymatch.jsx"
+    },
+    {
+      "label": "MEMORY_SIGNS",
+      "file_type": "code",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L4",
+      "id": "games_memorymatch_memory_signs",
+      "community": 2,
+      "norm_label": "memory_signs"
+    },
+    {
+      "label": "LEVELS",
+      "file_type": "code",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L15",
+      "id": "games_memorymatch_levels",
+      "community": 2,
+      "norm_label": "levels"
+    },
+    {
+      "label": "MemoryMatch()",
+      "file_type": "code",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L21",
+      "id": "games_memorymatch_memorymatch",
+      "community": 2,
+      "norm_label": "memorymatch()"
+    },
+    {
+      "label": "SignsQuiz.jsx",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L1",
+      "id": "src_games_signsquiz_jsx",
+      "community": 2,
+      "norm_label": "signsquiz.jsx"
+    },
+    {
+      "label": "getWikimediaUrl()",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L7",
+      "id": "games_signsquiz_getwikimediaurl",
+      "community": 2,
+      "norm_label": "getwikimediaurl()"
+    },
+    {
+      "label": "SIGNS_QUIZ_DATA",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L17",
+      "id": "games_signsquiz_signs_quiz_data",
+      "community": 2,
+      "norm_label": "signs_quiz_data"
+    },
+    {
+      "label": "TYPE_META",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L76",
+      "id": "games_signsquiz_type_meta",
+      "community": 2,
+      "norm_label": "type_meta"
+    },
+    {
+      "label": "LETTERS",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L84",
+      "id": "games_signsquiz_letters",
+      "community": 2,
+      "norm_label": "letters"
+    },
+    {
+      "label": "useSignImages()",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L170",
+      "id": "games_signsquiz_usesignimages",
+      "community": 2,
+      "norm_label": "usesignimages()"
+    },
+    {
+      "label": "StepDots()",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L200",
+      "id": "games_signsquiz_stepdots",
+      "community": 2,
+      "norm_label": "stepdots()"
+    },
+    {
+      "label": "OptionButton()",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L220",
+      "id": "games_signsquiz_optionbutton",
+      "community": 2,
+      "norm_label": "optionbutton()"
+    },
+    {
+      "label": "XpFloat()",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L259",
+      "id": "games_signsquiz_xpfloat",
+      "community": 2,
+      "norm_label": "xpfloat()"
+    },
+    {
+      "label": "SignsQuiz()",
+      "file_type": "code",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L273",
+      "id": "games_signsquiz_signsquiz",
+      "community": 2,
+      "norm_label": "signsquiz()"
+    },
+    {
+      "label": "VirtualDriver.jsx",
+      "file_type": "code",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L1",
+      "id": "src_games_virtualdriver_jsx",
+      "community": 4,
+      "norm_label": "virtualdriver.jsx"
+    },
+    {
+      "label": "LANE_XS",
+      "file_type": "code",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L9",
+      "id": "games_virtualdriver_lane_xs",
+      "community": 4,
+      "norm_label": "lane_xs"
+    },
+    {
+      "label": "OBSTACLE_TYPES",
+      "file_type": "code",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L11",
+      "id": "games_virtualdriver_obstacle_types",
+      "community": 4,
+      "norm_label": "obstacle_types"
+    },
+    {
+      "label": "makeCarMesh()",
+      "file_type": "code",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L21",
+      "id": "games_virtualdriver_makecarmesh",
+      "community": 4,
+      "norm_label": "makecarmesh()"
+    },
+    {
+      "label": "VirtualDriver()",
+      "file_type": "code",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L93",
+      "id": "games_virtualdriver_virtualdriver",
+      "community": 4,
+      "norm_label": "virtualdriver()"
+    },
+    {
+      "label": "styles",
+      "file_type": "code",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L736",
+      "id": "games_virtualdriver_styles",
+      "community": 4,
+      "norm_label": "styles"
+    },
+    {
+      "label": "WordSearch.jsx",
+      "file_type": "code",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L1",
+      "id": "src_games_wordsearch_jsx",
+      "community": 2,
+      "norm_label": "wordsearch.jsx"
+    },
+    {
+      "label": "LEVELS",
+      "file_type": "code",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L4",
+      "id": "games_wordsearch_levels",
+      "community": 2,
+      "norm_label": "levels"
+    },
+    {
+      "label": "WordSearch()",
+      "file_type": "code",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L29",
+      "id": "games_wordsearch_wordsearch",
+      "community": 2,
+      "norm_label": "wordsearch()"
+    },
+    {
+      "label": "Lesson1.jsx",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson1.jsx",
+      "source_location": "L1",
+      "id": "src_lessons_lesson1_jsx",
+      "community": 3,
+      "norm_label": "lesson1.jsx"
+    },
+    {
+      "label": "QUESTIONS",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson1.jsx",
+      "source_location": "L4",
+      "id": "lessons_lesson1_questions",
+      "community": 3,
+      "norm_label": "questions"
+    },
+    {
+      "label": "Lesson1()",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson1.jsx",
+      "source_location": "L15",
+      "id": "lessons_lesson1_lesson1",
+      "community": 3,
+      "norm_label": "lesson1()"
+    },
+    {
+      "label": "Lesson2.jsx",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson2.jsx",
+      "source_location": "L1",
+      "id": "src_lessons_lesson2_jsx",
+      "community": 3,
+      "norm_label": "lesson2.jsx"
+    },
+    {
+      "label": "QUESTIONS",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson2.jsx",
+      "source_location": "L4",
+      "id": "lessons_lesson2_questions",
+      "community": 3,
+      "norm_label": "questions"
+    },
+    {
+      "label": "Lesson2()",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson2.jsx",
+      "source_location": "L15",
+      "id": "lessons_lesson2_lesson2",
+      "community": 3,
+      "norm_label": "lesson2()"
+    },
+    {
+      "label": "Lesson3.jsx",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson3.jsx",
+      "source_location": "L1",
+      "id": "src_lessons_lesson3_jsx",
+      "community": 3,
+      "norm_label": "lesson3.jsx"
+    },
+    {
+      "label": "QUESTIONS",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson3.jsx",
+      "source_location": "L4",
+      "id": "lessons_lesson3_questions",
+      "community": 3,
+      "norm_label": "questions"
+    },
+    {
+      "label": "Lesson3()",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson3.jsx",
+      "source_location": "L15",
+      "id": "lessons_lesson3_lesson3",
+      "community": 3,
+      "norm_label": "lesson3()"
+    },
+    {
+      "label": "Lesson4.jsx",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson4.jsx",
+      "source_location": "L1",
+      "id": "src_lessons_lesson4_jsx",
+      "community": 3,
+      "norm_label": "lesson4.jsx"
+    },
+    {
+      "label": "QUESTIONS",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson4.jsx",
+      "source_location": "L4",
+      "id": "lessons_lesson4_questions",
+      "community": 3,
+      "norm_label": "questions"
+    },
+    {
+      "label": "Lesson4()",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson4.jsx",
+      "source_location": "L15",
+      "id": "lessons_lesson4_lesson4",
+      "community": 3,
+      "norm_label": "lesson4()"
+    },
+    {
+      "label": "Lesson5.jsx",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson5.jsx",
+      "source_location": "L1",
+      "id": "src_lessons_lesson5_jsx",
+      "community": 3,
+      "norm_label": "lesson5.jsx"
+    },
+    {
+      "label": "QUESTIONS",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson5.jsx",
+      "source_location": "L4",
+      "id": "lessons_lesson5_questions",
+      "community": 3,
+      "norm_label": "questions"
+    },
+    {
+      "label": "Lesson5()",
+      "file_type": "code",
+      "source_file": "src/lessons/Lesson5.jsx",
+      "source_location": "L15",
+      "id": "lessons_lesson5_lesson5",
+      "community": 3,
+      "norm_label": "lesson5()"
+    },
+    {
+      "label": "LessonHub.jsx",
+      "file_type": "code",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L1",
+      "id": "src_lessons_lessonhub_jsx",
+      "community": 3,
+      "norm_label": "lessonhub.jsx"
+    },
+    {
+      "label": "LessonHub()",
+      "file_type": "code",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L9",
+      "id": "lessons_lessonhub_lessonhub",
+      "community": 3,
+      "norm_label": "lessonhub()"
+    },
+    {
+      "label": "LessonShared.jsx",
+      "file_type": "code",
+      "source_file": "src/lessons/LessonShared.jsx",
+      "source_location": "L1",
+      "id": "src_lessons_lessonshared_jsx",
+      "community": 3,
+      "norm_label": "lessonshared.jsx"
+    },
+    {
+      "label": "LessonRunner()",
+      "file_type": "code",
+      "source_file": "src/lessons/LessonShared.jsx",
+      "source_location": "L7",
+      "id": "lessons_lessonshared_lessonrunner",
+      "community": 3,
+      "norm_label": "lessonrunner()"
+    },
+    {
+      "label": "PageHome.jsx",
+      "file_type": "code",
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L1",
+      "id": "src_pages_pagehome_jsx",
+      "community": 0,
+      "norm_label": "pagehome.jsx"
+    },
+    {
+      "label": "PageHome()",
+      "file_type": "code",
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L7",
+      "id": "pages_pagehome_pagehome",
+      "community": 0,
+      "norm_label": "pagehome()"
+    },
+    {
+      "label": "PageLeccionesLogrosPeril.jsx",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L1",
+      "id": "src_pages_pageleccioneslogrosperil_jsx",
+      "community": 0,
+      "norm_label": "pageleccioneslogrosperil.jsx"
+    },
+    {
+      "label": "LESSONS",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L9",
+      "id": "pages_pageleccioneslogrosperil_lessons",
+      "community": 0,
+      "norm_label": "lessons"
+    },
+    {
+      "label": "PageLecciones()",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L17",
+      "id": "pages_pageleccioneslogrosperil_pagelecciones",
+      "community": 0,
+      "norm_label": "pagelecciones()"
+    },
+    {
+      "label": "PageLogros()",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L41",
+      "id": "pages_pageleccioneslogrosperil_pagelogros",
+      "community": 0,
+      "norm_label": "pagelogros()"
+    },
+    {
+      "label": "T",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L87",
+      "id": "pages_pageleccioneslogrosperil_t",
+      "community": 0,
+      "norm_label": "t"
+    },
+    {
+      "label": "GOALS",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L99",
+      "id": "pages_pageleccioneslogrosperil_goals",
+      "community": 0,
+      "norm_label": "goals"
+    },
+    {
+      "label": "NOTIF_DEFS",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L106",
+      "id": "pages_pageleccioneslogrosperil_notif_defs",
+      "community": 0,
+      "norm_label": "notif_defs"
+    },
+    {
+      "label": "Toast()",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L113",
+      "id": "pages_pageleccioneslogrosperil_toast",
+      "community": 0,
+      "norm_label": "toast()"
+    },
+    {
+      "label": "Toggle()",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L130",
+      "id": "pages_pageleccioneslogrosperil_toggle",
+      "community": 0,
+      "norm_label": "toggle()"
+    },
+    {
+      "label": "StatCard()",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L163",
+      "id": "pages_pageleccioneslogrosperil_statcard",
+      "community": 0,
+      "norm_label": "statcard()"
+    },
+    {
+      "label": "ActivityGrid()",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L177",
+      "id": "pages_pageleccioneslogrosperil_activitygrid",
+      "community": 0,
+      "norm_label": "activitygrid()"
+    },
+    {
+      "label": "PagePerfil()",
+      "file_type": "code",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L211",
+      "id": "pages_pageleccioneslogrosperil_pageperfil",
+      "community": 0,
+      "norm_label": "pageperfil()"
+    },
+    {
+      "label": "PageModulo.jsx",
+      "file_type": "code",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L1",
+      "id": "src_pages_pagemodulo_jsx",
+      "community": 5,
+      "norm_label": "pagemodulo.jsx"
+    },
+    {
+      "label": "MODULE_CONTENT",
+      "file_type": "code",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L6",
+      "id": "pages_pagemodulo_module_content",
+      "community": 5,
+      "norm_label": "module_content"
+    },
+    {
+      "label": "Flashcard()",
+      "file_type": "code",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L132",
+      "id": "pages_pagemodulo_flashcard",
+      "community": 5,
+      "norm_label": "flashcard()"
+    },
+    {
+      "label": "FlashcardsLesson()",
+      "file_type": "code",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L179",
+      "id": "pages_pagemodulo_flashcardslesson",
+      "community": 5,
+      "norm_label": "flashcardslesson()"
+    },
+    {
+      "label": "ArticleLesson()",
+      "file_type": "code",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L244",
+      "id": "pages_pagemodulo_articlelesson",
+      "community": 5,
+      "norm_label": "articlelesson()"
+    },
+    {
+      "label": "StoryLesson()",
+      "file_type": "code",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L298",
+      "id": "pages_pagemodulo_storylesson",
+      "community": 5,
+      "norm_label": "storylesson()"
+    },
+    {
+      "label": "LessonView()",
+      "file_type": "code",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L383",
+      "id": "pages_pagemodulo_lessonview",
+      "community": 5,
+      "norm_label": "lessonview()"
+    },
+    {
+      "label": "ModuleView()",
+      "file_type": "code",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L436",
+      "id": "pages_pagemodulo_moduleview",
+      "community": 5,
+      "norm_label": "moduleview()"
+    },
+    {
+      "label": "PageModulo()",
+      "file_type": "code",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L536",
+      "id": "pages_pagemodulo_pagemodulo",
+      "community": 5,
+      "norm_label": "pagemodulo()"
+    },
+    {
+      "label": "firebaseErrors.js",
+      "file_type": "code",
+      "source_file": "src/utils/firebaseErrors.js",
+      "source_location": "L1",
+      "id": "src_utils_firebaseerrors_js",
+      "community": 1,
+      "norm_label": "firebaseerrors.js"
+    },
+    {
+      "label": "firebaseErrorMessage()",
+      "file_type": "code",
+      "source_file": "src/utils/firebaseErrors.js",
+      "source_location": "L7",
+      "id": "utils_firebaseerrors_firebaseerrormessage",
+      "community": 1,
+      "norm_label": "firebaseerrormessage()"
+    }
+  ],
+  "links": [
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "src_config_firebase_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "config_firebase_auth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "src_components_login_login_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "src_games_gameachievements_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "games_gameachievements_achievementsprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "src_components_layout_dashboardlayout_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "layout_dashboardlayout_dashboardlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "src_app_t",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "src_app_globalstyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "src_app_logo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "src_app_loader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "src_app_jsx",
+      "target": "src_app_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_main_jsx",
+      "target": "src_app_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_main_jsx",
+      "target": "src_context_progresscontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_main_jsx",
+      "target": "context_progresscontext_progressprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PageBiblioteca.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_components_pagebiblioteca_jsx",
+      "target": "src_data_signsdata_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PageBiblioteca.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_components_pagebiblioteca_jsx",
+      "target": "data_signsdata_signs_db",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PageBiblioteca.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_components_pagebiblioteca_jsx",
+      "target": "data_signsdata_sign_categories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PageBiblioteca.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_pagebiblioteca_jsx",
+      "target": "components_pagebiblioteca_t",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PageBiblioteca.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_components_pagebiblioteca_jsx",
+      "target": "components_pagebiblioteca_pagebiblioteca",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_components_pagebiblioteca_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "components_pagebiblioteca_pagebiblioteca",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_pages_pagemodulo_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "pages_pagemodulo_pagemodulo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_games_gamehub_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "games_gamehub_gamehub",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_lessons_lessonhub_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "lessons_lessonhub_lessonhub",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_context_progresscontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "context_progresscontext_useprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_components_ui_logo_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "ui_logo_logo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_components_ui_xpbar_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "ui_xpbar_xpbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_components_ui_cards_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "ui_cards_statchip",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_components_layout_dashboardstyles_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "layout_dashboardstyles_dashboardstyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_pages_pagehome_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "pages_pagehome_pagehome",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "src_pages_pageleccioneslogrosperil_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "pages_pageleccioneslogrosperil_pagelecciones",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "pages_pageleccioneslogrosperil_pagelogros",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "pages_pageleccioneslogrosperil_pageperfil",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "layout_dashboardlayout_nav_items",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardlayout_jsx",
+      "target": "layout_dashboardlayout_dashboardlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/layout/DashboardLayout.jsx",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "layout_dashboardlayout_dashboardlayout",
+      "target": "context_progresscontext_useprogress"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/layout/DashboardStyles.jsx",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "src_components_layout_dashboardstyles_jsx",
+      "target": "layout_dashboardstyles_dashboardstyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "src_components_login_uselogin_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_uselogin_uselogin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_c",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_inp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_login",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L264",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_field",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L274",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_passwordinput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L297",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_errormsg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L309",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_submitbtn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L323",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_googlebtn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L351",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_divider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L361",
+      "weight": 1.0,
+      "source": "src_components_login_login_jsx",
+      "target": "login_login_spinner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/Login/Login.jsx",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "login_login_login",
+      "target": "login_uselogin_uselogin"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/useLogin.js",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_components_login_uselogin_js",
+      "target": "src_config_firebase_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/useLogin.js",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_components_login_uselogin_js",
+      "target": "config_firebase_auth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/useLogin.js",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_components_login_uselogin_js",
+      "target": "config_firebase_googleprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/useLogin.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_components_login_uselogin_js",
+      "target": "src_utils_firebaseerrors_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/useLogin.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_components_login_uselogin_js",
+      "target": "utils_firebaseerrors_firebaseerrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Login/useLogin.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_components_login_uselogin_js",
+      "target": "login_uselogin_uselogin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ui/Cards.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_components_ui_cards_jsx",
+      "target": "ui_cards_statchip",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ui/Cards.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_components_ui_cards_jsx",
+      "target": "ui_cards_modulecard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_pages_pagehome_jsx",
+      "target": "src_components_ui_cards_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_pages_pagehome_jsx",
+      "target": "ui_cards_modulecard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ui/LessonRow.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_ui_lessonrow_jsx",
+      "target": "ui_lessonrow_lessonrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "src_components_ui_lessonrow_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "ui_lessonrow_lessonrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ui/Logo.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_components_ui_logo_jsx",
+      "target": "ui_logo_logo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ui/XpBar.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_components_ui_xpbar_jsx",
+      "target": "src_context_progresscontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ui/XpBar.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_components_ui_xpbar_jsx",
+      "target": "context_progresscontext_useprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ui/XpBar.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_ui_xpbar_jsx",
+      "target": "ui_xpbar_xpbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "src_components_ui_xpbar_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "ui_xpbar_xpbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/ui/XpBar.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "ui_xpbar_xpbar",
+      "target": "context_progresscontext_useprogress"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/config/firebase.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_config_firebase_js",
+      "target": "config_firebase_firebaseconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/config/firebase.js",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_config_firebase_js",
+      "target": "config_firebase_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/config/firebase.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_config_firebase_js",
+      "target": "config_firebase_auth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/config/firebase.js",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_config_firebase_js",
+      "target": "config_firebase_googleprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/context/ProgressContext.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_context_progresscontext_jsx",
+      "target": "context_progresscontext_getlevelinfo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/context/ProgressContext.jsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "src_context_progresscontext_jsx",
+      "target": "context_progresscontext_progresscontext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/context/ProgressContext.jsx",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_context_progresscontext_jsx",
+      "target": "context_progresscontext_progressprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/context/ProgressContext.jsx",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "src_context_progresscontext_jsx",
+      "target": "context_progresscontext_useprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_gameshared_jsx",
+      "target": "src_context_progresscontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonShared.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lessons_lessonshared_jsx",
+      "target": "src_context_progresscontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_pages_pagehome_jsx",
+      "target": "src_context_progresscontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "src_context_progresscontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_gameshared_jsx",
+      "target": "context_progresscontext_useprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonShared.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lessons_lessonshared_jsx",
+      "target": "context_progresscontext_useprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_pages_pagehome_jsx",
+      "target": "context_progresscontext_useprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "context_progresscontext_useprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L202",
+      "weight": 1.0,
+      "source": "games_gameshared_resultscreen",
+      "target": "context_progresscontext_useprogress"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lessons/LessonShared.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "lessons_lessonshared_lessonrunner",
+      "target": "context_progresscontext_useprogress"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "pages_pagehome_pagehome",
+      "target": "context_progresscontext_useprogress"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "pages_pageleccioneslogrosperil_pagelecciones",
+      "target": "context_progresscontext_useprogress"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "pages_pageleccioneslogrosperil_pagelogros",
+      "target": "context_progresscontext_useprogress"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L212",
+      "weight": 1.0,
+      "source": "pages_pageleccioneslogrosperil_pageperfil",
+      "target": "context_progresscontext_useprogress"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/lessons.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_data_lessons_js",
+      "target": "data_lessons_modules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonShared.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lessons_lessonshared_jsx",
+      "target": "src_data_lessons_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_pages_pagehome_jsx",
+      "target": "src_data_lessons_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonShared.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lessons_lessonshared_jsx",
+      "target": "data_lessons_modules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_pages_pagehome_jsx",
+      "target": "data_lessons_modules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/signsData.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_data_signsdata_js",
+      "target": "data_signsdata_sign_categories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/signsData.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_data_signsdata_js",
+      "target": "data_signsdata_signs_db",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameAchievements.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_games_gameachievements_jsx",
+      "target": "games_gameachievements_achievementscontext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameAchievements.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_games_gameachievements_jsx",
+      "target": "games_gameachievements_achievementsprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameAchievements.jsx",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "src_games_gameachievements_jsx",
+      "target": "games_gameachievements_useachievements",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "src_games_gameachievements_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gameachievements_achievementsprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gameachievements_useachievements",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L320",
+      "weight": 1.0,
+      "source": "games_gamehub_gamehubinner",
+      "target": "games_gameachievements_useachievements"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "src_games_gameshared_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gameshared_t",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gameshared_gamestyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "src_games_wordsearch_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_wordsearch_wordsearch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "src_games_memorymatch_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_memorymatch_memorymatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "src_games_signsquiz_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_signsquiz_signsquiz",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "src_games_virtualdriver_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_virtualdriver_virtualdriver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gamehub_games_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gamehub_difficulty_levels",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gamehub_difficultyselector",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L172",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gamehub_achievementspanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L213",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gamehub_gamecard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L319",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gamehub_gamehubinner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameHub.jsx",
+      "source_location": "L505",
+      "weight": 1.0,
+      "source": "src_games_gamehub_jsx",
+      "target": "games_gamehub_gamehub",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_games_gameshared_jsx",
+      "target": "games_gameshared_t",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L149",
+      "weight": 1.0,
+      "source": "src_games_gameshared_jsx",
+      "target": "games_gameshared_gamestyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L153",
+      "weight": 1.0,
+      "source": "src_games_gameshared_jsx",
+      "target": "games_gameshared_lives",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L163",
+      "weight": 1.0,
+      "source": "src_games_gameshared_jsx",
+      "target": "games_gameshared_scorebadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L173",
+      "weight": 1.0,
+      "source": "src_games_gameshared_jsx",
+      "target": "games_gameshared_progressbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L191",
+      "weight": 1.0,
+      "source": "src_games_gameshared_jsx",
+      "target": "games_gameshared_timerbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/GameShared.jsx",
+      "source_location": "L201",
+      "weight": 1.0,
+      "source": "src_games_gameshared_jsx",
+      "target": "games_gameshared_resultscreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_memorymatch_jsx",
+      "target": "src_games_gameshared_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "src_games_gameshared_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_wordsearch_jsx",
+      "target": "src_games_gameshared_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_memorymatch_jsx",
+      "target": "games_gameshared_t",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_wordsearch_jsx",
+      "target": "games_gameshared_t",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_gameshared_lives",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_memorymatch_jsx",
+      "target": "games_gameshared_scorebadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_gameshared_scorebadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_wordsearch_jsx",
+      "target": "games_gameshared_scorebadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_memorymatch_jsx",
+      "target": "games_gameshared_progressbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_wordsearch_jsx",
+      "target": "games_gameshared_progressbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_memorymatch_jsx",
+      "target": "games_gameshared_resultscreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_gameshared_resultscreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_games_wordsearch_jsx",
+      "target": "games_gameshared_resultscreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_games_memorymatch_jsx",
+      "target": "games_memorymatch_memory_signs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_games_memorymatch_jsx",
+      "target": "games_memorymatch_levels",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/MemoryMatch.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_games_memorymatch_jsx",
+      "target": "games_memorymatch_memorymatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_signsquiz_getwikimediaurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_signsquiz_signs_quiz_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_signsquiz_type_meta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_signsquiz_letters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L170",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_signsquiz_usesignimages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L200",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_signsquiz_stepdots",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L220",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_signsquiz_optionbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L259",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_signsquiz_xpfloat",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L273",
+      "weight": 1.0,
+      "source": "src_games_signsquiz_jsx",
+      "target": "games_signsquiz_signsquiz",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/SignsQuiz.jsx",
+      "source_location": "L274",
+      "weight": 1.0,
+      "source": "games_signsquiz_signsquiz",
+      "target": "games_signsquiz_usesignimages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_games_virtualdriver_jsx",
+      "target": "games_virtualdriver_lane_xs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_games_virtualdriver_jsx",
+      "target": "games_virtualdriver_obstacle_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_games_virtualdriver_jsx",
+      "target": "games_virtualdriver_makecarmesh",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "src_games_virtualdriver_jsx",
+      "target": "games_virtualdriver_virtualdriver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/VirtualDriver.jsx",
+      "source_location": "L736",
+      "weight": 1.0,
+      "source": "src_games_virtualdriver_jsx",
+      "target": "games_virtualdriver_styles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_games_wordsearch_jsx",
+      "target": "games_wordsearch_levels",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/games/WordSearch.jsx",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "src_games_wordsearch_jsx",
+      "target": "games_wordsearch_wordsearch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson1.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson1_jsx",
+      "target": "src_lessons_lessonshared_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson1.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson1_jsx",
+      "target": "lessons_lessonshared_lessonrunner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson1.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lessons_lesson1_jsx",
+      "target": "lessons_lesson1_questions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson1.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_lessons_lesson1_jsx",
+      "target": "lessons_lesson1_lesson1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "src_lessons_lesson1_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "lessons_lesson1_lesson1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson2.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson2_jsx",
+      "target": "src_lessons_lessonshared_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson2.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson2_jsx",
+      "target": "lessons_lessonshared_lessonrunner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson2.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lessons_lesson2_jsx",
+      "target": "lessons_lesson2_questions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson2.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_lessons_lesson2_jsx",
+      "target": "lessons_lesson2_lesson2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "src_lessons_lesson2_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "lessons_lesson2_lesson2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson3.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson3_jsx",
+      "target": "src_lessons_lessonshared_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson3.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson3_jsx",
+      "target": "lessons_lessonshared_lessonrunner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson3.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lessons_lesson3_jsx",
+      "target": "lessons_lesson3_questions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson3.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_lessons_lesson3_jsx",
+      "target": "lessons_lesson3_lesson3",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "src_lessons_lesson3_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "lessons_lesson3_lesson3",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson4.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson4_jsx",
+      "target": "src_lessons_lessonshared_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson4.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson4_jsx",
+      "target": "lessons_lessonshared_lessonrunner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson4.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lessons_lesson4_jsx",
+      "target": "lessons_lesson4_questions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson4.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_lessons_lesson4_jsx",
+      "target": "lessons_lesson4_lesson4",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "src_lessons_lesson4_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "lessons_lesson4_lesson4",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson5.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson5_jsx",
+      "target": "src_lessons_lessonshared_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson5.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lessons_lesson5_jsx",
+      "target": "lessons_lessonshared_lessonrunner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson5.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lessons_lesson5_jsx",
+      "target": "lessons_lesson5_questions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/Lesson5.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_lessons_lesson5_jsx",
+      "target": "lessons_lesson5_lesson5",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "src_lessons_lesson5_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "lessons_lesson5_lesson5",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonHub.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_lessons_lessonhub_jsx",
+      "target": "lessons_lessonhub_lessonhub",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lessons/LessonShared.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lessons_lessonshared_jsx",
+      "target": "lessons_lessonshared_lessonrunner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageHome.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_pages_pagehome_jsx",
+      "target": "pages_pagehome_pagehome",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_lessons",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_pagelecciones",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_pagelogros",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L87",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_t",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_goals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L106",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_notif_defs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L113",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_toast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L130",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_toggle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L163",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_statcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L177",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_activitygrid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageLeccionesLogrosPeril.jsx",
+      "source_location": "L211",
+      "weight": 1.0,
+      "source": "src_pages_pageleccioneslogrosperil_jsx",
+      "target": "pages_pageleccioneslogrosperil_pageperfil",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_pages_pagemodulo_jsx",
+      "target": "pages_pagemodulo_module_content",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L132",
+      "weight": 1.0,
+      "source": "src_pages_pagemodulo_jsx",
+      "target": "pages_pagemodulo_flashcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L179",
+      "weight": 1.0,
+      "source": "src_pages_pagemodulo_jsx",
+      "target": "pages_pagemodulo_flashcardslesson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L244",
+      "weight": 1.0,
+      "source": "src_pages_pagemodulo_jsx",
+      "target": "pages_pagemodulo_articlelesson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L298",
+      "weight": 1.0,
+      "source": "src_pages_pagemodulo_jsx",
+      "target": "pages_pagemodulo_storylesson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L383",
+      "weight": 1.0,
+      "source": "src_pages_pagemodulo_jsx",
+      "target": "pages_pagemodulo_lessonview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L436",
+      "weight": 1.0,
+      "source": "src_pages_pagemodulo_jsx",
+      "target": "pages_pagemodulo_moduleview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/pages/PageModulo.jsx",
+      "source_location": "L536",
+      "weight": 1.0,
+      "source": "src_pages_pagemodulo_jsx",
+      "target": "pages_pagemodulo_pagemodulo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/utils/firebaseErrors.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_utils_firebaseerrors_js",
+      "target": "utils_firebaseerrors_firebaseerrormessage",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "0ef66ba4c1447052c07a61bf60244968d849af22"
+}
