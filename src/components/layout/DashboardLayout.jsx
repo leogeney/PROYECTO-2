@@ -13,6 +13,8 @@ import { Logo } from '../ui/Logo'
 import { XpBar } from '../ui/XpBar'
 import { StatChip } from '../ui/Cards'
 import { DashboardStyles } from './DashboardStyles'
+import { PageNoticias } from '../../pages/PageNoticias'
+
 
 // Pages
 import { PageHome } from '../../pages/PageHome'
@@ -26,6 +28,7 @@ const NAV_ITEMS = [
   { icon: '🏆', label: 'Logros',    to: '/dashboard/logros'    },
   { icon: '👤', label: 'Perfil',    to: '/dashboard/perfil'    },
   { icon: '🎮', label: 'Juegos',    to: '/dashboard/juegos'    },
+   { icon: '📰', label: 'Noticias', to: '/dashboard/noticias' },
 ]
 
 export function DashboardLayout({ user, onLogout }) {
@@ -102,6 +105,7 @@ export function DashboardLayout({ user, onLogout }) {
             <Route path="leccion/:id" element={<LessonHub />} />
             <Route path="juegos"      element={<GameHub />} />
             <Route path="modulo/:id" element={<PageModulo />} />
+            <Route path="noticias" element={<PageNoticias />} />
           </Routes>
         </main>
       </div>
