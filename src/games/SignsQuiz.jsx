@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { ResultScreen, ScoreBadge, Lives } from './GameShared'
+import { useNotification } from '../context/NotificationContext'
 
 // Wikimedia Commons REST API — devuelve URL directa del archivo
 const WIKIMEDIA_API = 'https://commons.wikimedia.org/w/api.php'
@@ -271,6 +272,7 @@ function XpFloat({ visible }) {
 
 // ── Main ──────────────────────────────────────────────────────────
 export function SignsQuiz({ onBack }) {
+  const { showNotification } = useNotification()
   const { urls, loading } = useSignImages(SIGNS_QUIZ_DATA)
 
   const [step, setStep]               = useState(0)
@@ -298,7 +300,22 @@ export function SignsQuiz({ onBack }) {
     const nextLives = wasCorrect ? lives : lives - 1
     const nextStep  = step + 1
     if (nextStep >= SIGNS_QUIZ_DATA.length || nextLives <= 0) {
-      setTimeout(() => setDone(true), 900)
+      setTimeout(() => {
+        setDone(true)
+        if (nextLives <= 0) {
+          showNotification?.('performance', '¡Uy! Te quedaste sin vidas. Repasa las señales y vuelve a intentarlo. 🛑', 5000)
+        } else {
+          const correctCount = nr.filter(r => r.ok).length
+          const pct = correctCount / SIGNS_QUIZ_DATA.length
+          if (pct === 1) {
+            showNotification?.('performance', '¡Impresionante! Conoces todas las señales a la perfección. 🏆', 5000)
+          } else if (pct >= 0.6) {
+            showNotification?.('performance', '¡Buen trabajo! Vas por buen camino, sigue practicando. 👍', 5000)
+          } else {
+            showNotification?.('performance', '¡No te desanimes! Sigue aprendiendo y lo harás mejor. 💪', 5000)
+          }
+        }
+      }, 900)
     } else {
       setTimeout(() => {
         setStep(nextStep); setSelected(null)

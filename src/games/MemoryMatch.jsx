@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { T, ResultScreen, ScoreBadge, ProgressBar } from './GameShared'
+import { useNotification } from '../context/NotificationContext'
 
 const MEMORY_SIGNS = [
   { emoji: '⛔', label: 'STOP' },
@@ -19,6 +20,7 @@ const LEVELS = [
 ]
 
 export function MemoryMatch({ onBack }) {
+  const { showNotification } = useNotification()
   const [levelIdx, setLevelIdx] = useState(0)
   const [cards, setCards] = useState([])
   const [first, setFirst] = useState(null)
@@ -70,8 +72,10 @@ export function MemoryMatch({ onBack }) {
           if (matched.every(c => c.matched)) {
             setTimeout(() => {
               if (levelIdx + 1 < LEVELS.length) {
+                showNotification?.('performance', '¡Nivel superado, excelente trabajo! 🧠', 4000)
                 setLevelIdx(l => l + 1)
               } else {
+                showNotification?.('performance', '¡Increíble memoria, terminaste el juego! 🏆', 5000)
                 setDone(true)
               }
             }, 800)

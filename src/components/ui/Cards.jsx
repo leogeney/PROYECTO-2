@@ -31,44 +31,49 @@ export function ModuleCard({ mod }) {
       className="card card-hover"
       onClick={handleClick}
       style={{
-        padding: '16px', position: 'relative', overflow: 'hidden',
-        opacity: mod.unlocked ? 1 : 0.35,
+        padding: '24px', position: 'relative', overflow: 'hidden',
+        opacity: mod.unlocked ? 1 : 0.4,
         cursor: mod.unlocked ? 'pointer' : 'default',
-        borderColor: mod.unlocked ? `${mod.color}28` : T.border,
-        transition: 'all 0.2s',
+        borderColor: mod.unlocked ? `${mod.color}40` : T.border,
+        background: mod.unlocked ? `linear-gradient(145deg, ${T.card}, ${mod.color}0a)` : T.card,
+        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
       onMouseEnter={e => {
         if (mod.unlocked) {
-          e.currentTarget.style.transform = 'translateY(-3px)'
-          e.currentTarget.style.boxShadow = `0 10px 32px ${mod.color}18`
+          e.currentTarget.style.transform = 'translateY(-6px)'
+          e.currentTarget.style.boxShadow = `0 14px 40px ${mod.color}25`
+          e.currentTarget.style.borderColor = `${mod.color}80`
         }
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = 'none'
+        if (mod.unlocked) {
+          e.currentTarget.style.transform = 'translateY(0)'
+          e.currentTarget.style.boxShadow = 'none'
+          e.currentTarget.style.borderColor = `${mod.color}40`
+        }
       }}
     >
       <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+        position: 'absolute', top: 0, left: 0, right: 0, height: 4,
         background: mod.unlocked ? mod.color : T.faint,
         borderRadius: '14px 14px 0 0',
       }} />
-      <div style={{ fontSize: 24, marginBottom: 10 }}>{mod.unlocked ? mod.icon : '🔒'}</div>
-      <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginBottom: 10, lineHeight: 1.4 }}>
+      <div style={{ fontSize: 36, marginBottom: 14 }}>{mod.unlocked ? mod.icon : '🔒'}</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 16, lineHeight: 1.3 }}>
         {mod.title}
       </div>
       {mod.unlocked ? (
         <>
-          <div style={{ height: 2, background: T.faint, borderRadius: 99, marginBottom: 6, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${pct}%`, background: mod.color, borderRadius: 99 }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 8, fontWeight: 600 }}>
+            <span style={{ color: T.faint }}>{mod.done} / {mod.lessons} lecciones</span>
+            <span className="mono" style={{ color: mod.color }}>{pct}%</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10 }}>
-            <span style={{ color: T.faint }}>{mod.done}/{mod.lessons}</span>
-            <span className="mono" style={{ color: mod.color, fontWeight: 700 }}>{pct}%</span>
+          <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 99, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${pct}%`, background: mod.color, borderRadius: 99, boxShadow: `0 0 10px ${mod.color}` }} />
           </div>
         </>
       ) : (
-        <div style={{ fontSize: 10, color: T.faint, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+        <div style={{ fontSize: 11, color: T.faint, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>
           Bloqueado
         </div>
       )}

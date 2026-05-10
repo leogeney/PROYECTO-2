@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { T, ResultScreen, ScoreBadge, ProgressBar } from './GameShared'
+import { useNotification } from '../context/NotificationContext'
 
 const LEVELS = [
   {
@@ -27,6 +28,7 @@ const LEVELS = [
 ]
 
 export function WordSearch({ onBack }) {
+  const { showNotification } = useNotification()
   const [levelIdx, setLevelIdx] = useState(0)
   const [foundWords, setFoundWords] = useState([])
   const [score, setScore] = useState(0)
@@ -78,10 +80,12 @@ export function WordSearch({ onBack }) {
       if (foundWords.length + 1 === level.words.length) {
         setTimeout(() => {
           if (levelIdx + 1 < LEVELS.length) {
+            showNotification?.('performance', '¡Sopa completada! Tienes muy buena vista. 👀', 4000)
             setLevelIdx(levelIdx + 1)
             setFoundWords([])
             setSelection([])
           } else {
+            showNotification?.('performance', '¡Increíble! Encontraste todas las palabras del juego. 🔎', 5000)
             setDone(true)
           }
         }, 1500)

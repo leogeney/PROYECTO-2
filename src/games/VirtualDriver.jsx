@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import * as THREE from 'three'
+import { useNotification } from '../context/NotificationContext'
 
 const ROAD_W = 10
 const ROAD_SEGS = 30
@@ -111,6 +112,20 @@ export function VirtualDriver({ onBack }) {
     combo: 1,
   })
   const [floats, setFloats] = useState([])
+  const { showNotification } = useNotification()
+
+  useEffect(() => {
+    if (phase === 'dead') {
+      const dist = stateRef.current?.distance || 0
+      if (dist >= 5) {
+        showNotification?.('performance', '¡Eres un experto del volante! Recorriste una gran distancia. 🏁', 6000)
+      } else if (dist >= 1.5) {
+        showNotification?.('performance', '¡Buen recorrido! Cada vez conduces mejor. 🏎️', 5000)
+      } else {
+        showNotification?.('performance', '¡Cuidado en la vía! Inténtalo de nuevo para llegar más lejos. 💥', 5000)
+      }
+    }
+  }, [phase, showNotification])
 
   const addFloat = useCallback((text, color, screenX) => {
     const id = Math.random()

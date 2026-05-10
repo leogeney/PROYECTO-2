@@ -77,7 +77,7 @@ export function PageHome({ user }) {
           <h2 style={{ fontSize: 12, fontWeight: 700, color: T.faint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>📚 Módulos</h2>
           <span className="mono" style={{ fontSize: 10, color: T.faint }}>{MODULES.filter(m => m.unlocked).length}/{MODULES.length} activos</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))', gap: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
           {MODULES.map(m => <ModuleCard key={m.id} mod={m} />)}
         </div>
       </div>

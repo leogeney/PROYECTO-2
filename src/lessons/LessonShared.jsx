@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../context/ProgressContext'
 import { MODULES } from '../data/lessons'
 import { T } from '../styles/tokens'
+import { useNotification } from '../context/NotificationContext'
 
 export function LessonRunner({ lessonId, allQuestions }) {
+  const { showNotification } = useNotification()
   const navigate = useNavigate()
   const lesson = MODULES.find(l => l.id === lessonId)
   
@@ -70,6 +72,15 @@ export function LessonRunner({ lessonId, allQuestions }) {
       const xpEarned = Math.round((correctCount / quizPool.length) * lesson.xp)
       addXp(xpEarned)
       completeLesson(lesson.id)
+      
+      const percentage = correctCount / quizPool.length
+      if (percentage === 1) {
+        showNotification?.('performance', '¡Excelente trabajo! Puntaje perfecto. 🌟', 5000)
+      } else if (percentage >= 0.6) {
+        showNotification?.('performance', '¡Muy bien! Te fue bien, sigue practicando. 👍', 5000)
+      } else {
+        showNotification?.('performance', '¡No te rindas! Tienes que mejorar un poco. 💪', 5000)
+      }
     } else {
       setStep(step + 1)
       setSelected(null)

@@ -19,6 +19,7 @@ import { PageNoticias } from '../../pages/PageNoticias'
 // Pages
 import { PageHome } from '../../pages/PageHome'
 import { PageLecciones, PageLogros, PagePerfil } from '../../pages/PageLeccionesLogrosPeril'
+import { PageRanking } from '../../pages/PageRanking'
 import { T } from '../../styles/tokens'
 
 const NAV_ITEMS = [
@@ -26,9 +27,10 @@ const NAV_ITEMS = [
   { icon: '📚', label: 'Pruebas', to: '/dashboard/lecciones' },
   { icon: '🪧', label: 'Biblioteca',to: '/dashboard/biblioteca' },
   { icon: '🏆', label: 'Logros',    to: '/dashboard/logros'    },
+  { icon: '🏅', label: 'Ranking',   to: '/dashboard/ranking'   },
   { icon: '👤', label: 'Perfil',    to: '/dashboard/perfil'    },
   { icon: '🎮', label: 'Juegos',    to: '/dashboard/juegos'    },
-   { icon: '📰', label: 'Noticias', to: '/dashboard/noticias' },
+  { icon: '📰', label: 'Noticias', to: '/dashboard/noticias' },
 ]
 
 export function DashboardLayout({ user, onLogout }) {
@@ -106,6 +108,7 @@ export function DashboardLayout({ user, onLogout }) {
             <Route path="juegos"      element={<GameHub />} />
             <Route path="modulo/:id" element={<PageModulo />} />
             <Route path="noticias" element={<PageNoticias />} />
+            <Route path="ranking" element={<PageRanking user={user} />} />
           </Routes>
         </main>
       </div>
