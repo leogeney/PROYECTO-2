@@ -2,6 +2,118 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import * as THREE from 'three'
 import { useNotification } from '../context/NotificationContext'
 
+const CarIcon = () => (
+  <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+    <rect x="6" y="22" width="44" height="18" rx="4" fill="#e8251a"/>
+    <rect x="14" y="14" width="28" height="14" rx="3" fill="#cc2218"/>
+    <rect x="16" y="18" width="10" height="8" rx="1.5" fill="#223355" opacity="0.7"/>
+    <rect x="30" y="18" width="10" height="8" rx="1.5" fill="#223355" opacity="0.7"/>
+    <circle cx="16" cy="42" r="5" fill="#111"/>
+    <circle cx="40" cy="42" r="5" fill="#111"/>
+    <circle cx="16" cy="42" r="2.5" fill="#ccc"/>
+    <circle cx="40" cy="42" r="2.5" fill="#ccc"/>
+    <rect x="10" y="35" width="6" height="3" rx="1" fill="#ff4444"/>
+    <rect x="40" y="35" width="6" height="3" rx="1" fill="#ff4444"/>
+  </svg>
+)
+
+const HeartIcon = ({ filled }) => (
+  <svg width="22" height="22" viewBox="0 0 22 22" fill={filled ? '#ff4040' : 'rgba(255,255,255,0.2)'}>
+    <path d="M11 19.5C11 19.5 2.5 14.5 2.5 8.5C2.5 5.5 5 3 8 3C9.5 3 10.8 3.8 11 5C11.2 3.8 12.5 3 14 3C17 3 19.5 5.5 19.5 8.5C19.5 14.5 11 19.5 11 19.5Z"/>
+  </svg>
+)
+
+const StarIcon = ({ filled }) => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill={filled ? '#ffd700' : 'rgba(255,255,255,0.12)'}>
+    <path d="M16 2.5l4.5 9.5 10 1.5-7 7 1.5 10.5L16 25l-9 5.5L8.5 20l-7-7 10-1.5z"/>
+  </svg>
+)
+
+const LightningIcon = ({ size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 14 14" fill="#0af">
+    <path d="M8.5 0.5L3 8h3.5l-1 5.5L12 6H8z"/>
+  </svg>
+)
+
+const ChevronLeft = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M13 4L7 10l6 6"/>
+  </svg>
+)
+
+const ChevronRight = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M7 4l6 6-6 6"/>
+  </svg>
+)
+
+const BrakeIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#ff5555" strokeWidth="1.8">
+    <circle cx="11" cy="11" r="9"/>
+    <circle cx="11" cy="11" r="4.5" strokeWidth="1.5"/>
+    <line x1="11" y1="2" x2="11" y2="5" strokeWidth="1.5"/>
+    <line x1="11" y1="17" x2="11" y2="20" strokeWidth="1.5"/>
+    <line x1="2" y1="11" x2="5" y2="11" strokeWidth="1.5"/>
+    <line x1="17" y1="11" x2="20" y2="11" strokeWidth="1.5"/>
+  </svg>
+)
+
+const TrophyIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round">
+    <path d="M5 2h8v4a4 4 0 0 1-8 0V2z"/>
+    <path d="M4 2H3a1.5 1.5 0 0 0 0 3h1"/>
+    <path d="M14 2h1a1.5 1.5 0 0 1 0 3h-1"/>
+    <line x1="9" y1="10" x2="9" y2="16"/>
+    <line x1="6" y1="16" x2="12" y2="16"/>
+  </svg>
+)
+
+const ClockIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round">
+    <circle cx="8" cy="8" r="6.5"/>
+    <polyline points="8,4.5 8,8 10.5,10"/>
+  </svg>
+)
+
+const SpeedIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round">
+    <circle cx="9" cy="9" r="6.5"/>
+    <path d="M9 9l3-4"/>
+    <path d="M3.5 14.5l2-2"/>
+    <path d="M14.5 14.5l-2-2"/>
+    <path d="M9 2.5v1.5"/>
+  </svg>
+)
+
+const RulerIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round">
+    <rect x="1.5" y="6" width="15" height="8" rx="1"/>
+    <line x1="5" y1="6" x2="5" y2="14"/>
+    <line x1="9" y1="6" x2="9" y2="14"/>
+    <line x1="13" y1="6" x2="13" y2="14"/>
+  </svg>
+)
+
+const CrashIcon = () => (
+  <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+    <circle cx="28" cy="28" r="24" fill="rgba(255,50,50,0.15)" stroke="#ff4444" strokeWidth="2"/>
+    <path d="M20 20l16 16M36 20l-16 16" stroke="#ff4444" strokeWidth="3.5" strokeLinecap="round"/>
+    <circle cx="28" cy="28" r="8" stroke="#ff4444" strokeWidth="1.5" strokeDasharray="3 3"/>
+  </svg>
+)
+
+const RArrow = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#ffd700" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 3l5 5-5 5"/>
+  </svg>
+)
+
+const LArrow = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#ffd700" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 3l-5 5 5 5"/>
+  </svg>
+)
+
 const ROAD_W = 10
 const ROAD_SEGS = 30
 const SEG_LEN = 8
@@ -118,11 +230,11 @@ export function VirtualDriver({ onBack }) {
     if (phase === 'dead') {
       const dist = stateRef.current?.distance || 0
       if (dist >= 5) {
-        showNotification?.('performance', '¡Eres un experto del volante! Recorriste una gran distancia. 🏁', 6000)
+        showNotification?.('performance', 'Eres un experto del volante! Recorriste una gran distancia.', 6000)
       } else if (dist >= 1.5) {
-        showNotification?.('performance', '¡Buen recorrido! Cada vez conduces mejor. 🏎️', 5000)
+        showNotification?.('performance', 'Buen recorrido! Cada vez conduces mejor.', 5000)
       } else {
-        showNotification?.('performance', '¡Cuidado en la vía! Inténtalo de nuevo para llegar más lejos. 💥', 5000)
+        showNotification?.('performance', 'Cuidado en la via! Intentarlo de nuevo para llegar mas lejos.', 5000)
       }
     }
   }, [phase, showNotification])
@@ -720,7 +832,7 @@ export function VirtualDriver({ onBack }) {
           if (tl.state === 'red') {
             g.lives--
             doShake()
-            addFloat('🔴 SEMÁFORO', '#ff0000', 0)
+            addFloat('SEMAFORO EN ROJO', '#ff0000', 0)
             if (g.lives <= 0) {
               setPhase('dead')
               setHud(h => ({ ...h, lives: 0 }))
@@ -801,7 +913,7 @@ export function VirtualDriver({ onBack }) {
             if (!g.nitroActive) {
               g.lives--
               doShake()
-              addFloat(`💥 ${o.def.label}`, '#ff4444', o.laneX / ROAD_W)
+              addFloat(`! ${o.def.label}`, '#ff4444', o.laneX / ROAD_W)
               if (g.lives <= 0) {
                 setPhase('dead')
                 setHud(h => ({ ...h, lives: 0 }))
@@ -933,32 +1045,32 @@ export function VirtualDriver({ onBack }) {
     const g = stateRef.current || {}
     const dist = g.distance ?? 0
     const starsCount = dist >= 5 ? 3 : dist >= 2.5 ? 2 : dist >= 0.8 ? 1 : 0
-    const starIcons = ['★', '★', '★'].map((s, i) =>
-      <span key={i} style={{ fontSize: 32, color: i < starsCount ? '#ffd700' : 'rgba(255,255,255,0.12)', textShadow: i < starsCount ? '0 0 20px rgba(255,200,0,0.8)' : 'none', margin: '0 4px' }}>★</span>
+    const starIcons = [0, 1, 2].map(i =>
+      <span key={i} style={{ margin: '0 4px' }}><StarIcon filled={i < starsCount} /></span>
     )
     return (
       <div style={styles.overlay}>
-        <div style={{ fontSize: 56, marginBottom: 4, animation: 'pulse 1.2s ease-in-out infinite' }}>💥</div>
+        <div style={{ animation: 'pulse 1.2s ease-in-out infinite' }}><CrashIcon /></div>
         <div style={{ ...styles.gameOverTitle, animation: 'fadeIn 0.5s ease-out' }}>GAME OVER</div>
         <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>{starIcons}</div>
         <div style={{ width: 220, height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,200,0,0.4), transparent)', marginBottom: 16 }} />
         <div style={styles.resStat}>
-          <span style={{ opacity: 0.4 }}>🏆</span> Puntaje <span style={styles.gold}>{g.score ?? 0}</span>
+          <span style={{ opacity: 0.4, display: 'inline-flex', verticalAlign: 'middle' }}><TrophyIcon /></span> Puntaje <span style={styles.gold}>{g.score ?? 0}</span>
         </div>
         <div style={styles.resStat}>
-          <span style={{ opacity: 0.4 }}>📏</span> Distancia <span style={styles.gold}>{(g.distance ?? 0).toFixed(1)} km</span>
+          <span style={{ opacity: 0.4, display: 'inline-flex', verticalAlign: 'middle' }}><RulerIcon /></span> Distancia <span style={styles.gold}>{(g.distance ?? 0).toFixed(1)} km</span>
         </div>
         <div style={styles.resStat}>
-          <span style={{ opacity: 0.4 }}>🚀</span> Vel. máx <span style={styles.gold}>{Math.round((g.maxSpeed ?? 12) * 14)} km/h</span>
+          <span style={{ opacity: 0.4, display: 'inline-flex', verticalAlign: 'middle' }}><SpeedIcon /></span> Vel. max <span style={styles.gold}>{Math.round((g.maxSpeed ?? 12) * 14)} km/h</span>
         </div>
         <div style={styles.resStat}>
-          <span style={{ opacity: 0.4 }}>⏱️</span> Tiempo <span style={styles.gold}>{Math.max(1, Math.round(g.frameCount / 60))}s</span>
+          <span style={{ opacity: 0.4, display: 'inline-flex', verticalAlign: 'middle' }}><ClockIcon /></span> Tiempo <span style={styles.gold}>{Math.max(1, Math.round(g.frameCount / 60))}s</span>
         </div>
         <div style={{ width: 220, height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,200,0,0.4), transparent)', marginBottom: 20, marginTop: 4 }} />
-        <button style={{ ...styles.startBtn, animation: 'fadeIn 0.8s ease-out' }} onClick={startGame}>▶ REINTENTAR</button>
+        <button style={{ ...styles.startBtn, animation: 'fadeIn 0.8s ease-out', display: 'flex', alignItems: 'center', gap: 8, margin: '0 auto' }} onClick={startGame}><RArrow /> REINTENTAR</button>
         {onBack && (
-          <button style={{ ...styles.startBtn, marginTop: 12, fontSize: 12, padding: '10px 32px', borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.4)', animation: 'fadeIn 1s ease-out' }} onClick={onBack}>
-            ← MENÚ
+          <button style={{ ...styles.startBtn, marginTop: 12, fontSize: 12, padding: '10px 32px', borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.4)', animation: 'fadeIn 1s ease-out', display: 'flex', alignItems: 'center', gap: 6, margin: '12px auto 0' }} onClick={onBack}>
+            <LArrow /> MENU
           </button>
         )}
       </div>
@@ -980,11 +1092,11 @@ export function VirtualDriver({ onBack }) {
 
       {phase === 'idle' && (
         <div style={styles.overlay}>
-          <div style={{ fontSize: 56, marginBottom: 8 }}>🏎️</div>
+          <CarIcon />
           <div style={styles.bigTitle}>GTX RACING</div>
           <div style={styles.subtitle}>Next-Gen Street Racing</div>
-          <button style={styles.startBtn} onClick={startGame}>▶ ARRANCAR</button>
-          <div style={styles.hint}>← → cambiar carril &nbsp;•&nbsp; ↓ / S = frenar &nbsp;•&nbsp; ESPACIO = nitro</div>
+          <button style={{ ...styles.startBtn, display: 'flex', alignItems: 'center', gap: 8, margin: '0 auto' }} onClick={startGame}><RArrow /> ARRANCAR</button>
+          <div style={styles.hint}>&lt; &gt; cambiar carril &nbsp;·&nbsp; S / ↓ = frenar &nbsp;·&nbsp; ESPACIO = nitro</div>
         </div>
       )}
 
@@ -998,10 +1110,10 @@ export function VirtualDriver({ onBack }) {
               <div style={styles.label}>PTS</div>
             </div>
 
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
               {[1, 2, 3].map(i => (
-                <span key={i} style={{ fontSize: 20, filter: i <= hud.lives ? 'drop-shadow(0 0 6px #ff4040)' : 'none', opacity: i <= hud.lives ? 1 : 0.2, transition: 'all 0.3s' }}>
-                  ♥
+                <span key={i} style={{ filter: i <= hud.lives ? 'drop-shadow(0 0 6px #ff4040)' : 'none', opacity: i <= hud.lives ? 1 : 0.2, transition: 'all 0.3s', display: 'flex' }}>
+                  <HeartIcon filled={i <= hud.lives} />
                 </span>
               ))}
             </div>
@@ -1015,12 +1127,15 @@ export function VirtualDriver({ onBack }) {
           {hud.combo > 1 && <div style={styles.comboBadge}>×{hud.combo} COMBO</div>}
 
           <div style={styles.nitroWrap}>
-            <div style={styles.nitroLabel}>⚡ NITRO</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <LightningIcon size={12} />
+              <div style={styles.nitroLabel}>NITRO</div>
+            </div>
             <div style={styles.nitroBarBg}>
               <div style={{ ...styles.nitroBarFill, width: `${hud.nitroActive ? (stateRef.current?.nitroFuel ?? 0) : hud.nitroCharge}%` }} />
             </div>
             {hud.nitroCharge >= 100 && !hud.nitroActive && (
-              <button style={styles.nitroBtn} onPointerDown={activateNitro}>⚡ BOOST</button>
+              <button style={{ ...styles.nitroBtn, display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }} onPointerDown={activateNitro}><LightningIcon size={14} /> BOOST</button>
             )}
           </div>
 
@@ -1031,10 +1146,10 @@ export function VirtualDriver({ onBack }) {
           ))}
 
           <div style={styles.mobileControls}>
-            <button style={styles.mobBtn} onPointerDown={() => moveLane(-1)}>◀</button>
-            <button style={{ ...styles.mobBtn, borderColor: 'rgba(255,80,80,0.4)', color: '#ff5555' }} onPointerDown={() => { const g = stateRef.current; if (g) g.brakeActive = true }} onPointerUp={() => { const g = stateRef.current; if (g) g.brakeActive = false }} onPointerLeave={() => { const g = stateRef.current; if (g) g.brakeActive = false }}>⛞</button>
-            <button style={{ ...styles.mobBtn, borderColor: hud.nitroCharge >= 100 ? 'rgba(0,200,255,0.7)' : 'rgba(255,255,255,0.15)', color: hud.nitroCharge >= 100 ? '#0af' : '#fff' }} onPointerDown={activateNitro}>⚡</button>
-            <button style={styles.mobBtn} onPointerDown={() => moveLane(1)}>▶</button>
+            <button style={styles.mobBtn} onPointerDown={() => moveLane(-1)}><ChevronLeft /></button>
+            <button style={{ ...styles.mobBtn, borderColor: 'rgba(255,80,80,0.4)', color: '#ff5555', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onPointerDown={() => { const g = stateRef.current; if (g) g.brakeActive = true }} onPointerUp={() => { const g = stateRef.current; if (g) g.brakeActive = false }} onPointerLeave={() => { const g = stateRef.current; if (g) g.brakeActive = false }}><BrakeIcon /></button>
+            <button style={{ ...styles.mobBtn, borderColor: hud.nitroCharge >= 100 ? 'rgba(0,200,255,0.7)' : 'rgba(255,255,255,0.15)', color: hud.nitroCharge >= 100 ? '#0af' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onPointerDown={activateNitro}><LightningIcon size={20} /></button>
+            <button style={styles.mobBtn} onPointerDown={() => moveLane(1)}><ChevronRight /></button>
           </div>
         </>
       )}
@@ -1185,4 +1300,7 @@ const styles = {
     cursor: 'pointer',
     borderRadius: 10,
     WebkitTapHighlightColor: 'transparent',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   }}

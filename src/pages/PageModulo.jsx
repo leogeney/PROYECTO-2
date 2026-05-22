@@ -28,7 +28,7 @@ const SIGNS = {
   NO_ENTRE:     [WK_SVG('Colombia_road_sign_SR-04.svg'),  WK_THUMB('Colombia_road_sign_SR-04.svg'),  '⛔'],
   NO_GIRO_IZQ:  [WK_SVG('Colombia_road_sign_SR-07.svg'),  WK_THUMB('Colombia_road_sign_SR-07.svg'),  '↩️'],
   NO_GIRO_DER:  [WK_SVG('Colombia_road_sign_SR-08.svg'),  WK_THUMB('Colombia_road_sign_SR-08.svg'),  '↪️'],
-  NO_ADELANTAR: [WK_SVG('Colombia_road_sign_SR-25.svg'),  WK_THUMB('Colombia_road_sign_SR-25.svg'),  '🚘'],
+  NO_ADELANTAR: [WK_SVG('Colombia_road_sign_SR-26.svg'),  WK_THUMB('Colombia_road_sign_SR-26.svg'),  '🚘'],
   VEL_30:       [WK_SVG('Colombia_road_sign_SR-30.svg'),  WK_THUMB('Colombia_road_sign_SR-30.svg'),  '🔢'],
   VEL_50:       [WK_SVG('Colombia_road_sign_SR-30A.svg'), WK_THUMB('Colombia_road_sign_SR-30A.svg'), '5️⃣'],
   VEL_60:       [WK_SVG('Colombia_road_sign_SR-30B.svg'), WK_THUMB('Colombia_road_sign_SR-30B.svg'), '🔢'],
@@ -139,27 +139,55 @@ function Confetti({ active }) {
     const ctx = canvas.getContext('2d')
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
-    const particles = Array.from({ length: 150 }, () => ({
-      x: Math.random() * canvas.width, y: -10,
-      vx: (Math.random() - 0.5) * 5, vy: Math.random() * 4 + 2,
-      color: ['#a78bfa','#34d399','#fbbf24','#f87171','#60a5fa','#fb7185'][Math.floor(Math.random()*6)],
-      size: Math.random() * 7 + 3, spin: Math.random() * 0.15 - 0.075, angle: 0,
+    const shapes = ['rect','circle','star','triangle']
+    const colors = ['#a78bfa','#34d399','#fbbf24','#f87171','#60a5fa','#fb7185','#f97316','#22d3ee']
+    const particles = Array.from({ length: 280 }, () => ({
+      x: Math.random() * canvas.width, y: -20 - Math.random() * 200,
+      vx: (Math.random() - 0.5) * 8, vy: Math.random() * 5 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: Math.random() * 8 + 3, spin: Math.random() * 0.3 - 0.15, angle: 0,
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      opacity: 1,
+    }))
+    const sparks = Array.from({ length: 60 }, () => ({
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height * 0.5,
+      vx: (Math.random() - 0.5) * 2, vy: -Math.random() * 3 - 1,
+      life: 1, color: '#ffffff',
     }))
     let frame
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       particles.forEach(p => {
-        p.x += p.vx; p.y += p.vy; p.angle += p.spin; p.vy += 0.04
+        p.x += p.vx; p.y += p.vy; p.angle += p.spin; p.vy += 0.05
+        p.opacity = Math.max(0, 1 - p.y / (canvas.height * 0.9))
         ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle)
-        ctx.globalAlpha = Math.max(0, 1 - p.y / (canvas.height * 0.85))
+        ctx.globalAlpha = p.opacity * 0.9
         ctx.fillStyle = p.color
-        ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size)
+        if (p.shape === 'circle') { ctx.beginPath(); ctx.arc(0, 0, p.size/2, 0, Math.PI*2); ctx.fill() }
+        else if (p.shape === 'star') { drawStar(ctx, 0, 0, 5, p.size/2, p.size/4); ctx.fill() }
+        else if (p.shape === 'triangle') { ctx.beginPath(); ctx.moveTo(0, -p.size/2); ctx.lineTo(p.size/2, p.size/2); ctx.lineTo(-p.size/2, p.size/2); ctx.closePath(); ctx.fill() }
+        else { ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size) }
         ctx.restore()
+      })
+      sparks.forEach(s => {
+        s.x += s.vx; s.y += s.vy; s.life -= 0.008
+        ctx.globalAlpha = Math.max(0, s.life)
+        ctx.fillStyle = s.color
+        ctx.beginPath(); ctx.arc(s.x, s.y, 1.5, 0, Math.PI*2); ctx.fill()
       })
       frame = requestAnimationFrame(draw)
     }
+    function drawStar(ctx, cx, cy, points, outer, inner) {
+      ctx.beginPath()
+      for (let i = 0; i < points * 2; i++) {
+        const r = i % 2 === 0 ? outer : inner
+        const a = (i * Math.PI) / points - Math.PI / 2
+        i === 0 ? ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a)) : ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a))
+      }
+      ctx.closePath()
+    }
     draw()
-    const t = setTimeout(() => cancelAnimationFrame(frame), 2800)
+    const t = setTimeout(() => cancelAnimationFrame(frame), 3500)
     return () => { cancelAnimationFrame(frame); clearTimeout(t) }
   }, [active])
   if (!active) return null
@@ -173,25 +201,43 @@ function XPFloat({ visible }) {
       position:'fixed', top:'45%', left:'50%',
       transform:'translate(-50%,-50%)',
       zIndex:9998, pointerEvents:'none',
-      animation:'xpFloat 1.5s cubic-bezier(0.22,1,0.36,1) forwards',
+      animation:'xpFloat 2s cubic-bezier(0.22,1,0.36,1) forwards',
       textAlign:'center',
     }}>
       <div style={{
-        fontSize:52, fontWeight:900, letterSpacing:'-0.03em',
-        background:'linear-gradient(135deg,#fbbf24,#f59e0b)',
-        WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent',
-        filter:'drop-shadow(0 4px 24px rgba(251,191,36,0.6))',
-      }}>¡Completado!</div>
-      <div style={{ fontSize:28, marginTop:4 }}>⚡ XP ganado</div>
+        position:'relative', padding:'32px 48px', borderRadius:24,
+        background:'rgba(10,10,14,0.85)', border:'2px solid rgba(251,191,36,0.4)',
+        boxShadow:'0 0 80px rgba(251,191,36,0.25), inset 0 0 60px rgba(251,191,36,0.06)',
+        backdropFilter:'blur(12px)',
+      }}>
+        <div style={{
+          position:'absolute', inset:-2, borderRadius:24,
+          background:'linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24)',
+          zIndex:-1, opacity:0.3,
+        }} />
+        <div style={{
+          fontSize:48, fontWeight:900, letterSpacing:'-0.03em',
+          background:'linear-gradient(135deg,#fbbf24,#f59e0b)',
+          WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent',
+          filter:'drop-shadow(0 4px 24px rgba(251,191,36,0.6))',
+          marginBottom:8,
+        }}>Completado</div>
+        <div style={{
+          display:'inline-block', padding:'8px 20px', borderRadius:10,
+          background:'rgba(251,191,36,0.15)', border:'1px solid rgba(251,191,36,0.25)',
+          fontSize:22, fontWeight:700, color:'#fbbf24',
+          fontFamily:"'Space Mono', monospace",
+        }}>+XP GANADO</div>
+      </div>
     </div>
   )
 }
 
 const DIFF_COLOR = { fácil:'#34d399', medio:'#fbbf24', difícil:'#f87171' }
 const TYPE_LABELS = {
-  explainer:'📖 Explainer', explorer:'👆 Explorador',
-  interactive_demo:'🎮 Demo', story:'📚 Historia',
-  concept_map:'🗺️ Conceptos', step_guide:'🪜 Pasos',
+  explainer:'Explainer', explorer:'Explorador',
+  interactive_demo:'Demo interactivo', story:'Historia',
+  concept_map:'Mapa conceptual', step_guide:'Guia paso a paso',
 }
 
 function Pill({ label, color, size = 'sm' }) {
@@ -221,6 +267,7 @@ function PrimaryButton({ onClick, label, color, disabled }) {
         transition:'all 0.2s', letterSpacing:'0.01em',
         transform: !disabled && h ? 'translateY(-2px)' : 'none',
         boxShadow: !disabled && h ? `0 10px 32px ${color}45` : 'none',
+        animation: !disabled && h ? 'cardGlow 1.5s ease-in-out infinite' : 'none',
       }}>{label}</button>
   )
 }
@@ -241,11 +288,11 @@ function StepDots({ total, current, color }) {
 
 function InfoBlock({ type, text, color }) {
   const styles = {
-    tip:    { bg:'rgba(251,191,36,0.07)',  border:'1px solid rgba(251,191,36,0.18)',  tc:'rgba(251,191,36,0.9)',  icon:'⚡' },
-    detail: { bg:`${color}0C`,             border:`1px solid ${color}20`,             tc:color,                   icon:'💡' },
-    law:    { bg:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', tc:'rgba(255,255,255,0.4)', icon:'📋' },
-    warn:   { bg:'rgba(251,146,60,0.07)',  border:'1px solid rgba(251,146,60,0.2)',   tc:'#fb923c',               icon:'⚠️' },
-    good:   { bg:'rgba(52,211,153,0.06)',  border:'1px solid rgba(52,211,153,0.2)',   tc:'#34d399',               icon:'✅' },
+    tip:    { bg:'rgba(251,191,36,0.07)',  border:'1px solid rgba(251,191,36,0.18)',  tc:'rgba(251,191,36,0.9)',  icon:'TIP' },
+    detail: { bg:`${color}0C`,             border:`1px solid ${color}20`,             tc:color,                   icon:'INFO' },
+    law:    { bg:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', tc:'rgba(255,255,255,0.4)', icon:'LEY' },
+    warn:   { bg:'rgba(251,146,60,0.07)',  border:'1px solid rgba(251,146,60,0.2)',   tc:'#fb923c',               icon:'ALERTA' },
+    good:   { bg:'rgba(52,211,153,0.06)',  border:'1px solid rgba(52,211,153,0.2)',   tc:'#34d399',               icon:'OK' },
   }
   const s = styles[type] || styles.law
   return (
@@ -254,7 +301,7 @@ function InfoBlock({ type, text, color }) {
       background:s.bg, border:s.border,
       fontSize:13, color:'rgba(220,228,240,0.85)', lineHeight:1.75,
     }}>
-      <span style={{ fontWeight:700, color:s.tc, marginRight:6 }}>{s.icon}</span>
+      <span style={{ fontWeight:700, fontSize:10, color:s.tc, marginRight:6, letterSpacing:'0.1em' }}>{s.icon}</span>
       {text}
     </div>
   )
@@ -319,7 +366,7 @@ function ExplainerLesson({ steps, color, onComplete }) {
           background:'rgba(255,215,64,0.06)', border:'1px solid rgba(255,215,64,0.14)',
           display:'flex', alignItems:'center', gap:10,
         }}>
-          <span style={{ fontSize:18 }}>⚡</span>
+          <span style={{ fontSize:11, fontWeight:700, color:'#fbbf24', background:'rgba(251,191,36,0.15)', padding:'4px 8px', borderRadius:6, fontFamily:"'Space Mono',monospace" }}>XP</span>
           <div>
             <div style={{ fontSize:11, color:'rgba(255,215,64,0.5)', fontFamily:"'Space Mono',monospace", letterSpacing:'0.06em' }}>AL COMPLETAR</div>
             <div style={{ fontSize:18, fontWeight:700, color:'#fbbf24', fontFamily:"'Space Mono',monospace" }}>+{xpTotal} XP</div>
@@ -368,8 +415,13 @@ function ExplorerLesson({ items, color, intro, onComplete }) {
         }}>
           <div style={{
             width:42, height:42, borderRadius:12, background:`${color}14`,
-            display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, flexShrink:0,
-          }}>👆</div>
+            display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
+          }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke={color} strokeWidth="1.5">
+              <path d="M10 18c-4 0-6-1.5-6-5V6a2 2 0 0 1 4 0v1a2 2 0 0 1 4 0v1a2 2 0 0 1 4 0v6c0 3.5-2 5-6 5z"/>
+              <path d="M8 12V7"/><path d="M12 12V7"/>
+            </svg>
+          </div>
           <div>
             <div style={{ fontSize:14, fontWeight:600, color:T.text, marginBottom:3 }}>{intro.title}</div>
             <div style={{ fontSize:12, color:T.muted }}>{intro.subtitle}</div>
@@ -548,7 +600,7 @@ function InteractiveDemoLesson({ demos, color, onComplete }) {
                   <p style={{ fontSize:13, color:'rgba(215,225,240,0.88)', lineHeight:1.75 }}>{choice.consequence}</p>
                 </div>
                 <div style={{ padding:'14px 18px', background:'rgba(255,255,255,0.025)', borderTop:`1px solid ${choice.positive?'rgba(52,211,153,0.1)':'rgba(251,146,60,0.1)'}` }}>
-                  <div style={{ fontSize:10, fontWeight:700, color, fontFamily:"'Space Mono',monospace", letterSpacing:'0.08em', marginBottom:6 }}>✅ LO IDEAL</div>
+                  <div style={{ fontSize:10, fontWeight:700, color, fontFamily:"'Space Mono',monospace", letterSpacing:'0.08em', marginBottom:6 }}>[OK] LO IDEAL</div>
                   <p style={{ fontSize:12, color:T.muted, lineHeight:1.65 }}>{demo.idealExplanation}</p>
                   {demo.law && <p style={{ fontSize:11, color:T.faint, marginTop:6, fontStyle:'italic' }}>📋 {demo.law}</p>}
                 </div>
@@ -583,7 +635,7 @@ function StoryLesson({ storyTitle, intro, chapters, color, onComplete }) {
   return (
     <div>
       <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:22, paddingBottom:20, borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-        <Pill label="📖 Historia" color={color} />
+        <Pill label="HISTORIA" color={color} />
         <Pill label={`Cap. ${chIdx+1}/${chapters.length}`} color="rgba(255,255,255,0.3)" size="xs" />
         <div style={{ flex:1 }} />
         <div style={{ display:'flex', gap:5 }}>
@@ -614,7 +666,7 @@ function StoryLesson({ storyTitle, intro, chapters, color, onComplete }) {
           <p style={{ fontSize:15, color:T.text, lineHeight:1.9, marginTop:14, letterSpacing:'0.005em' }}>{chapter.narrative}</p>
           {!decision && chapter.decision && (
             <div style={{ marginTop:20 }}>
-              <div style={{ fontSize:10, fontWeight:700, color:T.faint, letterSpacing:'0.1em', textTransform:'uppercase', fontFamily:"'Space Mono',monospace", marginBottom:12 }}>🔀 ¿Qué decides?</div>
+                  <div style={{ fontSize:10, fontWeight:700, color:T.faint, letterSpacing:'0.1em', textTransform:'uppercase', fontFamily:"'Space Mono',monospace", marginBottom:12 }}>¿QUÉ DECIDES?</div>
               <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
                 {chapter.decision.paths.map((path,i) => (
                   <button key={i} onClick={() => setDecision(path)}
@@ -640,19 +692,19 @@ function StoryLesson({ storyTitle, intro, chapters, color, onComplete }) {
           <div style={{ display:'flex', flexDirection:'column', gap:12, animation:'fadeInUp 0.35s ease' }}>
             <div style={{ flex:1, borderRadius:20, overflow:'hidden', border:`1px solid ${rc}28` }}>
               <div style={{ padding:'22px 22px', background:`${rc}07` }}>
-                <div style={{ fontSize:28, marginBottom:12 }}>{decision.positive ? '✅' : decision.neutral ? '⚠️' : '❗'}</div>
+                <div style={{ fontSize:28, marginBottom:12 }}>{decision.positive ? '[OK]' : decision.neutral ? '[!]' : '[!]'}</div>
                 <p style={{ fontSize:14, color:T.text, lineHeight:1.85 }}>{decision.consequence}</p>
               </div>
               <div style={{ padding:'16px 22px', background:'rgba(255,255,255,0.02)', borderTop:`1px solid ${rc}14` }}>
-                <div style={{ fontSize:10, fontWeight:700, color, fontFamily:"'Space Mono',monospace", letterSpacing:'0.1em', marginBottom:8 }}>🧠 LO QUE APRENDEMOS</div>
+                <div style={{ fontSize:10, fontWeight:700, color, fontFamily:"'Space Mono',monospace", letterSpacing:'0.1em', marginBottom:8 }}>APRENDIZAJE: LO QUE APRENDEMOS</div>
                 <p style={{ fontSize:13, color:T.muted, lineHeight:1.7 }}>{decision.learning}</p>
               </div>
             </div>
-            <PrimaryButton onClick={handleContinue} label={isLast?'🏁 Fin · Completar':'Continuar la historia →'} color={color} />
+            <PrimaryButton onClick={handleContinue} label={isLast?'FIN · Completar':'Continuar la historia →'} color={color} />
           </div>
         )}
       </div>
-      {!chapter.decision && <PrimaryButton onClick={handleContinue} label={isLast?'🏁 Completar':'Continuar →'} color={color} />}
+      {!chapter.decision && <PrimaryButton onClick={handleContinue} label={isLast?'FIN Completar':'Continuar →'} color={color} />}
     </div>
   )
 }
@@ -674,7 +726,7 @@ function ConceptMapLesson({ concepts, color, onComplete }) {
         display:'flex', alignItems:'center', gap:14, padding:'14px 18px', borderRadius:16,
         background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.07)', marginBottom:20,
       }}>
-        <div style={{ fontSize:20 }}>🗺️</div>
+        <div style={{ fontSize:10, fontWeight:700, color, fontFamily:"'Space Mono',monospace", letterSpacing:'0.1em' }}>MAPA</div>
         <div style={{ flex:1, fontSize:12, color:T.text, fontWeight:600 }}>Mapa de conceptos</div>
         <div style={{ display:'flex', gap:4 }}>
           {concepts.map((_,i) => (
@@ -755,7 +807,7 @@ function ConceptMapLesson({ concepts, color, onComplete }) {
       {allRevealed && (
         <div style={{ marginTop:20, animation:'fadeInUp 0.3s ease' }}>
           <div style={{ padding:'14px 18px', borderRadius:14, marginBottom:14, background:'rgba(52,211,153,0.07)', border:'1px solid rgba(52,211,153,0.2)', textAlign:'center', fontSize:13, color:'#34d399' }}>
-            🌟 ¡Todos los conceptos explorados! +{xp} XP
+            * ¡Todos los conceptos explorados! +{xp} XP
           </div>
           <PrimaryButton onClick={() => onComplete(xp)} label="Completar lección ✓" color={color} />
         </div>
@@ -786,7 +838,7 @@ function StepGuideLesson({ steps, color, onComplete }) {
                 display:'flex', alignItems:'center', justifyContent:'center',
                 fontSize:11, fontWeight:700, color:i===current?'#000':i<current?color:T.faint,
                 fontFamily:"'Space Mono',monospace", cursor:i<current?'pointer':'default', flexShrink:0,
-                transition:'all 0.3s', boxShadow:i===current?`0 0 16px ${color}50`:'none',
+                transition:'all 0.3s', boxShadow:i===current?`0 0 20px ${color}60, 0 0 40px ${color}25`:'none',
               }}>{i<current?'✓':i+1}</button>
               <div style={{
                 fontSize:9, color:i===current?color:T.faint, fontFamily:"'Space Mono',monospace",
@@ -797,6 +849,7 @@ function StepGuideLesson({ steps, color, onComplete }) {
               <div style={{
                 height:2, width:40, flexShrink:0, margin:'0 4px 18px',
                 background:i<current?color:'rgba(255,255,255,0.08)', transition:'background 0.4s',
+                boxShadow: i<current ? `0 0 6px ${color}60` : 'none',
               }} />
             )}
           </div>
@@ -911,7 +964,7 @@ const MODULE_CONTENT = {
             meaning:'Flecha tachada dentro de círculo rojo. Giro prohibido en esa dirección, aunque el semáforo esté verde.',
             rule:'El giro sigue prohibido aunque el semáforo permita circular.',
             example:'Semáforo verde pero con señal de "No gire a la izquierda". No puedes girar.' },
-          { id:'no_adelantar',name:'No adelantar',      code:'SR-25', emoji:'🚘', sign:SR.NO_ADELANTAR, type:'Reglamentaria', typeColor:'#f87171',
+          { id:'no_adelantar',name:'No adelantar',      code:'SR-26', emoji:'🚘', sign:SR.NO_ADELANTAR, type:'Reglamentaria', typeColor:'#f87171',
             meaning:'Prohíbe sobrepasar vehículos en ese tramo. Aparece en curvas y zonas de poca visibilidad.',
             rule:'Adelantar donde está prohibido = infracción muy grave.',
             example:'Esperas a que desaparezca la señal antes de intentar adelantar.' },
@@ -995,10 +1048,10 @@ const MODULE_CONTENT = {
             situation:'Una ambulancia con sirena se aproxima por detrás.',
             context:'Estás en una calle de dos carriles. El vehículo de emergencias viene por tu carril.',
             options:[
-              { label:'Me orillo a la derecha gradualmente y reduzco', positive:true,  consequenceEmoji:'✅', consequenceTitle:'¡Correcto!',              consequence:'Al orillar a la derecha abres paso sin crear peligro adicional. La ambulancia continúa sin obstáculos.' },
-              { label:'Freno en seco donde estoy',                     positive:false, consequenceEmoji:'❗', consequenceTitle:'Peligroso',               consequence:'Frenar bruscamente puede causar un choque con quien viene detrás y dificulta el paso de la ambulancia.' },
-              { label:'Acelero para abrir espacio adelante',           positive:false, consequenceEmoji:'⚠️', consequenceTitle:'No resuelve el problema', consequence:'Si la ambulancia va más rápido que tú, no estás ayudando y puedes crear otro peligro.' },
-              { label:'Me cambio al carril izquierdo',                 positive:false, consequenceEmoji:'❗', consequenceTitle:'Incorrecto',              consequence:'Cambiar al izquierdo bloquea el paso. Siempre orilla A LA DERECHA.' },
+              { label:'Me orillo a la derecha gradualmente y reduzco', positive:true,  consequenceEmoji:'[OK]', consequenceTitle:'¡Correcto!',              consequence:'Al orillar a la derecha abres paso sin crear peligro adicional. La ambulancia continúa sin obstáculos.' },
+              { label:'Freno en seco donde estoy',                     positive:false, consequenceEmoji:'[!]', consequenceTitle:'Peligroso',               consequence:'Frenar bruscamente puede causar un choque con quien viene detrás y dificulta el paso de la ambulancia.' },
+              { label:'Acelero para abrir espacio adelante',           positive:false, consequenceEmoji:'[!]', consequenceTitle:'No resuelve el problema', consequence:'Si la ambulancia va más rápido que tú, no estás ayudando y puedes crear otro peligro.' },
+              { label:'Me cambio al carril izquierdo',                 positive:false, consequenceEmoji:'[!]', consequenceTitle:'Incorrecto',              consequence:'Cambiar al izquierdo bloquea el paso. Siempre orilla A LA DERECHA.' },
             ],
             idealExplanation:'Ante emergencias: orilla gradualmente a la derecha, reduce y detente si es necesario.',
             law:'Ley 769/2002 Art. 70 — Ceder paso a vehículos de emergencia.' },
@@ -1006,10 +1059,10 @@ const MODULE_CONTENT = {
             situation:'Intersección sin señales. Vehículo a tu derecha aproximándose.',
             context:'Los dos llegarán al cruce casi al mismo tiempo.',
             options:[
-              { label:'Cedo el paso: viene por mi derecha, tiene prioridad', positive:true,  consequenceEmoji:'✅', consequenceTitle:'¡Correcto!',              consequence:'Quien viene por la derecha tiene prioridad. Cediste correctamente y evitaste un choque.' },
-              { label:'Acelero para cruzar primero',                         positive:false, consequenceEmoji:'❗', consequenceTitle:'Peligroso',               consequence:'Acelerar para "ganarle" al que tiene prioridad puede terminar en choque.' },
-              { label:'Toco bocina para avisarle',                           positive:false, consequenceEmoji:'⚠️', consequenceTitle:'La bocina no da prioridad',consequence:'Tocar bocina no te da prioridad legal. El de la derecha la tiene siempre.' },
-              { label:'Freno y espero que pase',                             positive:true,  consequenceEmoji:'✅', consequenceTitle:'También correcto',         consequence:'Igualmente válido. Lo importante es que el de la derecha pase primero.' },
+              { label:'Cedo el paso: viene por mi derecha, tiene prioridad', positive:true,  consequenceEmoji:'[OK]', consequenceTitle:'¡Correcto!',              consequence:'Quien viene por la derecha tiene prioridad. Cediste correctamente y evitaste un choque.' },
+              { label:'Acelero para cruzar primero',                         positive:false, consequenceEmoji:'[!]', consequenceTitle:'Peligroso',               consequence:'Acelerar para "ganarle" al que tiene prioridad puede terminar en choque.' },
+              { label:'Toco bocina para avisarle',                           positive:false, consequenceEmoji:'[!]', consequenceTitle:'La bocina no da prioridad',consequence:'Tocar bocina no te da prioridad legal. El de la derecha la tiene siempre.' },
+              { label:'Freno y espero que pase',                             positive:true,  consequenceEmoji:'[OK]', consequenceTitle:'También correcto',         consequence:'Igualmente válido. Lo importante es que el de la derecha pase primero.' },
             ],
             idealExplanation:'Sin señal ni semáforo: norma de la derecha. El vehículo que viene por tu derecha tiene prioridad.',
             law:'Ley 769/2002 Art. 81 — Prioridad al vehículo de la derecha.' },
@@ -1017,9 +1070,9 @@ const MODULE_CONTENT = {
             situation:'Giras a la derecha en verde. Un peatón comienza a cruzar.',
             context:'El semáforo peatonal también está en verde.',
             options:[
-              { label:'Espero a que el peatón cruce completamente', positive:true,  consequenceEmoji:'✅', consequenceTitle:'Correcto — el peatón manda', consequence:'El peatón en paso habilitado tiene prioridad absoluta. Esperaste correctamente.' },
-              { label:'Giro lento esperando que se haga a un lado',  positive:false, consequenceEmoji:'❗', consequenceTitle:'Arriesgado e ilegal',        consequence:'Si el peatón cambia dirección o tropieza, puedes atropellarlo.' },
-              { label:'Toco bocina suavemente',                      positive:false, consequenceEmoji:'⚠️', consequenceTitle:'No corresponde',            consequence:'Tocarle bocina a quien cruza legalmente es innecesario e irrespetuoso.' },
+              { label:'Espero a que el peatón cruce completamente', positive:true,  consequenceEmoji:'[OK]', consequenceTitle:'Correcto — el peatón manda', consequence:'El peatón en paso habilitado tiene prioridad absoluta. Esperaste correctamente.' },
+              { label:'Giro lento esperando que se haga a un lado',  positive:false, consequenceEmoji:'[!]', consequenceTitle:'Arriesgado e ilegal',        consequence:'Si el peatón cambia dirección o tropieza, puedes atropellarlo.' },
+              { label:'Toco bocina suavemente',                      positive:false, consequenceEmoji:'[!]', consequenceTitle:'No corresponde',            consequence:'Tocarle bocina a quien cruza legalmente es innecesario e irrespetuoso.' },
             ],
             idealExplanation:'El peatón en paso habilitado tiene siempre prioridad, incluso cuando tú tienes verde para girar.',
             law:'Ley 769/2002 Art. 76 — Prioridad al peatón en paso habilitado.' },
@@ -1209,7 +1262,7 @@ function LessonCard({ lesson, index, done, color, onClick }) {
         display:'flex', alignItems:'center', gap:14,
         textAlign:'left', width:'100%', transition:'all 0.18s',
         transform:h?'translateX(2px)':'none',
-        boxShadow:h?`-3px 0 0 0 ${color}`:'none',
+        boxShadow:h?`-3px 0 0 0 ${color}, 0 0 30px rgba(255,215,0,0.08)`:'none',
       }}>
       <div style={{
         width:38, height:38, borderRadius:11, flexShrink:0,
@@ -1249,6 +1302,12 @@ function ModuleView({ mod, onSelectLesson, completedIds }) {
           {bgImg && (
             <div style={{ position:'absolute', inset:0, backgroundImage:`url(${bgImg})`, backgroundSize:'cover', backgroundPosition:'center', opacity:0.22 }} />
           )}
+          <div style={{
+            position:'absolute', inset:-2, borderRadius:26, zIndex:0,
+            background:'linear-gradient(135deg, ' + mod.color + ', #fbbf24, ' + mod.color + ', #a78bfa)',
+            backgroundSize:'300% 300%', animation:'shimmer 4s ease infinite',
+            opacity:0.3,
+          }} />
           <div style={{ position:'absolute', inset:0, background:`linear-gradient(135deg, rgba(10,10,14,0.85) 40%, ${mod.color}18)` }} />
           <div style={{ position:'relative', padding:'36px 36px 32px' }}>
             <div style={{ width:64, height:64, borderRadius:20, marginBottom:20, background:`${mod.color}18`, border:`1px solid ${mod.color}30`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:34 }}>{mod.icon}</div>
@@ -1292,7 +1351,7 @@ function ModuleView({ mod, onSelectLesson, completedIds }) {
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.25)', fontFamily:"'Space Mono',monospace", letterSpacing:'0.1em', marginBottom:14 }}>PRÓXIMA LECCIÓN</div>
           {(() => {
             const next = mod.lessons.find(l => !completedIds.includes(l.id))
-            if (!next) return <div style={{ textAlign:'center', padding:'12px 0', fontSize:13, color:'#34d399' }}>🌟 ¡Módulo completado!</div>
+            if (!next) return <div style={{ textAlign:'center', padding:'12px 0', fontSize:13, color:'#34d399' }}>* ¡Módulo completado!</div>
             return (
               <div>
                 <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:14 }}>
@@ -1357,12 +1416,37 @@ export function PageModulo() {
       <style>{`
         @keyframes fadeInUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
         @keyframes xpFloat  { 0%{opacity:0;transform:translate(-50%,-50%) scale(0.6)} 25%{opacity:1;transform:translate(-50%,-58%) scale(1.08)} 70%{opacity:1;transform:translate(-50%,-70%) scale(1)} 100%{opacity:0;transform:translate(-50%,-85%) scale(0.92)} }
-        .fin { animation: fadeInUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+        @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-30px) scale(1.1)} 66%{transform:translate(-20px,20px) scale(0.9)} }
+        @keyframes shimmer { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        @keyframes cardGlow { 0%,100%{box-shadow:0 0 20px rgba(255,215,0,0)} 50%{box-shadow:0 0 40px rgba(255,215,0,0.1)} }
+        .fin { animation: fadeInUp 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
       `}</style>
+
+      <div style={{
+        position:'fixed', inset:0, zIndex:0, overflow:'hidden', pointerEvents:'none',
+      }}>
+        <div style={{
+          position:'absolute', width:'500px', height:'500px', borderRadius:'50%',
+          background:'radial-gradient(circle, rgba(167,139,250,0.08), transparent 70%)',
+          top:'-100px', left:'-100px', animation:'orbFloat 12s ease-in-out infinite',
+        }} />
+        <div style={{
+          position:'absolute', width:'400px', height:'400px', borderRadius:'50%',
+          background:'radial-gradient(circle, rgba(52,211,153,0.06), transparent 70%)',
+          bottom:'-80px', right:'-80px', animation:'orbFloat 15s ease-in-out infinite reverse',
+        }} />
+        <div style={{
+          position:'absolute', width:'300px', height:'300px', borderRadius:'50%',
+          background:'radial-gradient(circle, rgba(251,191,36,0.05), transparent 70%)',
+          top:'50%', left:'50%', transform:'translate(-50%,-50%)',
+          animation:'orbFloat 18s ease-in-out infinite 3s',
+        }} />
+      </div>
+
       <Confetti active={confetti} />
       {showXP && <XPFloat visible={showXP} />}
 
-      <div style={{ padding:'0 8px' }}>
+      <div style={{ position:'relative', zIndex:1, padding:'0 8px' }}>
         {activeLesson ? (
           <div className="fin">
             <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:24 }}>
