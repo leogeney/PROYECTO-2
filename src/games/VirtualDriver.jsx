@@ -2,184 +2,93 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import * as THREE from 'three'
 import { useNotification } from '../context/NotificationContext'
 
-const ROAD_W = 12
-const ROAD_SEGS = 40
-const SEG_LEN = 10
-const LANES = 3
+const ROAD_W = 10
+const ROAD_SEGS = 30
+const SEG_LEN = 8
+const LANES = 5
 const LANE_W = ROAD_W / LANES
-const LANE_XS = [-4, 0, 4]
+const LANE_XS = [-4, -2, 0, 2, 4]
 
-// Función para crear un coche REALISTA (sedán deportivo)
-function makeRealisticCar(bodyColor, isPlayer, THREE) {
-  const group = new THREE.Group()
-  
-  // Carrocería principal (sedán)
-  const bodyGeo = new THREE.BoxGeometry(1.8, 0.45, 4.2)
-  const bodyMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.3, metalness: 0.85 })
-  const body = new THREE.Mesh(bodyGeo, bodyMat)
-  body.position.y = 0.25
+const OBSTACLE_TYPES = [
+  { type: 'hazard', label: 'Barricada', color: 0xff4400, pts: 0 },
+  { type: 'hazard', label: 'Bus', color: 0xcc2200, pts: 0 },
+  { type: 'hazard', label: 'Camión', color: 0xaa1100, pts: 0 },
+  { type: 'bonus', label: 'Nitro', color: 0x00aaff, pts: 25, nitro: true },
+  { type: 'bonus', label: 'Diamante', color: 0xffdd00, pts: 50 },
+  { type: 'bonus', label: 'Vida', color: 0xff3366, pts: 10, heal: true },
+  { type: 'bonus', label: 'Vía libre', color: 0x00ff88, pts: 15 },
+]
+
+function makeCarMesh(bodyColor, isPlayer, THREE) {
+  const g = new THREE.Group()
+
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(1.6, 0.38, 3.4),
+    new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.25, metalness: 0.9 })
+  )
+  body.position.y = 0.22
   body.castShadow = true
-  body.receiveShadow = true
-  group.add(body)
-  
-  // Techo (más bajo, más aerodinámico)
-  const roofGeo = new THREE.BoxGeometry(1.5, 0.32, 2.4)
-  const roofMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.25, metalness: 0.9 })
-  const roof = new THREE.Mesh(roofGeo, roofMat)
-  roof.position.set(0, 0.55, -0.3)
-  roof.castShadow = true
-  group.add(roof)
-  
-  // Capó (más bajo)
-  const hoodGeo = new THREE.BoxGeometry(1.6, 0.15, 1.2)
-  const hoodMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.2, metalness: 0.9 })
-  const hood = new THREE.Mesh(hoodGeo, hoodMat)
-  hood.position.set(0, 0.38, 1.4)
-  group.add(hood)
-  
-  // Maletero
-  const trunkGeo = new THREE.BoxGeometry(1.6, 0.2, 1.0)
-  const trunk = new THREE.Mesh(trunkGeo, bodyMat)
-  trunk.position.set(0, 0.35, -1.5)
-  group.add(trunk)
-  
-  // Ventanas (cristal oscuro)
-  const glassMat = new THREE.MeshStandardMaterial({ color: 0x1a2a3a, roughness: 0.1, metalness: 0.95, emissive: 0x0a1a2a, emissiveIntensity: 0.3 })
-  
-  // Luneta delantera
-  const frontWindshield = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.28, 0.9), glassMat)
-  frontWindshield.position.set(0, 0.62, 0.9)
-  group.add(frontWindshield)
-  
-  // Luneta trasera
-  const rearWindshield = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.28, 0.9), glassMat)
-  rearWindshield.position.set(0, 0.62, -1.3)
-  group.add(rearWindshield)
-  
-  // Ventanas laterales
-  const sideWindowMat = new THREE.MeshStandardMaterial({ color: 0x2a3a4a, roughness: 0.1, metalness: 0.9 })
-  const leftWindow = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.3, 1.8), sideWindowMat)
-  leftWindow.position.set(-0.95, 0.58, -0.2)
-  group.add(leftWindow)
-  
-  const rightWindow = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.3, 1.8), sideWindowMat)
-  rightWindow.position.set(0.95, 0.58, -0.2)
-  group.add(rightWindow)
-  
-  // Faros delanteros
-  const headlightMat = new THREE.MeshStandardMaterial({ color: 0xffaa88, emissive: 0xff4422, emissiveIntensity: 0.8 })
-  const leftHeadlight = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), headlightMat)
-  leftHeadlight.position.set(-0.65, 0.28, 2.05)
-  group.add(leftHeadlight)
-  
-  const rightHeadlight = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), headlightMat)
-  rightHeadlight.position.set(0.65, 0.28, 2.05)
-  group.add(rightHeadlight)
-  
-  // Luces traseras
-  const tailMat = new THREE.MeshStandardMaterial({ color: 0xcc2200, emissive: 0xff0000, emissiveIntensity: 0.5 })
-  const leftTail = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), tailMat)
-  leftTail.position.set(-0.68, 0.28, -2.05)
-  group.add(leftTail)
-  
-  const rightTail = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), tailMat)
-  rightTail.position.set(0.68, 0.28, -2.05)
-  group.add(rightTail)
-  
-  // Ruedas realistas
-  const wheelGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.5, 24)
-  const tireMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.1 })
-  const rimMat = new THREE.MeshStandardMaterial({ color: 0xccccdd, metalness: 0.95, roughness: 0.2 })
-  
-  const wheelPositions = [
-    [-0.9, 0.18, 1.3], [0.9, 0.18, 1.3],
-    [-0.9, 0.18, -1.4], [0.9, 0.18, -1.4]
-  ]
-  
-  wheelPositions.forEach(([x, y, z]) => {
-    const wheel = new THREE.Mesh(wheelGeo, tireMat)
-    wheel.rotation.z = Math.PI / 2
-    wheel.position.set(x, y, z)
-    wheel.castShadow = true
-    group.add(wheel)
-    
-    const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.52, 8), rimMat)
-    rim.rotation.z = Math.PI / 2
-    rim.position.set(x, y, z)
-    group.add(rim)
-  })
-  
-  if (isPlayer) {
-    // Luces LED diurnas
-    const drlMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x88aaff, emissiveIntensity: 1.5 })
-    const leftDrl = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.05), drlMat)
-    leftDrl.position.set(-0.78, 0.22, 2.08)
-    group.add(leftDrl)
-    
-    const rightDrl = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.05), drlMat)
-    rightDrl.position.set(0.78, 0.22, 2.08)
-    group.add(rightDrl)
-    
-    // Escape deportivo
-    const exhaustMat = new THREE.MeshStandardMaterial({ color: 0x886644, metalness: 0.9, roughness: 0.3 })
-    const exhaust = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.4, 8), exhaustMat)
-    exhaust.rotation.x = Math.PI / 2
-    exhaust.position.set(0.65, 0.12, -2.1)
-    group.add(exhaust)
-  }
-  
-  return group
-}
+  g.add(body)
 
-// Semáforo realista
-function makeRealisticTrafficLight(zPos, THREE) {
-  const group = new THREE.Group()
-  
-  // Poste metálico
-  const poleMat = new THREE.MeshStandardMaterial({ color: 0x556677, metalness: 0.7, roughness: 0.4 })
-  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.25, 5.5, 8), poleMat)
-  pole.position.set(-ROAD_W / 2 - 0.8, 2.75, 0)
-  group.add(pole)
-  
-  // Brazo horizontal
-  const armMat = new THREE.MeshStandardMaterial({ color: 0x667788, metalness: 0.6 })
-  const arm = new THREE.Mesh(new THREE.BoxGeometry(ROAD_W + 2.5, 0.15, 0.35), armMat)
-  arm.position.set(0, 4.2, 0)
-  group.add(arm)
-  
-  // Caja del semáforo
-  const boxMat = new THREE.MeshStandardMaterial({ color: 0x334455, roughness: 0.3, metalness: 0.5 })
-  const lightBox = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.2, 0.5), boxMat)
-  lightBox.position.set(0, 4.2, 0.4)
-  group.add(lightBox)
-  
-  // Marco negro alrededor
-  const frameMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.2 })
-  const frame = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.4, 0.55), frameMat)
-  frame.position.set(0, 4.2, 0.38)
-  group.add(frame)
-  
-  // Luz ROJA
-  const redLightMat = new THREE.MeshStandardMaterial({ color: 0xcc0000, emissive: 0xff0000, emissiveIntensity: 0.8 })
-  const redLight = new THREE.Mesh(new THREE.SphereGeometry(0.28, 24, 24), redLightMat)
-  redLight.position.set(0, 4.8, 0.65)
-  group.add(redLight)
-  
-  // Luz AMARILLA (centro)
-  const yellowLightMat = new THREE.MeshStandardMaterial({ color: 0xcc8800, emissive: 0xffaa00, emissiveIntensity: 0.3 })
-  const yellowLight = new THREE.Mesh(new THREE.SphereGeometry(0.28, 24, 24), yellowLightMat)
-  yellowLight.position.set(0, 4.2, 0.65)
-  group.add(yellowLight)
-  
-  // Luz VERDE
-  const greenLightMat = new THREE.MeshStandardMaterial({ color: 0x00cc00, emissive: 0x00ff00, emissiveIntensity: 0.3 })
-  const greenLight = new THREE.Mesh(new THREE.SphereGeometry(0.28, 24, 24), greenLightMat)
-  greenLight.position.set(0, 3.6, 0.65)
-  group.add(greenLight)
-  
-  group.position.set(0, 0, zPos)
-  
-  return { group, redLight, yellowLight, greenLight }
+  const cab = new THREE.Mesh(
+    new THREE.BoxGeometry(1.3, 0.32, 1.7),
+    new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.15, metalness: 0.9 })
+  )
+  cab.position.set(0, 0.55, -0.1)
+  g.add(cab)
+
+  const glass = new THREE.Mesh(
+    new THREE.BoxGeometry(1.1, 0.24, 1.5),
+    new THREE.MeshStandardMaterial({
+      color: 0x223355,
+      roughness: 0.05,
+      metalness: 0.8,
+      opacity: 0.7,
+      transparent: true,
+    })
+  )
+  glass.position.set(0, 0.56, -0.1)
+  g.add(glass)
+
+  const wheelGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.18, 12)
+  const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9, metalness: 0.2 })
+  const rimMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.9 })
+
+  ;[[-0.82, 0.09, 1.1], [0.82, 0.09, 1.1], [-0.82, 0.09, -1.1], [0.82, 0.09, -1.1]].forEach(([wx, wy, wz]) => {
+    const w = new THREE.Mesh(wheelGeo, wheelMat)
+    w.rotation.z = Math.PI / 2
+    w.position.set(wx, wy, wz)
+    g.add(w)
+
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.19, 6), rimMat)
+    rim.rotation.z = Math.PI / 2
+    rim.position.set(wx, wy, wz)
+    g.add(rim)
+  })
+
+  if (isPlayer) {
+    const hlMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff8ee, emissiveIntensity: 3 })
+    ;[-0.5, 0.5].forEach(ox => {
+      const hl = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), hlMat)
+      hl.position.set(ox, 0.22, 1.72)
+      g.add(hl)
+    })
+
+    const spot = new THREE.SpotLight(0xfff8dd, 4, 20, Math.PI / 6, 0.3)
+    spot.position.set(0, 0.8, 2)
+    spot.target.position.set(0, -1, -10)
+    g.add(spot)
+    g.add(spot.target)
+  }
+
+  const tlMat = new THREE.MeshStandardMaterial({ color: 0xff1111, emissive: 0xff0000, emissiveIntensity: 2 })
+  ;[-0.55, 0.55].forEach(ox => {
+    const tl = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.06, 0.04), tlMat)
+    tl.position.set(ox, 0.22, -1.71)
+    g.add(tl)
+  })
+
+  return g
 }
 
 export function VirtualDriver({ onBack }) {
@@ -187,30 +96,53 @@ export function VirtualDriver({ onBack }) {
   const threeRef = useRef(null)
   const stateRef = useRef(null)
   const rafRef = useRef(null)
+  const cameraTargetRef = useRef(new THREE.Vector3())
+  const lookTargetRef = useRef(new THREE.Vector3())
+  const shakeTimeoutRef = useRef(null)
   const floatTimeoutsRef = useRef([])
 
   const [phase, setPhase] = useState('idle')
   const [hud, setHud] = useState({
-    speed: 0,
-    rpm: 0,
-    gear: 1,
-    fuel: 85,
-    distance: 0,
     score: 0,
     lives: 3,
-    trafficState: '🟢',
-    trafficTimer: 0
+    distance: 0,
+    speed: 5,
+    nitroCharge: 0,
+    nitroActive: false,
+    combo: 1,
   })
   const [floats, setFloats] = useState([])
   const { showNotification } = useNotification()
 
-  const addFloat = useCallback((text, color) => {
+  useEffect(() => {
+    if (phase === 'dead') {
+      const dist = stateRef.current?.distance || 0
+      if (dist >= 5) {
+        showNotification?.('performance', '¡Eres un experto del volante! Recorriste una gran distancia. 🏁', 6000)
+      } else if (dist >= 1.5) {
+        showNotification?.('performance', '¡Buen recorrido! Cada vez conduces mejor. 🏎️', 5000)
+      } else {
+        showNotification?.('performance', '¡Cuidado en la vía! Inténtalo de nuevo para llegar más lejos. 💥', 5000)
+      }
+    }
+  }, [phase, showNotification])
+
+  const addFloat = useCallback((text, color, screenX) => {
     const id = Math.random()
-    setFloats(f => [...f, { id, text, color }])
+    setFloats(f => [...f, { id, text, color, screenX }])
     const t = setTimeout(() => {
       setFloats(f => f.filter(ff => ff.id !== id))
-    }, 1000)
+    }, 900)
     floatTimeoutsRef.current.push(t)
+  }, [])
+
+  const doShake = useCallback(() => {
+    if (!stateRef.current) return
+    stateRef.current.shakeAmt = 0.12
+    if (shakeTimeoutRef.current) clearTimeout(shakeTimeoutRef.current)
+    shakeTimeoutRef.current = setTimeout(() => {
+      if (stateRef.current) stateRef.current.shakeAmt = 0
+    }, 420)
   }, [])
 
   useEffect(() => {
@@ -218,437 +150,909 @@ export function VirtualDriver({ onBack }) {
     if (!el) return
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
-    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
-    renderer.setSize(el.clientWidth, el.clientHeight)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping
+    renderer.toneMappingExposure = 1.2
     el.appendChild(renderer.domElement)
 
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color(0x0a1428)
-    scene.fog = new THREE.FogExp2(0x0a1428, 0.008)
+    scene.fog = new THREE.FogExp2(0x0a0d14, 0.018)
 
-    // Cámara realista (tercera persona desde atrás)
-    const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 500)
-    camera.position.set(0, 2.2, -4.5)
+    const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 300)
+    camera.position.set(0, 3.5, 9)
+    camera.lookAt(0, 1, -10)
 
     const resize = () => {
-      const w = el.clientWidth
-      const h = el.clientHeight
-      renderer.setSize(w, h)
-      camera.aspect = w / h
+      const W = el.clientWidth || window.innerWidth
+      const H = el.clientHeight || window.innerHeight
+      renderer.setSize(W, H, false)
+      camera.aspect = W / H
       camera.updateProjectionMatrix()
     }
-    window.addEventListener('resize', resize)
+
     resize()
+    const ro = new ResizeObserver(resize)
+    ro.observe(el)
 
-    // Iluminación realista
-    const ambientLight = new THREE.AmbientLight(0x223344, 0.6)
-    scene.add(ambientLight)
-    
-    const mainLight = new THREE.DirectionalLight(0xfff5e0, 1.5)
-    mainLight.position.set(10, 20, 5)
-    mainLight.castShadow = true
-    mainLight.shadow.mapSize.set(2048, 2048)
-    scene.add(mainLight)
-    
-    const fillLight = new THREE.PointLight(0x4466aa, 0.4)
-    fillLight.position.set(-5, 5, 10)
-    scene.add(fillLight)
-    
-    const backLight = new THREE.PointLight(0xffaa66, 0.3)
-    backLight.position.set(0, 3, -8)
-    scene.add(backLight)
+    scene.add(new THREE.AmbientLight(0x223366, 1.2))
 
-    // Carretera
-    const roadMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2a, roughness: 0.7, metalness: 0.1 })
-    const road = new THREE.Mesh(new THREE.PlaneGeometry(ROAD_W, 500), roadMat)
-    road.rotation.x = -Math.PI / 2
-    road.position.set(0, -0.05, -250)
-    road.receiveShadow = true
-    scene.add(road)
-    
-    // Marcas de carril
-    const lineMat = new THREE.MeshStandardMaterial({ color: 0xffdd88, emissive: 0xffaa44, emissiveIntensity: 0.3 })
-    for (let i = -250; i < 250; i += 15) {
-      const line = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.05, 3), lineMat)
-      line.position.set(0, -0.02, i)
-      scene.add(line)
+    const sun = new THREE.DirectionalLight(0xfff0cc, 2.0)
+    sun.position.set(30, 40, 20)
+    sun.castShadow = true
+    sun.shadow.mapSize.set(2048, 2048)
+    sun.shadow.camera.left = -40
+    sun.shadow.camera.right = 40
+    sun.shadow.camera.top = 40
+    sun.shadow.camera.bottom = -40
+    sun.shadow.camera.far = 200
+    scene.add(sun)
+
+    const rim = new THREE.DirectionalLight(0x0055ff, 0.5)
+    rim.position.set(-10, 5, 10)
+    scene.add(rim)
+
+    const roadSegments = []
+    for (let i = 0; i < ROAD_SEGS; i++) {
+      const m = new THREE.Mesh(
+        new THREE.PlaneGeometry(ROAD_W, SEG_LEN),
+        new THREE.MeshStandardMaterial({ color: 0x111520, roughness: 0.85, metalness: 0.05 })
+      )
+      m.rotation.x = -Math.PI / 2
+      m.position.set(0, -0.01, -i * SEG_LEN)
+      m.receiveShadow = true
+      scene.add(m)
+      roadSegments.push(m)
     }
-    
-    // Bordes de carretera
-    const edgeMat = new THREE.MeshStandardMaterial({ color: 0x88aacc })
-    for (let side of [-6.2, 6.2]) {
-      const edge = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 500), edgeMat)
-      edge.position.set(side, -0.03, -250)
-      scene.add(edge)
-    }
-    
-    // Postes de luz
-    const lampMat = new THREE.MeshStandardMaterial({ color: 0x667788, metalness: 0.7 })
-    for (let i = -200; i < 200; i += 30) {
-      for (let side of [-7, 7]) {
-        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 5, 6), lampMat)
-        pole.position.set(side, 2.5, i)
-        pole.castShadow = true
-        scene.add(pole)
-        
-        const light = new THREE.PointLight(0xffaa66, 0.8, 25)
-        light.position.set(side, 4.5, i)
-        scene.add(light)
+
+    ;[-ROAD_W / 2 + 0.18, ROAD_W / 2 - 0.18].forEach(x => {
+      const m = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.35, ROAD_SEGS * SEG_LEN),
+        new THREE.MeshStandardMaterial({ color: 0xff6600, roughness: 0.9 })
+      )
+      m.rotation.x = -Math.PI / 2
+      m.position.set(x, 0, -ROAD_SEGS * SEG_LEN / 2)
+      scene.add(m)
+    })
+
+    const laneLines = []
+    for (let l = 1; l < LANES; l++) {
+      const lx = -ROAD_W / 2 + l * LANE_W
+      for (let s = 0; s < ROAD_SEGS * 3; s++) {
+        const m = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.06, 2.8),
+          new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8, opacity: 0.3, transparent: true })
+        )
+        m.rotation.x = -Math.PI / 2
+        m.position.set(lx, 0.002, -s * 4.8)
+        scene.add(m)
+        laneLines.push(m)
       }
     }
-    
-    // Árboles
-    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B5A2B })
-    const foliageMat = new THREE.MeshStandardMaterial({ color: 0x2d5a27 })
-    for (let i = -200; i < 200; i += 25) {
-      for (let side of [-9, 9]) {
-        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.5, 1.5, 6), trunkMat)
-        trunk.position.set(side + (Math.random() - 0.5) * 1.5, 0.75, i + (Math.random() - 0.5) * 5)
-        trunk.castShadow = true
-        scene.add(trunk)
-        
-        const foliage = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.2, 8), foliageMat)
-        foliage.position.set(side + (Math.random() - 0.5) * 1.5, 1.6, i + (Math.random() - 0.5) * 5)
-        foliage.castShadow = true
-        scene.add(foliage)
-      }
+
+    const makeEdge = (x, color) => {
+      const m = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.08, ROAD_SEGS * SEG_LEN * 4),
+        new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 2, roughness: 0.1 })
+      )
+      m.rotation.x = -Math.PI / 2
+      m.position.set(x, 0.003, -ROAD_SEGS * SEG_LEN * 2)
+      scene.add(m)
+      return m
     }
-    
-    // Coche del jugador
-    const playerCar = makeRealisticCar(0xc41e3a, true, THREE)
-    playerCar.position.set(0, 0, 0)
-    playerCar.castShadow = true
-    scene.add(playerCar)
-    
-    // Semáforos
-    const trafficLights = []
-    const trafficStates = ['red', 'yellow', 'green']
-    let trafficIndex = 0
-    let trafficTimer = 0
-    
-    // Crear semáforos a lo largo del camino
-    for (let z = -80; z >= -400; z -= 120) {
-      const { group, redLight, yellowLight, greenLight } = makeRealisticTrafficLight(z, THREE)
-      scene.add(group)
-      trafficLights.push({ group, redLight, yellowLight, greenLight, state: 'red', z })
-    }
-    
-    // Edificios a los lados
-    const buildingMat = new THREE.MeshStandardMaterial({ color: 0x3a4a5a, roughness: 0.4 })
-    for (let i = -180; i < 180; i += 40) {
-      for (let side of [-14, 14]) {
-        const height = 5 + Math.random() * 8
-        const building = new THREE.Mesh(new THREE.BoxGeometry(3 + Math.random() * 2, height, 4 + Math.random() * 2), buildingMat)
-        building.position.set(side, height / 2, i + (Math.random() - 0.5) * 20)
-        building.castShadow = true
-        scene.add(building)
-        
-        // Ventanas
-        const windowMat = new THREE.MeshStandardMaterial({ color: 0xffaa66, emissive: 0xff8844, emissiveIntensity: 0.2 })
-        for (let w = 0; w < 4; w++) {
-          const windowGeo = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.2, 0.1), windowMat)
-          windowGeo.position.set(side + (Math.random() - 0.5) * 2, 2 + Math.random() * (height - 3), i + (Math.random() - 0.5) * 3)
-          scene.add(windowGeo)
-        }
-      }
-    }
-    
-    threeRef.current = {
-      renderer, scene, camera, playerCar, trafficLights,
-      clock: new THREE.Clock(), trafficTimer, trafficIndex,
-      trafficStates, roadOffset: 0
-    }
-    
-    return () => {
-      window.removeEventListener('resize', resize)
-      cancelAnimationFrame(rafRef.current)
-      renderer.dispose()
-      floatTimeoutsRef.current.forEach(clearTimeout)
-    }
-  }, [])
-  
-  useEffect(() => {
-    if (phase !== 'playing') return
-    
-    let animationId
-    let lastTime = performance.now()
-    
-    const gameState = {
-      speed: 0,
-      targetSpeed: 0,
-      rpm: 0,
-      gear: 1,
-      fuel: 85,
-      distance: 0,
-      score: 0,
-      lives: 3,
-      lane: 1,
-      laneTarget: 1,
-      steering: 0,
-      steeringReturn: 0,
-      brakingForce: 0,
-      trafficTimer: 3,
-      trafficState: 'red',
-      lastTrafficZ: -80
-    }
-    
-    const T = threeRef.current
-    if (!T) return
-    
-    const animate = () => {
-      const now = performance.now()
-      let dt = Math.min((now - lastTime) / 1000, 0.033)
-      lastTime = now
-      if (dt < 0.01) dt = 0.016
-      
-      // Física realista
-      const throttleInput = 0.6 // Aceleración constante
-      const brakeInput = gameState.brakingForce
-      
-      // Aceleración progresiva
-      if (throttleInput > 0 && brakeInput === 0) {
-        const acceleration = 15 * dt
-        gameState.targetSpeed = Math.min(180, gameState.targetSpeed + acceleration)
-      } else if (brakeInput > 0) {
-        const deceleration = 25 * brakeInput * dt
-        gameState.targetSpeed = Math.max(0, gameState.targetSpeed - deceleration)
-      }
-      
-      // Resistencia aerodinámica y fricción
-      const drag = 0.015 * gameState.targetSpeed * dt
-      gameState.targetSpeed = Math.max(0, gameState.targetSpeed - drag)
-      
-      // Suavizado de velocidad
-      gameState.speed += (gameState.targetSpeed - gameState.speed) * 0.1
-      
-      // RPM basado en velocidad y marcha
-      const speedsPerGear = [0, 45, 85, 130, 180]
-      const rpmBase = (gameState.speed / speedsPerGear[gameState.gear]) * 7000
-      gameState.rpm = Math.min(7000, Math.max(800, rpmBase))
-      
-      // Cambio de marcha automático
-      if (gameState.rpm > 6500 && gameState.gear < 5) {
-        gameState.gear++
-        addFloat(`⚙️ ${gameState.gear}ª`, '#88aaff')
-      } else if (gameState.rpm < 1200 && gameState.gear > 1) {
-        gameState.gear--
-        addFloat(`⚙️ ${gameState.gear}ª`, '#88aaff')
-      }
-      
-      // Movimiento de la carretera
-      const moveDistance = gameState.speed * dt
-      gameState.distance += moveDistance / 100
-      
-      // Mover semáforos
-      for (const tl of T.trafficLights) {
-        tl.group.position.z += moveDistance
-        if (tl.group.position.z > 20) {
-          tl.group.position.z = -380
-          // Resetear estado del semáforo
-          tl.state = 'red'
-          tl.redLight.material.emissiveIntensity = 1.2
-          tl.yellowLight.material.emissiveIntensity = 0.1
-          tl.greenLight.material.emissiveIntensity = 0.1
-        }
-        
-        // Lógica de cambio de semáforo
-        if (tl.group.position.z > -15 && tl.group.position.z < 15) {
-          const timeInZone = (Date.now() / 1000) % 12
-          let newState = 'red'
-          if (timeInZone < 3) newState = 'red'
-          else if (timeInZone < 4) newState = 'yellow'
-          else newState = 'green'
-          
-          if (newState !== tl.state) {
-            tl.state = newState
-            // Actualizar colores
-            tl.redLight.material.emissiveIntensity = newState === 'red' ? 1.2 : 0.1
-            tl.yellowLight.material.emissiveIntensity = newState === 'yellow' ? 1.0 : 0.1
-            tl.greenLight.material.emissiveIntensity = newState === 'green' ? 1.0 : 0.1
-            
-            // Verificar si el jugador está cerca y el semáforo está en rojo
-            if (newState === 'red' && Math.abs(tl.group.position.z) < 25) {
-              addFloat('🔴 SEMÁFORO ROJO - FRENA 🔴', '#ff4444')
-              if (gameState.speed > 30) {
-                gameState.lives--
-                addFloat('💥 MULTAS POR PASAR EN ROJO 💥', '#ff0000')
-                if (gameState.lives <= 0) {
-                  setPhase('dead')
-                }
-              }
-            } else if (newState === 'green' && Math.abs(tl.group.position.z) < 25) {
-              addFloat('🟢 SEMÁFORO VERDE - ADELANTE 🟢', '#44ff44')
-              gameState.score += 50
-            }
+
+    const leftEdge = makeEdge(-ROAD_W / 2, 0x00ff88)
+    const rightEdge = makeEdge(ROAD_W / 2, 0x00ff88)
+
+    const skyDome = new THREE.Mesh(
+      new THREE.SphereGeometry(180, 32, 32),
+      new THREE.ShaderMaterial({
+        side: THREE.BackSide,
+        uniforms: {
+          topColor: { value: new THREE.Color(0x0a0a2e) },
+          bottomColor: { value: new THREE.Color(0x1a1a3e) },
+          offset: { value: 20 },
+          exponent: { value: 0.4 }
+        },
+        vertexShader: `
+          varying vec3 vWorldPosition;
+          void main() {
+            vec4 worldPos = modelMatrix * vec4(position, 1.0);
+            vWorldPosition = worldPos.xyz;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 topColor;
+          uniform vec3 bottomColor;
+          uniform float offset;
+          uniform float exponent;
+          varying vec3 vWorldPosition;
+          void main() {
+            float h = normalize(vWorldPosition + offset).y;
+            gl_FragColor = vec4(mix(bottomColor, topColor, max(pow(max(h, 0.0), exponent), 0.0)), 1.0);
+          }
+        `
+      })
+    )
+    scene.add(skyDome)
+
+    const stars = []
+    const starGeo = new THREE.BufferGeometry()
+    const starCount = 800
+    const starPos = new Float32Array(starCount * 3)
+    for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 400
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3))
+    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.3, transparent: true, opacity: 0.8 })
+    const starMesh = new THREE.Points(starGeo, starMat)
+    starMesh.position.y = 50
+    scene.add(starMesh)
+    stars.push(starMesh)
+
+    const buildings = []
+    const bColors = [0x1a2035, 0x131828, 0x1c1a2a, 0x0f1520]
+    for (let i = 0; i < 40; i++) {
+      const side = i % 2 === 0 ? 1 : -1
+      const x = side * (ROAD_W / 2 + 3 + Math.random() * 6)
+      const z = -i * 15 - 10
+      const h = 4 + Math.random() * 18
+      const color = bColors[Math.floor(Math.random() * bColors.length)]
+      const bm = new THREE.Mesh(
+        new THREE.BoxGeometry(2 + Math.random() * 3, h, 2 + Math.random() * 3),
+        new THREE.MeshStandardMaterial({ color, roughness: 0.8, metalness: 0.3 })
+      )
+      bm.position.set(x, h / 2, z)
+      bm.castShadow = true
+      scene.add(bm)
+
+      if (h > 8) {
+        const winMat = new THREE.MeshStandardMaterial({
+          color: 0xffdd88,
+          emissive: 0xffaa44,
+          emissiveIntensity: 0.3 + Math.random() * 0.4,
+          roughness: 0.1,
+          metalness: 0.8,
+        })
+        const wg = new THREE.PlaneGeometry(0.8, 0.8)
+        for (let wy = 2; wy < h - 1; wy += 2.2) {
+          for (let wx = -0.6; wx <= 0.6; wx += 1.2) {
+            const win = new THREE.Mesh(wg, winMat)
+            const wxOff = (Math.random() - 0.5) * 0.8
+            win.position.set(x + wx + wxOff, wy, z + (side > 0 ? 1.1 : -1.1))
+            scene.add(win)
           }
         }
       }
-      
-      // Movimiento de la cámara (realista)
-      const targetCamX = gameState.steering * 0.8
-      const targetCamY = 2.0 + gameState.speed * 0.002
-      T.camera.position.x += (targetCamX - T.camera.position.x) * 0.05
-      T.camera.position.y += (targetCamY - T.camera.position.y) * 0.05
-      T.camera.position.z = -4.5 + (gameState.speed / 180) * 1.5
-      T.camera.lookAt(0, 0.5, gameState.steering * 2)
-      
-      // Rotación de ruedas (efecto visual)
-      const wheelRotation = moveDistance * 3
-      
-      // Actualizar HUD
-      setHud({
-        speed: Math.floor(gameState.speed),
-        rpm: Math.floor(gameState.rpm),
-        gear: gameState.gear,
-        fuel: Math.max(0, gameState.fuel - 0.005),
-        distance: gameState.distance,
-        score: gameState.score,
-        lives: gameState.lives,
-        trafficState: gameState.trafficState === 'red' ? '🔴' : gameState.trafficState === 'yellow' ? '🟡' : '🟢',
-        trafficTimer: Math.ceil(gameState.trafficTimer)
+
+      buildings.push({ mesh: bm })
+    }
+
+    const trees = []
+    const treeColors = [0x1a5c2a, 0x2d6b3f, 0x3d7a4f]
+    for (let i = 0; i < 40; i++) {
+      const side = i % 2 === 0 ? 1 : -1
+      const x = side * (ROAD_W / 2 + 10 + Math.random() * 14)
+      const z = -i * 22 - 20
+      const treeG = new THREE.Group()
+      const trunk = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.06, 0.10, 1.2, 6),
+        new THREE.MeshStandardMaterial({ color: 0x4a3728, roughness: 0.9 })
+      )
+      trunk.position.y = 0.6
+      treeG.add(trunk)
+      const foliage = new THREE.Mesh(
+        new THREE.SphereGeometry(0.6 + Math.random() * 0.5, 6, 6),
+        new THREE.MeshStandardMaterial({
+          color: treeColors[Math.floor(Math.random() * treeColors.length)],
+          roughness: 0.9
+        })
+      )
+      foliage.position.y = 1.6 + Math.random() * 0.6
+      treeG.add(foliage)
+      treeG.position.set(x, 0, z)
+      scene.add(treeG)
+      trees.push(treeG)
+    }
+
+    const lamps = []
+    const makeLamp = (x, z) => {
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 4, 6), new THREE.MeshStandardMaterial({ color: 0x334455 }))
+      pole.position.set(x, 2, z)
+      scene.add(pole)
+
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), new THREE.MeshStandardMaterial({ color: 0xffffaa, emissive: 0xffee88, emissiveIntensity: 2 }))
+      head.position.set(x, 4.1, z)
+      scene.add(head)
+
+      const pl = new THREE.PointLight(0xffee88, 1.2, 12)
+      pl.position.set(x, 4, z)
+      scene.add(pl)
+
+      lamps.push({ pole, head, pl })
+    }
+
+    for (let i = 0; i < 30; i++) {
+      makeLamp(-ROAD_W / 2 - 0.6, -i * 14 - 5)
+      makeLamp(ROAD_W / 2 + 0.6, -i * 14 - 5)
+    }
+
+    const trafficLights = []
+    const createTrafficLight = (z) => {
+      const g = new THREE.Group()
+      const poleMat = new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.4, metalness: 0.7 })
+      const beamMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.5, metalness: 0.5 })
+
+      const leftPole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 6, 8), poleMat)
+      leftPole.position.set(-ROAD_W / 2 - 0.4, 3, 0)
+      g.add(leftPole)
+
+      const rightPole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 6, 8), poleMat)
+      rightPole.position.set(ROAD_W / 2 + 0.4, 3, 0)
+      g.add(rightPole)
+
+      const beam = new THREE.Mesh(new THREE.BoxGeometry(ROAD_W + 1, 0.08, 0.5), beamMat)
+      beam.position.set(0, 5.8, 0)
+      g.add(beam)
+
+      const box = new THREE.Mesh(
+        new THREE.BoxGeometry(0.9, 2.0, 0.5),
+        new THREE.MeshStandardMaterial({ color: 0x181818, roughness: 0.2, metalness: 0.3 })
+      )
+      box.position.set(0, 4.4, 0.1)
+      g.add(box)
+
+      const visorMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.3 })
+      const visor = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.12, 0.6), visorMat)
+      visor.position.set(0, 5.4, 0.25)
+      g.add(visor)
+
+      const lightDefs = [
+        { y: 5.2, color: 0xff0000, state: 'red', offColor: 0x330000 },
+        { y: 4.4, color: 0xffaa00, state: 'yellow', offColor: 0x332200 },
+        { y: 3.6, color: 0x00ff00, state: 'green', offColor: 0x003300 },
+      ]
+      const lights = lightDefs.map(def => {
+        const s = new THREE.Mesh(
+          new THREE.SphereGeometry(0.22, 12, 12),
+          new THREE.MeshStandardMaterial({ color: def.offColor, emissive: 0x000000, emissiveIntensity: 0, roughness: 0.15 })
+        )
+        s.position.set(0, def.y, 0.3)
+        s.userData = def
+        g.add(s)
+        return s
       })
-      
-      T.renderer.render(T.scene, T.camera)
-      animationId = requestAnimationFrame(animate)
+
+      const glowLight = new THREE.PointLight(0x00ff00, 0, 10)
+      glowLight.position.set(0, 4.4, 1.2)
+      g.add(glowLight)
+
+      g.position.set(0, 0, z)
+      scene.add(g)
+      const si = 2
+      lights[si].material.color.setHex(lightDefs[si].color)
+      lights[si].material.emissive.setHex(lightDefs[si].color)
+      lights[si].material.emissiveIntensity = 4
+      glowLight.color.setHex(0x00ff00)
+      glowLight.intensity = 3
+      return {
+        group: g, lights, lightDefs, glowLight, state: 'green', stateIndex: si,
+        timer: 5 + Math.random() * 3, z, passed: false,
+      }
     }
-    
-    animate()
-    
+
+    for (let i = 0; i < 5; i++) {
+      trafficLights.push(createTrafficLight(-i * 80 - 50))
+    }
+
+    const playerCar = makeCarMesh(0xe8251a, true, THREE)
+    playerCar.position.set(0, 0.13, 4)
+    playerCar.rotation.y = Math.PI
+    scene.add(playerCar)
+
+    const flame = new THREE.Mesh(
+      new THREE.ConeGeometry(0.15, 1.2, 8),
+      new THREE.MeshStandardMaterial({ color: 0x00ccff, emissive: 0x00aaff, emissiveIntensity: 3, opacity: 0.8, transparent: true })
+    )
+    flame.position.set(0, 0.18, -2.1)
+    flame.rotation.x = Math.PI / 2
+    flame.visible = false
+    playerCar.add(flame)
+
+    const nitroLight = new THREE.PointLight(0x00aaff, 0, 8)
+    nitroLight.position.set(0, 0.5, 4)
+    scene.add(nitroLight)
+
+    const particles = []
+    const activeObstacles = []
+
+    const spawnParticles = (pos, color, count) => {
+      for (let i = 0; i < count; i++) {
+        const mat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 2, transparent: true, opacity: 1 })
+        const m = new THREE.Mesh(new THREE.SphereGeometry(0.07, 4, 4), mat)
+        m.position.copy(pos)
+        scene.add(m)
+        const vel = new THREE.Vector3((Math.random() - 0.5) * 0.3, Math.random() * 0.25, (Math.random() - 0.5) * 0.3)
+        particles.push({ mesh: m, vel, life: 1, mat })
+      }
+    }
+
+    const spawnObstacle = (def, lane) => {
+      const laneX = -ROAD_W / 2 + LANE_W * 0.5 + lane * LANE_W
+      let mesh
+      if (def.type === 'hazard') {
+        mesh = makeCarMesh(def.color, false, THREE)
+        mesh.rotation.y = 0
+        mesh.position.set(laneX, 0.13, -80)
+        mesh.castShadow = true
+        scene.add(mesh)
+      } else {
+        mesh = new THREE.Mesh(
+          new THREE.BoxGeometry(0.6, 0.6, 0.6),
+          new THREE.MeshStandardMaterial({ color: def.color, emissive: def.color, emissiveIntensity: 1.5 })
+        )
+        mesh.position.set(laneX, 0.5, -80)
+        scene.add(mesh)
+        const gl = new THREE.PointLight(def.color, 1.5, 4)
+        gl.position.copy(mesh.position)
+        scene.add(gl)
+        mesh._light = gl
+      }
+      return { mesh, lane, laneX, def }
+    }
+
+    threeRef.current = {
+      renderer,
+      scene,
+      camera,
+      roadSegments,
+      laneLines,
+      buildings,
+      trees,
+      lamps,
+      trafficLights,
+      playerCar,
+      flame,
+      nitroLight,
+      leftEdge,
+      rightEdge,
+      activeObstacles,
+      particles,
+      spawnParticles,
+      spawnObstacle,
+      skyDome,
+      stars,
+      clock: new THREE.Clock(),
+      cameraTarget: cameraTargetRef.current,
+      lookTarget: lookTargetRef.current,
+    }
+
     return () => {
-      cancelAnimationFrame(animationId)
-    }
-  }, [phase, addFloat])
-  
-  // Controles realistas
-  useEffect(() => {
-    const gameState = { brakingForce: 0, steering: 0, laneTarget: 1, lane: 1 }
-    let brakeInterval
-    
-    const onKeyDown = (e) => {
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault()
-        if (gameState.lane > 0) {
-          gameState.laneTarget = gameState.lane - 1
-        }
+      ro.disconnect()
+      cancelAnimationFrame(rafRef.current)
+      if (shakeTimeoutRef.current) clearTimeout(shakeTimeoutRef.current)
+      floatTimeoutsRef.current.forEach(clearTimeout)
+      floatTimeoutsRef.current = []
+
+      const disposeObject = obj => {
+        if (!obj) return
+        obj.traverse?.(child => {
+          if (child.geometry) child.geometry.dispose()
+          if (child.material) {
+            if (Array.isArray(child.material)) child.material.forEach(m => m.dispose?.())
+            else child.material.dispose?.()
+          }
+        })
       }
-      if (e.key === 'ArrowRight') {
-        e.preventDefault()
-        if (gameState.lane < 2) {
-          gameState.laneTarget = gameState.lane + 1
-        }
-      }
-      if (e.key === 'ArrowDown') {
-        e.preventDefault()
-        gameState.brakingForce = 0.8
-        addFloat('🛑 FRENANDO 🛑', '#ffaa44')
-      }
-    }
-    
-    const onKeyUp = (e) => {
-      if (e.key === 'ArrowDown') {
-        gameState.brakingForce = 0
-      }
-    }
-    
-    window.addEventListener('keydown', onKeyDown)
-    window.addEventListener('keyup', onKeyUp)
-    
-    const moveInterval = setInterval(() => {
-      if (stateRef.current) {
-        const diff = gameState.laneTarget - gameState.lane
-        if (Math.abs(diff) > 0.01) {
-          gameState.lane += diff * 0.2
-        } else {
-          gameState.lane = gameState.laneTarget
-        }
-        stateRef.current.lane = gameState.lane
-        stateRef.current.steering = (gameState.lane - 1) * 0.8
-        stateRef.current.brakingForce = gameState.brakingForce
-      }
-    }, 16)
-    
-    return () => {
-      window.removeEventListener('keydown', onKeyDown)
-      window.removeEventListener('keyup', onKeyUp)
-      clearInterval(moveInterval)
+
+      disposeObject(scene)
+      renderer.dispose()
+      if (renderer.domElement.parentNode === el) el.removeChild(renderer.domElement)
+      threeRef.current = null
     }
   }, [])
-  
-  const startGame = () => {
-    setPhase('playing')
-    setHud({
-      speed: 0,
-      rpm: 800,
-      gear: 1,
-      fuel: 85,
-      distance: 0,
+
+  useEffect(() => {
+    if (phase !== 'playing') return
+
+    stateRef.current = {
+      lane: 2,
+      carX: 0,
+      carTargetX: 0,
+      driftAngle: 0,
       score: 0,
       lives: 3,
-      trafficState: '🟢',
-      trafficTimer: 0
+      distance: 0,
+      speed: 7,
+      maxSpeed: 7,
+      nitroCharge: 0,
+      nitroActive: false,
+      nitroFuel: 0,
+      combo: 1,
+      comboTimer: 0,
+      frameCount: 0,
+      spawnTimer: 0,
+      shakeAmt: 0,
+      brakeActive: false,
+    }
+
+    const T = threeRef.current
+    if (!T) return
+
+    T.activeObstacles.forEach(o => {
+      T.scene.remove(o.mesh)
+      if (o.mesh._light) T.scene.remove(o.mesh._light)
     })
-  }
-  
+    T.activeObstacles.length = 0
+
+    if (T.trafficLights) {
+      T.trafficLights.forEach(tl => {
+        tl.passed = false
+        tl.stateIndex = 2
+        tl.state = 'green'
+        tl.timer = 4 + Math.random() * 3
+        tl.lights.forEach((l, i) => {
+          if (i === 2) {
+            l.material.color.setHex(tl.lightDefs[i].color)
+            l.material.emissive.setHex(tl.lightDefs[i].color)
+            l.material.emissiveIntensity = 3
+          } else {
+            l.material.color.setHex(tl.lightDefs[i].offColor)
+            l.material.emissive.setHex(0x000000)
+            l.material.emissiveIntensity = 0
+          }
+        })
+        tl.glowLight.color.setHex(0x00ff00)
+        tl.glowLight.intensity = 2.5
+      })
+    }
+
+    const loop = () => {
+      rafRef.current = requestAnimationFrame(loop)
+      const T = threeRef.current
+      const g = stateRef.current
+      if (!T || !g) return
+
+      const dt = Math.min(T.clock.getDelta(), 0.05)
+      const t = T.clock.elapsedTime
+      const sm = g.nitroActive ? 2.2 : 1
+
+      g.frameCount++
+      g.distance += g.speed * sm * dt * 0.007
+      if (g.speed < 14) g.speed += dt * 0.3
+      if (g.brakeActive) {
+        g.speed -= dt * 25
+        if (g.speed < 0.3) g.speed = 0.3
+        T.playerCar.children.forEach(c => {
+          if (c.isMesh && c.material && c.material.color && c.material.color.getHex() === 0xff1111) {
+            c.material.emissive.setHex(0xff2222)
+            c.material.emissiveIntensity = 4
+          }
+        })
+      } else {
+        T.playerCar.children.forEach(c => {
+          if (c.isMesh && c.material && c.material.color && c.material.color.getHex() === 0xff1111) {
+            c.material.emissive.setHex(0xff0000)
+            c.material.emissiveIntensity = 2
+          }
+        })
+      }
+      g.maxSpeed = Math.max(g.maxSpeed, g.speed)
+
+      const scroll = g.speed * sm * dt * 4
+
+      T.roadSegments.forEach(s => {
+        s.position.z += scroll
+        if (s.position.z > SEG_LEN) s.position.z -= ROAD_SEGS * SEG_LEN
+      })
+
+      T.laneLines.forEach(ll => {
+        ll.position.z += scroll
+        if (ll.position.z > 2) ll.position.z -= ROAD_SEGS * SEG_LEN * 4
+      })
+
+      T.lamps.forEach(l => {
+        l.pole.position.z += scroll
+        l.head.position.z += scroll
+        l.pl.position.z += scroll
+        if (l.pole.position.z > 16) {
+          const back = -(ROAD_SEGS * SEG_LEN + 10)
+          l.pole.position.z += back
+          l.head.position.z += back
+          l.pl.position.z += back
+        }
+      })
+
+      T.buildings.forEach(b => {
+        b.mesh.position.z += g.speed * sm * dt * 1.5
+        if (b.mesh.position.z > 40) b.mesh.position.z -= 700
+      })
+
+      T.trees.forEach(tr => {
+        tr.position.z += g.speed * sm * dt * 1.5
+        if (tr.position.z > 40) tr.position.z -= 900
+      })
+
+      T.trafficLights.forEach(tl => {
+        tl.group.position.z += scroll
+        tl.timer -= dt
+        if (tl.timer <= 0) {
+          tl.stateIndex = (tl.stateIndex + 1) % 3
+          const states = ['red', 'yellow', 'green']
+          tl.state = states[tl.stateIndex]
+          tl.timer = tl.state === 'yellow' ? 1.8 : 4 + Math.random() * 3
+          tl.lights.forEach((l, i) => {
+            if (i === tl.stateIndex) {
+              l.material.color.setHex(tl.lightDefs[i].color)
+              l.material.emissive.setHex(tl.lightDefs[i].color)
+              l.material.emissiveIntensity = 3
+            } else {
+              l.material.color.setHex(tl.lightDefs[i].offColor)
+              l.material.emissive.setHex(0x000000)
+              l.material.emissiveIntensity = 0
+            }
+          })
+          tl.glowLight.color.setHex(tl.lightDefs[tl.stateIndex].color)
+          tl.glowLight.intensity = tl.state === 'red' ? 4 : 2.5
+        }
+        if (tl.group.position.z > 20) {
+          tl.group.position.z -= (ROAD_SEGS * SEG_LEN + 60)
+          tl.passed = false
+          tl.stateIndex = 2
+          tl.state = 'green'
+          tl.timer = 4 + Math.random() * 3
+          tl.lights.forEach((l, i) => {
+            if (i === 2) {
+              l.material.color.setHex(tl.lightDefs[2].color)
+              l.material.emissive.setHex(tl.lightDefs[2].color)
+              l.material.emissiveIntensity = 3
+            } else {
+              l.material.color.setHex(tl.lightDefs[i].offColor)
+              l.material.emissive.setHex(0x000000)
+              l.material.emissiveIntensity = 0
+            }
+          })
+          tl.glowLight.color.setHex(0x00ff00)
+          tl.glowLight.intensity = 2.5
+        }
+        if (!tl.passed && tl.group.position.z > 2 && tl.group.position.z < 5.5) {
+          tl.passed = true
+          if (tl.state === 'red') {
+            g.lives--
+            doShake()
+            addFloat('🔴 SEMÁFORO', '#ff0000', 0)
+            if (g.lives <= 0) {
+              setPhase('dead')
+              setHud(h => ({ ...h, lives: 0 }))
+            }
+          }
+        }
+      })
+
+      if (g.nitroActive) {
+        g.nitroFuel -= dt * 60
+        T.flame.visible = true
+        T.flame.scale.y = 0.8 + Math.sin(t * 20) * 0.25
+        T.nitroLight.intensity = 4 + Math.sin(t * 15)
+        T.leftEdge.material.color.setHex(0x00aaff)
+        T.leftEdge.material.emissive.setHex(0x00aaff)
+        T.rightEdge.material.color.setHex(0x00aaff)
+        T.rightEdge.material.emissive.setHex(0x00aaff)
+        if (g.nitroFuel <= 0) {
+          g.nitroActive = false
+          g.nitroFuel = 0
+          T.flame.visible = false
+          T.nitroLight.intensity = 0
+          T.leftEdge.material.color.setHex(0x00ff88)
+          T.leftEdge.material.emissive.setHex(0x00ff88)
+          T.rightEdge.material.color.setHex(0x00ff88)
+          T.rightEdge.material.emissive.setHex(0x00ff88)
+        }
+      } else {
+        g.nitroCharge = Math.min(100, g.nitroCharge + dt * 18)
+        T.flame.visible = false
+        T.nitroLight.intensity = 0
+      }
+
+      if (g.comboTimer > 0) {
+        g.comboTimer -= dt
+        if (g.comboTimer <= 0) g.combo = 1
+      }
+
+      g.carX += (g.carTargetX - g.carX) * Math.min(1, dt * 9)
+      g.driftAngle *= Math.pow(0.1, dt)
+      T.playerCar.position.x = g.carX
+      T.playerCar.rotation.z = g.driftAngle
+
+      g.spawnTimer += dt
+      const spawnRate = Math.max(0.5, 2.5 - g.frameCount * 0.0008)
+      if (g.spawnTimer >= spawnRate) {
+        g.spawnTimer = 0
+        const def = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)]
+        const lane = Math.floor(Math.random() * LANES)
+        T.activeObstacles.push(T.spawnObstacle(def, lane))
+      }
+
+      const carPos = T.playerCar.position
+      for (let i = T.activeObstacles.length - 1; i >= 0; i--) {
+        const o = T.activeObstacles[i]
+        o.mesh.position.z += g.speed * sm * dt * 4
+        if (o.mesh._light) o.mesh._light.position.z = o.mesh.position.z
+
+        if (o.def.type === 'bonus') {
+          o.mesh.rotation.y += dt * 2.5
+          o.mesh.rotation.x += dt * 1.5
+          o.mesh.position.y = 0.5 + Math.sin(t * 3 + i) * 0.12
+        }
+
+        if (o.mesh.position.z > 12) {
+          T.scene.remove(o.mesh)
+          if (o.mesh._light) T.scene.remove(o.mesh._light)
+          T.activeObstacles.splice(i, 1)
+          continue
+        }
+
+        const dx = Math.abs(o.mesh.position.x - carPos.x)
+        const dz = Math.abs(o.mesh.position.z - carPos.z)
+        if (dx < 1.1 && dz < 2.0) {
+          T.spawnParticles(o.mesh.position.clone(), o.def.type === 'hazard' ? 0xff3300 : 0xffdd00, 10)
+
+          if (o.def.type === 'hazard') {
+            if (!g.nitroActive) {
+              g.lives--
+              doShake()
+              addFloat(`💥 ${o.def.label}`, '#ff4444', o.laneX / ROAD_W)
+              if (g.lives <= 0) {
+                setPhase('dead')
+                setHud(h => ({ ...h, lives: 0 }))
+              }
+            }
+          } else {
+            const comboBefore = g.combo
+            const bonus = o.def.pts * comboBefore
+            g.score += bonus
+            g.combo = Math.min(8, g.combo + 1)
+            g.comboTimer = 2.5
+            if (o.def.nitro) g.nitroCharge = 100
+            if (o.def.heal && g.lives < 3) g.lives++
+            addFloat(`+${bonus}${comboBefore > 1 ? ` ×${comboBefore}` : ''}`, o.def.nitro ? '#00ccff' : '#ffd700', o.laneX / ROAD_W)
+          }
+
+          T.scene.remove(o.mesh)
+          if (o.mesh._light) T.scene.remove(o.mesh._light)
+          T.activeObstacles.splice(i, 1)
+        }
+      }
+
+      for (let i = T.particles.length - 1; i >= 0; i--) {
+        const p = T.particles[i]
+        p.mesh.position.add(p.vel)
+        p.vel.y -= dt * 0.3
+        p.life -= dt * 1.8
+        p.mat.opacity = p.life
+        if (p.life <= 0) {
+          T.scene.remove(p.mesh)
+          T.particles.splice(i, 1)
+        }
+      }
+
+      T.cameraTarget.set(g.carX * 0.35, 3.5 + g.speed * 0.03, 9 + g.speed * 0.05)
+      T.lookTarget.set(g.carX * 0.1, 0.8, -10)
+      T.camera.position.lerp(T.cameraTarget, dt * 5)
+      T.camera.lookAt(T.lookTarget)
+
+      if (g.shakeAmt > 0) {
+        T.camera.position.x += (Math.random() - 0.5) * g.shakeAmt
+        T.camera.position.y += (Math.random() - 0.5) * g.shakeAmt
+        g.shakeAmt *= 0.88
+        if (g.shakeAmt < 0.002) g.shakeAmt = 0
+      }
+
+      T.camera.fov = g.nitroActive ? THREE.MathUtils.lerp(T.camera.fov, 80, dt * 5) : THREE.MathUtils.lerp(T.camera.fov, 65, dt * 3)
+      T.camera.updateProjectionMatrix()
+
+      if (g.frameCount % 3 === 0) {
+        setHud({
+          score: g.score,
+          lives: g.lives,
+          distance: g.distance,
+          speed: g.speed,
+          nitroCharge: g.nitroCharge,
+          nitroActive: g.nitroActive,
+          combo: g.combo,
+        })
+      }
+
+      T.renderer.render(T.scene, T.camera)
+    }
+
+    T.clock.start()
+    rafRef.current = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [phase, addFloat, doShake])
+
+  const moveLane = useCallback((dir) => {
+    const g = stateRef.current
+    if (!g) return
+    g.lane = Math.max(0, Math.min(LANES - 1, g.lane + dir))
+    g.carTargetX = LANE_XS[g.lane]
+    g.driftAngle = dir * 0.06
+  }, [])
+
+  const activateNitro = useCallback(() => {
+    const g = stateRef.current
+    if (!g || g.nitroCharge < 100 || g.nitroActive) return
+    g.nitroActive = true
+    g.nitroFuel = 100
+    g.nitroCharge = 0
+  }, [])
+
+  useEffect(() => {
+    const onKey = e => {
+      if (e.key === 'ArrowLeft') moveLane(-1)
+      if (e.key === 'ArrowRight') moveLane(1)
+      if (e.key === ' ') {
+        e.preventDefault()
+        activateNitro()
+      }
+      if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+        e.preventDefault()
+        const g = stateRef.current
+        if (g) g.brakeActive = true
+      }
+    }
+    const onKeyUp = e => {
+      if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+        const g = stateRef.current
+        if (g) g.brakeActive = false
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('keyup', onKeyUp)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('keyup', onKeyUp)
+    }
+  }, [moveLane, activateNitro])
+
+  const startGame = useCallback(() => {
+    setPhase('playing')
+    setFloats([])
+    setHud({
+      score: 0,
+      lives: 3,
+      distance: 0,
+      speed: 7,
+      nitroCharge: 0,
+      nitroActive: false,
+      combo: 1,
+    })
+  }, [])
+
   if (phase === 'dead') {
+    const g = stateRef.current || {}
+    const dist = g.distance ?? 0
+    const starsCount = dist >= 5 ? 3 : dist >= 2.5 ? 2 : dist >= 0.8 ? 1 : 0
+    const starIcons = ['★', '★', '★'].map((s, i) =>
+      <span key={i} style={{ fontSize: 32, color: i < starsCount ? '#ffd700' : 'rgba(255,255,255,0.12)', textShadow: i < starsCount ? '0 0 20px rgba(255,200,0,0.8)' : 'none', margin: '0 4px' }}>★</span>
+    )
     return (
       <div style={styles.overlay}>
-        <div style={styles.gameOverTitle}>GAME OVER</div>
-        <div style={styles.resStat}>Puntaje: <span style={styles.gold}>{hud.score}</span></div>
-        <div style={styles.resStat}>Distancia: <span style={styles.gold}>{hud.distance.toFixed(1)} km</span></div>
-        <button style={styles.startBtn} onClick={startGame}>▶ REINTENTAR</button>
+        <div style={{ fontSize: 56, marginBottom: 4, animation: 'pulse 1.2s ease-in-out infinite' }}>💥</div>
+        <div style={{ ...styles.gameOverTitle, animation: 'fadeIn 0.5s ease-out' }}>GAME OVER</div>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>{starIcons}</div>
+        <div style={{ width: 220, height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,200,0,0.4), transparent)', marginBottom: 16 }} />
+        <div style={styles.resStat}>
+          <span style={{ opacity: 0.4 }}>🏆</span> Puntaje <span style={styles.gold}>{g.score ?? 0}</span>
+        </div>
+        <div style={styles.resStat}>
+          <span style={{ opacity: 0.4 }}>📏</span> Distancia <span style={styles.gold}>{(g.distance ?? 0).toFixed(1)} km</span>
+        </div>
+        <div style={styles.resStat}>
+          <span style={{ opacity: 0.4 }}>🚀</span> Vel. máx <span style={styles.gold}>{Math.round((g.maxSpeed ?? 12) * 14)} km/h</span>
+        </div>
+        <div style={styles.resStat}>
+          <span style={{ opacity: 0.4 }}>⏱️</span> Tiempo <span style={styles.gold}>{Math.max(1, Math.round(g.frameCount / 60))}s</span>
+        </div>
+        <div style={{ width: 220, height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,200,0,0.4), transparent)', marginBottom: 20, marginTop: 4 }} />
+        <button style={{ ...styles.startBtn, animation: 'fadeIn 0.8s ease-out' }} onClick={startGame}>▶ REINTENTAR</button>
         {onBack && (
-          <button style={{ ...styles.startBtn, marginTop: 12 }} onClick={onBack}>← MENÚ</button>
+          <button style={{ ...styles.startBtn, marginTop: 12, fontSize: 12, padding: '10px 32px', borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.4)', animation: 'fadeIn 1s ease-out' }} onClick={onBack}>
+            ← MENÚ
+          </button>
         )}
       </div>
     )
   }
-  
+
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100vh', background: '#0a1428', overflow: 'hidden' }}>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100vh',
+        background: '#000',
+        overflow: 'hidden',
+        userSelect: 'none',
+      }}
+    >
       <div ref={mountRef} style={{ position: 'absolute', inset: 0 }} />
-      
+
       {phase === 'idle' && (
         <div style={styles.overlay}>
-          <div style={{ fontSize: 64, marginBottom: 8 }}>🏎️</div>
-          <div style={styles.bigTitle}>DRIVING ACADEMY</div>
-          <div style={styles.subtitle}>Realistic Driving Simulator</div>
-          <button style={styles.startBtn} onClick={startGame}>▶ START DRIVING</button>
-          <div style={styles.hint}>← → cambiar carril &nbsp;•&nbsp; ↓ FRENAR</div>
+          <div style={{ fontSize: 56, marginBottom: 8 }}>🏎️</div>
+          <div style={styles.bigTitle}>GTX RACING</div>
+          <div style={styles.subtitle}>Next-Gen Street Racing</div>
+          <button style={styles.startBtn} onClick={startGame}>▶ ARRANCAR</button>
+          <div style={styles.hint}>← → cambiar carril &nbsp;•&nbsp; ↓ / S = frenar &nbsp;•&nbsp; ESPACIO = nitro</div>
         </div>
       )}
-      
+
       {phase === 'playing' && (
         <>
-          {/* HUD Realista - Velocímetro */}
-          <div style={styles.speedometer}>
-            <div style={styles.speedValue}>{hud.speed}</div>
-            <div style={styles.speedUnit}>km/h</div>
-            <div style={styles.rpmBar}>
-              <div style={{ ...styles.rpmFill, width: `${(hud.rpm / 7000) * 100}%`, background: hud.rpm > 6000 ? '#ff4444' : '#44ff44' }} />
+          <div style={styles.topBar}>
+            <div>
+              <div style={{ ...styles.scoreVal, color: hud.nitroActive ? '#00ffff' : '#ffffff', textShadow: `0 0 30px ${hud.nitroActive ? '#00ffff' : 'rgba(255,200,0,0.8)'}` }}>
+                {hud.score}
+              </div>
+              <div style={styles.label}>PTS</div>
             </div>
-            <div style={styles.gearDisplay}>{hud.gear}ª</div>
-          </div>
-          
-          {/* Panel derecho */}
-          <div style={styles.rightPanel}>
-            <div style={styles.stat}>❤️ {hud.lives}</div>
-            <div style={styles.stat}>⭐ {hud.score}</div>
-            <div style={styles.stat}>📊 {hud.distance.toFixed(1)} km</div>
-            <div style={styles.trafficLight}>
-              <div style={{ ...styles.light, background: hud.trafficState === '🔴' ? '#ff0000' : '#330000', boxShadow: hud.trafficState === '🔴' ? '0 0 10px #ff0000' : 'none' }} />
-              <div style={{ ...styles.light, background: hud.trafficState === '🟡' ? '#ffaa00' : '#332200', boxShadow: hud.trafficState === '🟡' ? '0 0 10px #ffaa00' : 'none' }} />
-              <div style={{ ...styles.light, background: hud.trafficState === '🟢' ? '#00ff00' : '#003300', boxShadow: hud.trafficState === '🟢' ? '0 0 10px #00ff00' : 'none' }} />
+
+            <div style={{ display: 'flex', gap: 8 }}>
+              {[1, 2, 3].map(i => (
+                <span key={i} style={{ fontSize: 20, filter: i <= hud.lives ? 'drop-shadow(0 0 6px #ff4040)' : 'none', opacity: i <= hud.lives ? 1 : 0.2, transition: 'all 0.3s' }}>
+                  ♥
+                </span>
+              ))}
+            </div>
+
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: 'monospace', fontSize: 18, color: '#00e676' }}>{hud.distance.toFixed(1)} km</div>
+              <div style={styles.label}>{Math.round(hud.speed * 14)} km/h</div>
             </div>
           </div>
-          
-          {/* Mensajes flotantes */}
+
+          {hud.combo > 1 && <div style={styles.comboBadge}>×{hud.combo} COMBO</div>}
+
+          <div style={styles.nitroWrap}>
+            <div style={styles.nitroLabel}>⚡ NITRO</div>
+            <div style={styles.nitroBarBg}>
+              <div style={{ ...styles.nitroBarFill, width: `${hud.nitroActive ? (stateRef.current?.nitroFuel ?? 0) : hud.nitroCharge}%` }} />
+            </div>
+            {hud.nitroCharge >= 100 && !hud.nitroActive && (
+              <button style={styles.nitroBtn} onPointerDown={activateNitro}>⚡ BOOST</button>
+            )}
+          </div>
+
           {floats.map(f => (
-            <div key={f.id} style={{ ...styles.floatText, color: f.color }}>{f.text}</div>
+            <div key={f.id} style={{ ...styles.floatText, color: f.color, left: `${(f.screenX * 0.5 + 0.5) * 100}%` }}>
+              {f.text}
+            </div>
           ))}
+
+          <div style={styles.mobileControls}>
+            <button style={styles.mobBtn} onPointerDown={() => moveLane(-1)}>◀</button>
+            <button style={{ ...styles.mobBtn, borderColor: 'rgba(255,80,80,0.4)', color: '#ff5555' }} onPointerDown={() => { const g = stateRef.current; if (g) g.brakeActive = true }} onPointerUp={() => { const g = stateRef.current; if (g) g.brakeActive = false }} onPointerLeave={() => { const g = stateRef.current; if (g) g.brakeActive = false }}>⛞</button>
+            <button style={{ ...styles.mobBtn, borderColor: hud.nitroCharge >= 100 ? 'rgba(0,200,255,0.7)' : 'rgba(255,255,255,0.15)', color: hud.nitroCharge >= 100 ? '#0af' : '#fff' }} onPointerDown={activateNitro}>⚡</button>
+            <button style={styles.mobBtn} onPointerDown={() => moveLane(1)}>▶</button>
+          </div>
         </>
       )}
+
+      <style>{`
+        @keyframes floatUp {
+          0% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+          100% { opacity: 0; transform: translateX(-50%) translateY(-80px) scale(1.5); }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.15); }
+        }
+        @keyframes fadeIn {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }
@@ -662,90 +1066,123 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'rgba(0,0,0,0.9)',
+    background: 'rgba(0,0,0,0.88)',
     gap: 12,
   },
   bigTitle: {
     fontFamily: 'monospace',
-    fontSize: 42,
+    fontSize: 48,
     fontWeight: 800,
     color: '#fff',
-    letterSpacing: 8,
+    letterSpacing: 10,
     textTransform: 'uppercase',
+    textShadow: '0 0 40px rgba(255,200,0,0.6)',
   },
-  subtitle: { fontSize: 12, letterSpacing: 4, color: 'rgba(255,255,255,0.4)', marginBottom: 32 },
+  subtitle: { fontSize: 12, letterSpacing: 5, color: 'rgba(255,255,255,0.35)', marginBottom: 32 },
   startBtn: {
-    padding: '14px 48px',
-    border: '2px solid #ffd700',
+    padding: '16px 56px',
+    border: '2px solid rgba(255,200,0,0.8)',
     background: 'transparent',
     color: '#ffd700',
-    fontSize: 14,
-    letterSpacing: 4,
+    fontSize: 15,
+    letterSpacing: 6,
     cursor: 'pointer',
     textTransform: 'uppercase',
     fontWeight: 700,
     fontFamily: 'monospace',
   },
-  hint: { fontSize: 10, letterSpacing: 2, color: 'rgba(255,255,255,0.25)', marginTop: 16 },
+  hint: { fontSize: 10, letterSpacing: 3, color: 'rgba(255,255,255,0.2)', marginTop: 8 },
   gameOverTitle: {
     fontFamily: 'monospace',
-    fontSize: 38,
+    fontSize: 40,
     fontWeight: 800,
     color: '#fff',
-    letterSpacing: 6,
-    marginBottom: 24,
+    letterSpacing: 8,
+    marginBottom: 32,
   },
-  resStat: { fontSize: 14, letterSpacing: 2, color: 'rgba(255,255,255,0.5)', marginBottom: 8, fontFamily: 'monospace' },
+  resStat: { fontSize: 14, letterSpacing: 3, color: 'rgba(255,255,255,0.55)', marginBottom: 8, fontFamily: 'monospace' },
   gold: { color: '#ffd700' },
-  
-  // HUD Realista
-  speedometer: {
+  topBar: {
     position: 'absolute',
-    bottom: 30,
-    right: 30,
+    top: 0,
+    left: 0,
+    right: 0,
     zIndex: 20,
-    background: 'rgba(0,0,0,0.75)',
-    backdropFilter: 'blur(8px)',
-    borderRadius: 20,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: '16px 24px',
-    border: '1px solid rgba(255,255,255,0.15)',
-    fontFamily: 'monospace',
-    textAlign: 'center',
+    background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)',
   },
-  speedValue: { fontSize: 48, fontWeight: 800, color: '#44ff44', lineHeight: 1, textShadow: '0 0 20px #44ff44' },
-  speedUnit: { fontSize: 11, color: 'rgba(255,255,255,0.5)', letterSpacing: 2, marginTop: 4 },
-  rpmBar: { width: 120, height: 4, background: 'rgba(255,255,255,0.2)', borderRadius: 2, marginTop: 12, overflow: 'hidden' },
-  rpmFill: { height: '100%', transition: 'width 0.05s linear' },
-  gearDisplay: { fontSize: 18, fontWeight: 700, color: '#ffd700', marginTop: 8 },
-  
-  rightPanel: {
+  scoreVal: { fontFamily: 'monospace', fontSize: 40, fontWeight: 700, lineHeight: 1, transition: 'color 0.3s, text-shadow 0.3s' },
+  label: { fontSize: 9, letterSpacing: 4, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginTop: 2 },
+  comboBadge: {
     position: 'absolute',
-    top: 30,
-    right: 30,
+    top: 80,
+    right: 24,
     zIndex: 20,
-    background: 'rgba(0,0,0,0.6)',
-    backdropFilter: 'blur(8px)',
-    borderRadius: 16,
-    padding: '12px 20px',
-    textAlign: 'right',
     fontFamily: 'monospace',
-    border: '1px solid rgba(255,255,255,0.1)',
+    fontSize: 26,
+    fontWeight: 700,
+    color: '#ffd700',
+    textShadow: '0 0 20px rgba(255,200,0,0.9)',
   },
-  stat: { fontSize: 14, color: '#fff', marginBottom: 4 },
-  trafficLight: { display: 'flex', gap: 6, marginTop: 12, justifyContent: 'center' },
-  light: { width: 20, height: 20, borderRadius: '50%', transition: 'all 0.2s' },
+  nitroWrap: {
+    position: 'absolute',
+    bottom: 100,
+    left: 24,
+    zIndex: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 6,
+    width: 180,
+  },
+  nitroLabel: { fontSize: 10, letterSpacing: 4, color: 'rgba(0,200,255,0.7)', textTransform: 'uppercase', fontFamily: 'monospace' },
+  nitroBarBg: { width: '100%', height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden' },
+  nitroBarFill: { height: '100%', background: 'linear-gradient(90deg,#0af,#07f)', borderRadius: 3, transition: 'width 0.1s' },
+  nitroBtn: {
+    padding: '10px 20px',
+    border: '1px solid #0af',
+    background: 'rgba(0,100,200,0.2)',
+    color: '#0af',
+    fontSize: 12,
+    letterSpacing: 3,
+    cursor: 'pointer',
+    borderRadius: 6,
+    textTransform: 'uppercase',
+    fontFamily: 'monospace',
+    boxShadow: '0 0 20px rgba(0,170,255,0.3)',
+  },
   floatText: {
     position: 'absolute',
-    bottom: '50%',
-    left: '50%',
-    transform: 'translateX(-50%)',
+    top: '40%',
     zIndex: 100,
     fontFamily: 'monospace',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 700,
     pointerEvents: 'none',
     whiteSpace: 'nowrap',
-    textShadow: '0 0 10px currentColor',
-    animation: 'floatUp 1s ease-out forwards',
+    textShadow: '0 0 20px currentColor',
+    animation: 'floatUp 0.9s ease-out forwards',
+    transform: 'translateX(-50%)',
   },
-}
+  mobileControls: {
+    position: 'absolute',
+    bottom: 24,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    gap: 12,
+    zIndex: 20,
+  },
+  mobBtn: {
+    width: 70,
+    height: 56,
+    border: '1px solid rgba(255,255,255,0.15)',
+    background: 'rgba(255,255,255,0.06)',
+    color: '#fff',
+    fontSize: 22,
+    cursor: 'pointer',
+    borderRadius: 10,
+    WebkitTapHighlightColor: 'transparent',
+  }}
