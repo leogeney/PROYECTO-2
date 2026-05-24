@@ -1,5 +1,6 @@
 import { T } from '../../styles/tokens'
 import { useNavigate } from 'react-router-dom'
+import { Icon } from './Icon'
 export function StatChip({ icon, value, label, color = T.muted }) {
   return (
     <div style={{
@@ -58,7 +59,7 @@ export function ModuleCard({ mod }) {
         background: mod.unlocked ? mod.color : T.faint,
         borderRadius: '14px 14px 0 0',
       }} />
-      <div style={{ fontSize: 36, marginBottom: 14 }}>{mod.unlocked ? mod.icon : '🔒'}</div>
+      <div style={{ fontSize: 36, marginBottom: 14 }}>{mod.unlocked ? mod.icon : <Icon icon="🔒" size={36} />}</div>
       <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 16, lineHeight: 1.3 }}>
         {mod.title}
       </div>

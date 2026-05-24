@@ -5,6 +5,7 @@ import { WordSearch } from './WordSearch'
 import { MemoryMatch } from './MemoryMatch'
 import { SignsQuiz } from './SignsQuiz'
 import { VirtualDriver } from './VirtualDriver'
+import { Icon } from '../components/ui/Icon'
 
 const GAMES_CONFIG = [
   {
@@ -102,7 +103,7 @@ function DifficultySelector({ game, onSelect, onCancel }) {
         boxShadow: '0 20px 60px rgba(0,0,0,.5)'
       }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>{game.emoji}</div>
+          <div style={{ fontSize: 48, marginBottom: 12 }}><Icon icon={game.emoji} size={48} /></div>
           <h2 style={{ fontSize: 20, fontWeight: 700, color: T.text, marginBottom: 6 }}>
             {game.title}
           </h2>
@@ -128,10 +129,10 @@ function DifficultySelector({ game, onSelect, onCancel }) {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-                <span style={{ fontSize: 20 }}>{diff.icon}</span>
+                <span style={{ fontSize: 20 }}><Icon icon={diff.icon} size={20} /></span>
                 <div style={{ textAlign: 'left' }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: diff.color }}>
-                    {diff.label} {diff.recommended && '⭐'}
+                    {diff.label} {diff.recommended && <Icon icon="⭐" size={13} />}
                   </div>
                   <div style={{ fontSize: 11, color: T.muted }}>
                     {diff.desc} • ×{diff.multiplier} XP
@@ -182,7 +183,7 @@ function AchievementsPanel({ achievements }) {
       marginBottom: 16
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: 24 }}>🏆</span>
+        <Icon icon="🏆" size={24} />
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>
             Logros desbloqueados
@@ -249,7 +250,7 @@ function GameCard({ game, onPlay, isNew }) {
           fontSize: 9, fontWeight: 700,
           zIndex: 10, animation: 'pulse 2s infinite'
         }}>
-          ✨ NUEVO
+          <> <Icon icon="✨" size={9} /> NUEVO</>
         </div>
       )}
 
@@ -264,7 +265,7 @@ function GameCard({ game, onPlay, isNew }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 24, boxShadow: `0 0 16px ${game.color}10`, flexShrink: 0
           }}>
-            {game.emoji}
+            <Icon icon={game.emoji} size={24} />
           </div>
           <div style={{
             padding: '4px 10px', borderRadius: 99, background: diff.bg,
@@ -302,7 +303,7 @@ function GameCard({ game, onPlay, isNew }) {
             fontSize: 12, fontWeight: 700, color: T.gold,
             fontFamily: "'Space Mono', monospace"
           }}>
-            ⚡ {game.baseXp}
+            <Icon icon="⚡" size={12} /> {game.baseXp}
             <span style={{ fontSize: 16, opacity: 0, transition: 'all .2s' }} className="play-arrow">→</span>
           </div>
         </div>
@@ -407,7 +408,7 @@ function GameHubInner() {
                   fontSize: 32, fontWeight: 800, marginBottom: 8,
                   lineHeight: 1.2, color: T.text, letterSpacing: '-0.5px'
                 }}>
-                  Aprende jugando <span style={{ color: T.green }}>🎮</span>
+                  Aprende jugando <Icon icon="🎮" size={32} color={T.green} />
                 </h1>
                 <p style={{ fontSize: 14, color: T.muted, maxWidth: 480, lineHeight: 1.6 }}>
                   Domina las normas de tránsito a través de juegos interactivos y desafiantes.
@@ -441,7 +442,7 @@ function GameHubInner() {
               border: `1px solid ${T.borderHi}`,
               textAlign: 'center', fontSize: 12, color: T.muted, marginTop: 12
             }}>
-              💡 Completa todos los juegos y desbloquea logros épicos.
+              <Icon icon="💡" size={12} /> Completa todos los juegos y desbloquea logros épicos.
               Tu puntuación se guarda automáticamente.
             </div>
           </>
@@ -468,7 +469,7 @@ function GameHubInner() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 18, flexShrink: 0
               }}>
-                {currentGame.emoji}
+                <Icon icon={currentGame.emoji} size={18} />
               </div>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>{currentGame.title}</div>
@@ -478,7 +479,7 @@ function GameHubInner() {
               </div>
               <div style={{ marginLeft: 'auto' }}>
                 <span className="mono" style={{ fontSize: 12, color: T.gold, fontWeight: 700 }}>
-                  ⚡ {Math.round(currentGame.baseXp * DIFFICULTY_LEVELS[selectedDifficulty].multiplier)} XP
+                  <Icon icon="⚡" size={12} /> {Math.round(currentGame.baseXp * DIFFICULTY_LEVELS[selectedDifficulty].multiplier)} XP
                 </span>
               </div>
             </div>

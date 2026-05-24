@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { T } from '../styles/tokens'
 import { useProgress } from '../context/ProgressContext'
+import { Icon } from '../components/ui/Icon'
 
 // ═══════════════════════════════════════════════════════════════════
 // SEÑALES VIALES — Estrategia multi-fuente con fallback robusto
@@ -71,10 +72,10 @@ function SignImage({ srcs = [], emoji = '🔲', size = 80, style: extraStyle = {
   if (failed || validSrcs.length === 0) {
     return (
       <span style={{
-        fontSize: size * 0.55, lineHeight: 1, display: 'flex',
+        lineHeight: 1, display: 'flex',
         alignItems: 'center', justifyContent: 'center',
         width: size, height: size, userSelect: 'none', ...extraStyle,
-      }}>{emoji}</span>
+      }}><Icon icon={emoji} size={size * 0.55} /></span>
     )
   }
 

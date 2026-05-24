@@ -1,6 +1,7 @@
 // components/Login/Login.jsx
 import { useState } from 'react'
 import { useLogin } from './useLogin'
+import { Icon } from '../ui/Icon'
 
 const C = {
   bg:       '#0d1117',
@@ -69,7 +70,7 @@ export default function Login({ onLoginSuccess }) {
             width: 48, height: 48, background: C.greenDk, borderRadius: 14,
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 26, marginBottom: 10, boxShadow: '0 4px 20px rgba(63,185,80,0.3)',
-          }}>☸</div>
+          }}><Icon icon="☸" size={26} /></div>
           <div style={{ fontSize: 20, fontWeight: 800, color: C.text, letterSpacing: '-0.02em' }}>
             TRANSI<span style={{ color: C.green }}>+</span>
           </div>
@@ -108,7 +109,7 @@ export default function Login({ onLoginSuccess }) {
           {isReset && (
             <>
               <div style={{ textAlign: 'center', marginBottom: 20 }}>
-                <div style={{ fontSize: 28 }}>🔑</div>
+                <div style={{ fontSize: 28 }}><Icon icon="🔑" size={28} /></div>
                 <h2 style={{ fontSize: 16, fontWeight: 700, color: C.text, margin: '6px 0 4px' }}>
                   Recuperar contraseña
                 </h2>
@@ -123,7 +124,7 @@ export default function Login({ onLoginSuccess }) {
                   border: '1px solid rgba(63,185,80,0.3)', borderRadius: 10,
                   textAlign: 'center', fontSize: 13, color: C.green,
                 }}>
-                  ✅ ¡Correo enviado! Revisa tu bandeja.
+                  <Icon icon="✅" size={14} /> ¡Correo enviado! Revisa tu bandeja.
                 </div>
               ) : (
                 <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -197,7 +198,7 @@ export default function Login({ onLoginSuccess }) {
                   border: '1px solid rgba(63,185,80,0.3)', borderRadius: 10,
                   textAlign: 'center',
                 }}>
-                  <div style={{ fontSize: 28, marginBottom: 8 }}>🎉</div>
+                  <div style={{ fontSize: 28, marginBottom: 8 }}><Icon icon="🎉" size={28} /></div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: C.green, marginBottom: 4 }}>
                     ¡Cuenta creada!
                   </div>
@@ -288,7 +289,7 @@ function PasswordInput({ name, value, onChange, error, placeholder = '•••�
         background: 'none', border: 'none', cursor: 'pointer', color: C.faint,
         fontSize: 14, padding: 0, display: 'flex', alignItems: 'center',
       }}>
-        {show ? '🙈' : '👁️'}
+        {show ? <Icon icon="🙈" size={14} /> : <Icon icon="👁️" size={14} />}
       </button>
     </div>
   )

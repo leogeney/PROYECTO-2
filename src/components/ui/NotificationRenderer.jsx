@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNotification } from '../../context/NotificationContext'
+import { Icon } from './Icon'
 
 const T = {
   bg: '#07090f', surface: '#0e1118', card: '#131720',
@@ -10,25 +11,25 @@ const T = {
 // Configuración visual por tipo de notificación
 const TYPE_CONFIG = {
   performance: {
-    icon: '🌟',
+    icon: <Icon icon="🌟" size={24} />,
     color: T.yellow,
     title: '¡Desempeño!',
     bgGradient: 'linear-gradient(135deg, rgba(255, 214, 0, 0.1), rgba(255, 214, 0, 0.05))'
   },
   inactivity: {
-    icon: '👀',
+    icon: <Icon icon="👀" size={24} />,
     color: T.blue,
     title: '¡Hola!',
     bgGradient: 'linear-gradient(135deg, rgba(41, 121, 255, 0.1), rgba(41, 121, 255, 0.05))'
   },
   progress: {
-    icon: '🚀',
+    icon: <Icon icon="🚀" size={24} />,
     color: T.purple,
     title: '¡Progreso!',
     bgGradient: 'linear-gradient(135deg, rgba(213, 0, 249, 0.1), rgba(213, 0, 249, 0.05))'
   },
   default: {
-    icon: '🔔',
+    icon: <Icon icon="🔔" size={24} />,
     color: T.green,
     title: 'Notificación',
     bgGradient: 'linear-gradient(135deg, rgba(0, 230, 118, 0.1), rgba(0, 230, 118, 0.05))'

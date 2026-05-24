@@ -12,6 +12,7 @@ import { useProgress } from '../../context/ProgressContext'
 import { Logo } from '../ui/Logo'
 import { XpBar } from '../ui/XpBar'
 import { StatChip } from '../ui/Cards'
+import { Icon } from '../ui/Icon'
 import { DashboardStyles } from './DashboardStyles'
 import { PageNoticias } from '../../pages/PageNoticias'
 
@@ -24,13 +25,13 @@ import { T } from '../../styles/tokens'
 
 const NAV_ITEMS = [
   { icon: '⊞',  label: 'Inicio',    to: '/dashboard/inicio'    },
-  { icon: '📚', label: 'Pruebas', to: '/dashboard/lecciones' },
-  { icon: '🪧', label: 'Biblioteca',to: '/dashboard/biblioteca' },
-  { icon: '🏆', label: 'Logros',    to: '/dashboard/logros'    },
-  { icon: '🏅', label: 'Ranking',   to: '/dashboard/ranking'   },
-  { icon: '👤', label: 'Perfil',    to: '/dashboard/perfil'    },
-  { icon: '🎮', label: 'Juegos',    to: '/dashboard/juegos'    },
-  { icon: '📰', label: 'Noticias', to: '/dashboard/noticias' },
+  { icon: <Icon icon="📚" size={16} />, label: 'Pruebas', to: '/dashboard/lecciones' },
+  { icon: <Icon icon="🪧" size={16} />, label: 'Biblioteca',to: '/dashboard/biblioteca' },
+  { icon: <Icon icon="🏆" size={16} />, label: 'Logros',    to: '/dashboard/logros'    },
+  { icon: <Icon icon="🏅" size={16} />, label: 'Ranking',   to: '/dashboard/ranking'   },
+  { icon: <Icon icon="👤" size={16} />, label: 'Perfil',    to: '/dashboard/perfil'    },
+  { icon: <Icon icon="🎮" size={16} />, label: 'Juegos',    to: '/dashboard/juegos'    },
+  { icon: <Icon icon="📰" size={16} />, label: 'Noticias', to: '/dashboard/noticias' },
 ]
 
 export function DashboardLayout({ user, onLogout }) {
@@ -53,9 +54,9 @@ export function DashboardLayout({ user, onLogout }) {
         }}>
           <Logo small />
           <div style={{ flex: 1 }} />
-          <StatChip icon="🔥" value={streak} label="racha" color={T.orange} />
-          <StatChip icon="❤️" value="4/5"  color={T.red}   />
-          <StatChip icon="⚡" value={xp}     label="xp"    color={T.green}  />
+          <StatChip icon={<Icon icon="🔥" size={13} />} value={streak} label="racha" color={T.orange} />
+          <StatChip icon={<Icon icon="❤️" size={13} />} value="4/5"  color={T.red}   />
+          <StatChip icon={<Icon icon="⚡" size={13} />} value={xp}     label="xp"    color={T.green}  />
           <button className="btn-ghost" onClick={onLogout} style={{ marginLeft: 4, fontSize: 11 }}>Salir</button>
         </header>
 

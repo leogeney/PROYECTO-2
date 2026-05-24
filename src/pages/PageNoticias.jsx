@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { NEWS, NEWS_CATEGORIES } from '../data/newsData'
 import { T } from '../styles/tokens'
+import { Icon } from '../components/ui/Icon'
 
 /* ─── Estilos locales ─────────────────────────────────────── */
 const S = {
@@ -161,11 +162,11 @@ function NewsModal({ news, onClose }) {
       <div style={S.modal} onClick={e => e.stopPropagation()}>
         <div style={S.modalBanner(news.color)} />
         <div style={S.modalContent}>
-          <button style={S.modalClose} onClick={onClose}>✕</button>
+          <button style={S.modalClose} onClick={onClose}><Icon icon="✕" size={22} /></button>
           <span style={S.modalTag(news.color)}>{news.tag}</span>
           <h2 style={S.modalTitle}>{news.emoji} {news.title}</h2>
           <div style={S.modalMeta}>
-            <span>📅 {news.date}</span>
+            <span><Icon icon="📅" size={12} /> {news.date}</span>
             <span>·</span>
             <span>⏱ {news.readMin} min de lectura</span>
           </div>
@@ -221,7 +222,7 @@ export function PageNoticias() {
     <div style={S.page}>
       {/* Encabezado */}
       <div className="anim-fade" style={S.header}>
-        <h2 style={S.label}>📰 Noticias Viales</h2>
+        <h2 style={S.label}><Icon icon="📰" size={13} /> Noticias Viales</h2>
         <p style={S.subtitle}>
           Mantente al día con las normas, sanciones y tips del tránsito en Colombia.
         </p>

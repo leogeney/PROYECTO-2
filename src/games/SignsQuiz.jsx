@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { ResultScreen, ScoreBadge, Lives } from './GameShared'
 import { useNotification } from '../context/NotificationContext'
+import { Icon } from '../components/ui/Icon'
 
 // Wikimedia Commons REST API — devuelve URL directa del archivo
 const WIKIMEDIA_API = 'https://commons.wikimedia.org/w/api.php'
@@ -249,7 +250,7 @@ function OptionButton({ label, letter, index, selected, correctIdx, disabled, on
         }}>{label}</span>
         {isRevealed && (isCorrect || isSelected) && (
           <div style={{ width: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>
-            {isCorrect ? '✓' : '✗'}
+            {isCorrect ? <Icon icon="✓" size={14} /> : <Icon icon="✗" size={14} />}
           </div>
         )}
       </div>
@@ -303,16 +304,16 @@ export function SignsQuiz({ onBack }) {
       setTimeout(() => {
         setDone(true)
         if (nextLives <= 0) {
-          showNotification?.('performance', '¡Uy! Te quedaste sin vidas. Repasa las señales y vuelve a intentarlo. 🛑', 5000)
+          showNotification?.('performance', <>¡Uy! Te quedaste sin vidas. Repasa las señales y vuelve a intentarlo. <Icon icon="🛑" size={16} /></>, 5000)
         } else {
           const correctCount = nr.filter(r => r.ok).length
           const pct = correctCount / SIGNS_QUIZ_DATA.length
           if (pct === 1) {
-            showNotification?.('performance', '¡Impresionante! Conoces todas las señales a la perfección. 🏆', 5000)
+            showNotification?.('performance', <>¡Impresionante! Conoces todas las señales a la perfección. <Icon icon="🏆" size={16} /></>, 5000)
           } else if (pct >= 0.6) {
-            showNotification?.('performance', '¡Buen trabajo! Vas por buen camino, sigue practicando. 👍', 5000)
+            showNotification?.('performance', <>¡Buen trabajo! Vas por buen camino, sigue practicando. <Icon icon="👍" size={16} /></>, 5000)
           } else {
-            showNotification?.('performance', '¡No te desanimes! Sigue aprendiendo y lo harás mejor. 💪', 5000)
+            showNotification?.('performance', <>¡No te desanimes! Sigue aprendiendo y lo harás mejor. <Icon icon="💪" size={16} /></>, 5000)
           }
         }
       }, 900)
@@ -367,7 +368,7 @@ export function SignsQuiz({ onBack }) {
     return (
       <ResultScreen
         score={score} maxScore={maxScore}
-        title="Quiz de Señales" emoji="🚦"
+        title="Quiz de Señales" emoji={<Icon icon="🚦" size={64} />}
         messages={results}
         onRetry={handleRetry}
         onHome={onBack}

@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useProgress } from '../context/ProgressContext'
 import { LessonRow } from '../components/ui/LessonRow'
 import { XpBar } from '../components/ui/XpBar'
+import { Icon } from '../components/ui/Icon'
 
 // ─────────────────────────────────────────────
 // PageLecciones

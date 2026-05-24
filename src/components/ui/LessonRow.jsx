@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { T, DIFF } from '../../styles/tokens'
+import { Icon } from './Icon'
 
 export function LessonRow({ lesson, delay = 0 }) {
   const navigate = useNavigate()
@@ -42,7 +43,7 @@ export function LessonRow({ lesson, delay = 0 }) {
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           <span className="badge" style={{ color: d.color, background: d.bg }}>{d.label}</span>
-          <span style={{ fontSize: 10, color: T.faint }}>⏱ {lesson.time}</span>
+          <span style={{ fontSize: 10, color: T.faint }}><Icon icon="⏱" size={10} /> {lesson.time}</span>
           <span className="mono" style={{ fontSize: 10, color: T.gold }}>+{lesson.xp} XP</span>
         </div>
       </div>
@@ -53,7 +54,7 @@ export function LessonRow({ lesson, delay = 0 }) {
           background: 'rgba(0,230,118,0.12)', border: '1px solid rgba(0,230,118,0.28)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 12, color: T.green, flexShrink: 0,
-        }}>✓</div>
+        }}><Icon icon="✓" size={12} /></div>
       ) : !lesson.locked && (
         <button
           className="btn-primary"

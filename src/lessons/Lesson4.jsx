@@ -1,4 +1,5 @@
 import React from 'react'
+import { Icon } from '../components/ui/Icon'
 import { LessonRunner } from './LessonShared'
 
 const QUESTIONS = [

@@ -1,4 +1,5 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react'
+import { Icon } from '../components/ui/Icon'
 
 export const AchievementsContext = createContext()
 

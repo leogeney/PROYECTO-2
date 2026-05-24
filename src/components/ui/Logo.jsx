@@ -1,4 +1,5 @@
 import { T } from '../../styles/tokens'
+import { Icon } from './Icon'
 
 export function Logo({ small }) {
   return (
@@ -9,7 +10,7 @@ export function Logo({ small }) {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: small ? 14 : 18, color: '#000', fontWeight: 900,
         boxShadow: '0 0 16px rgba(0,230,118,0.35)',
-      }}>☸</div>
+      }}><Icon icon="☸" size={small ? 14 : 18} /></div>
       <span className="mono" style={{
         fontSize: small ? 13 : 15, fontWeight: 700, color: T.text, letterSpacing: '0.08em',
       }}>

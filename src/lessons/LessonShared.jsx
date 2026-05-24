@@ -4,6 +4,7 @@ import { useProgress } from '../context/ProgressContext'
 import { MODULES } from '../data/lessons'
 import { T } from '../styles/tokens'
 import { useNotification } from '../context/NotificationContext'
+import { Icon } from '../components/ui/Icon'
 
 export function LessonRunner({ lessonId, allQuestions }) {
   const { showNotification } = useNotification()
@@ -43,7 +44,7 @@ export function LessonRunner({ lessonId, allQuestions }) {
     const perfect = correct === quizPool.length
     return (
       <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 20, textAlign: 'center' }}>
-        <div style={{ fontSize: 60 }}>{perfect ? '🏆' : correct > 0 ? '⭐' : '😅'}</div>
+        <div style={{ fontSize: 60 }}>{perfect ? <Icon icon="🏆" size={60} /> : correct > 0 ? <Icon icon="⭐" size={60} /> : <Icon icon="😅" size={60} />}</div>
         <h2 style={{ fontSize: 24, fontWeight: 700 }}>{perfect ? '¡Perfecto!' : '¡Completado!'}</h2>
         <p style={{ color: T.muted, fontSize: 14 }}>Respondiste <strong style={{ color: T.text }}>{correct}/{quizPool.length}</strong> correctamente</p>
         <div className="card" style={{ padding: '20px 44px', borderColor: 'rgba(255,215,64,0.25)', background: 'rgba(255,215,64,0.04)' }}>
@@ -75,11 +76,11 @@ export function LessonRunner({ lessonId, allQuestions }) {
       
       const percentage = correctCount / quizPool.length
       if (percentage === 1) {
-        showNotification?.('performance', '¡Excelente trabajo! Puntaje perfecto. 🌟', 5000)
+        showNotification?.('performance', <>¡Excelente trabajo! Puntaje perfecto. <Icon icon="🌟" size={14} /></>, 5000)
       } else if (percentage >= 0.6) {
-        showNotification?.('performance', '¡Muy bien! Te fue bien, sigue practicando. 👍', 5000)
+        showNotification?.('performance', <>¡Muy bien! Te fue bien, sigue practicando. <Icon icon="👍" size={14} /></>, 5000)
       } else {
-        showNotification?.('performance', '¡No te rindas! Tienes que mejorar un poco. 💪', 5000)
+        showNotification?.('performance', <>¡No te rindas! Tienes que mejorar un poco. <Icon icon="💪" size={14} /></>, 5000)
       }
     } else {
       setStep(step + 1)
@@ -109,7 +110,7 @@ export function LessonRunner({ lessonId, allQuestions }) {
       </div>
 
       <div className="card anim-fade" style={{ padding: '28px', marginBottom: 24, textAlign: 'center' }}>
-        {q.emoji && <div style={{ fontSize: 44, marginBottom: 12 }}>{q.emoji}</div>}
+        {q.emoji && <div style={{ marginBottom: 12 }}><Icon icon={q.emoji} size={44} /></div>}
         <p style={{ fontSize: 18, fontWeight: 600, lineHeight: 1.4, margin: 0, color: T.text }}>{q.q}</p>
       </div>
 
@@ -136,8 +137,8 @@ export function LessonRunner({ lessonId, allQuestions }) {
                 fontSize: 10, fontWeight: 700, color: T.faint, flexShrink: 0,
               }}>{['A', 'B', 'C', 'D'][i]}</span>
               <span style={{ flex: 1 }}>{opt}</span>
-              {selected !== null && isCorrect && <span style={{ color: T.green }}>✓</span>}
-              {selected !== null && isSelected && !isCorrect && <span style={{ color: T.red }}>✗</span>}
+              {selected !== null && isCorrect && <Icon icon="✓" size={14} color={T.green} />}
+              {selected !== null && isSelected && !isCorrect && <Icon icon="✗" size={14} color={T.red} />}
             </button>
           )
         })}
@@ -151,7 +152,7 @@ export function LessonRunner({ lessonId, allQuestions }) {
             border: `1px solid ${selected === q.correct ? 'rgba(0,230,118,0.3)' : 'rgba(255,82,82,0.3)'}`,
             fontSize: 13, color: selected === q.correct ? T.green : T.red,
           }}>
-            {selected === q.correct ? '✅ ¡Correcto!' : `❌ La respuesta correcta es: "${q.opts[q.correct]}"`}
+            {selected === q.correct ? <><Icon icon="✅" size={14} /> ¡Correcto!</> : <><Icon icon="❌" size={14} /> La respuesta correcta es: "{q.opts[q.correct]}"</>}
           </div>
           <button className="btn-primary" style={{ width: '100%', padding: '13px' }} onClick={handleNext}>
             {step + 1 >= quizPool.length ? 'Ver resultados →' : 'Siguiente →'}

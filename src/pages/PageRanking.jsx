@@ -1,5 +1,6 @@
 import React from 'react'
 import { T } from '../styles/tokens'
+import { Icon } from '../components/ui/Icon'
 
 // Datos de prueba para el mockup
 const DUMMY_RANKING = [
@@ -30,7 +31,7 @@ export function PageRanking({ user }) {
     <div className="anim-fade" style={{ maxWidth: 800, margin: '0 auto', paddingBottom: 40 }}>
       
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <div style={{ fontSize: 48, marginBottom: 12, animation: 'glow-pulse 2s infinite' }}>🏆</div>
+        <Icon icon="🏆" size={48} />
         <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Ranking Global</h1>
         <p style={{ color: T.muted, fontSize: 14, marginTop: 8 }}>
           Los mejores conductores virtuales de la academia.
@@ -92,7 +93,7 @@ export function PageRanking({ user }) {
               <div style={{ fontWeight: 600, fontSize: 15 }}>{u.name}</div>
               <div style={{ fontSize: 11, color: T.muted, display: 'flex', gap: 12, marginTop: 4 }}>
                 <span>Nivel {u.level}</span>
-                {u.streak > 0 && <span style={{ color: T.orange }}>🔥 {u.streak} días</span>}
+                {u.streak > 0 && <span style={{ color: T.orange }}><Icon icon="🔥" size={11} /> {u.streak} días</span>}
               </div>
             </div>
             <div className="mono" style={{ fontSize: 16, fontWeight: 700, color: T.text }}>

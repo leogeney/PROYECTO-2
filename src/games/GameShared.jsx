@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useProgress } from '../context/ProgressContext'
+import { Icon } from '../components/ui/Icon'
 
 export const T = {
   bg:       '#07090f',
@@ -154,7 +155,7 @@ export function Lives({ lives, max = 3 }) {
   return (
     <div style={{ display: 'flex', gap: 4 }}>
       {Array.from({ length: max }).map((_, i) => (
-        <span key={i} className={`lives-heart${i >= lives ? ' lost' : ''}`}>❤️</span>
+        <span key={i} className={`lives-heart${i >= lives ? ' lost' : ''}`}><Icon icon="❤️" size={20} /></span>
       ))}
     </div>
   )
@@ -164,7 +165,7 @@ export function ScoreBadge({ score, color = T.gold }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
       <span className="mono" style={{ fontSize: 13, color, fontWeight: 700 }}>
-        ⚡ {score} XP
+        <Icon icon="⚡" size={13} /> {score} XP
       </span>
     </div>
   )
@@ -201,7 +202,7 @@ export function TimerBar({ timeLeft, total }) {
 export function ResultScreen({ score, maxScore, title, emoji, onRetry, onHome, messages = [] }) {
   const { addXp } = useProgress()
   const pct = Math.round((score / maxScore) * 100)
-  const medal = pct === 100 ? '🏆' : pct >= 70 ? '⭐' : pct >= 40 ? '😊' : '😅'
+  const medal = pct === 100 ? <Icon icon="🏆" size={64} /> : pct >= 70 ? <Icon icon="⭐" size={64} /> : pct >= 40 ? <Icon icon="😊" size={64} /> : <Icon icon="😅" size={64} />
   const phrase = pct === 100 ? '¡Perfecto! Eres un experto vial.' : pct >= 70 ? '¡Muy bien! Sigue practicando.' : pct >= 40 ? '¡Buen intento! Puedes mejorar.' : 'Sigue estudiando.'
 
   const added = useRef(false)
@@ -245,7 +246,7 @@ export function ResultScreen({ score, maxScore, title, emoji, onRetry, onHome, m
               border: `1px solid ${m.ok ? 'rgba(0,230,118,.2)' : 'rgba(255,82,82,.2)'}`,
               borderRadius: 8, padding: '6px 12px', textAlign: 'left',
             }}>
-              {m.ok ? '✓' : '✗'} {m.text}
+              {m.ok ? <Icon icon="✓" size={12} /> : <Icon icon="✗" size={12} />} {m.text}
             </div>
           ))}
         </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { T, ResultScreen, ScoreBadge, ProgressBar } from './GameShared'
 import { useNotification } from '../context/NotificationContext'
+import { Icon } from '../components/ui/Icon'
 
 const LEVELS = [
   {
@@ -80,12 +81,12 @@ export function WordSearch({ onBack }) {
       if (foundWords.length + 1 === level.words.length) {
         setTimeout(() => {
           if (levelIdx + 1 < LEVELS.length) {
-            showNotification?.('performance', '¡Sopa completada! Tienes muy buena vista. 👀', 4000)
+            showNotification?.('performance', <>¡Sopa completada! Tienes muy buena vista. <Icon icon="👀" size={16} /></>, 4000)
             setLevelIdx(levelIdx + 1)
             setFoundWords([])
             setSelection([])
           } else {
-            showNotification?.('performance', '¡Increíble! Encontraste todas las palabras del juego. 🔎', 5000)
+            showNotification?.('performance', <>¡Increíble! Encontraste todas las palabras del juego. <Icon icon="🔎" size={16} /></>, 5000)
             setDone(true)
           }
         }, 1500)
@@ -106,7 +107,7 @@ export function WordSearch({ onBack }) {
       <ResultScreen
         score={score} maxScore={maxScore}
         title="Sopa de Letras"
-        emoji="🔍"
+        emoji={<Icon icon="🔍" size={64} />}
         messages={[{ text: '¡Encontraste todas las palabras!', ok: true }]}
         onRetry={() => { setLevelIdx(0); setFoundWords([]); setSelection([]); setScore(0); setDone(false) }}
         onHome={onBack}
@@ -199,7 +200,7 @@ export function WordSearch({ onBack }) {
                   transition: 'all .3s'
                 }}
               >
-                {w} {found && '✓'}
+                {w} {found && <Icon icon="✓" size={12} />}
               </div>
             )
           })}
