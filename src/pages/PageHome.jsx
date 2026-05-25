@@ -16,7 +16,7 @@ export function PageHome({ user }) {
       {/* Hero banner */}
       <div className="card anim-up" style={{
         padding: '26px 28px', position: 'relative', overflow: 'hidden',
-        borderColor: 'rgba(0,230,118,0.14)',
+        borderColor: 'rgba(119, 1, 1, 0.14)',
         background: `linear-gradient(135deg, ${T.card} 60%, rgba(0,230,118,0.05))`,
       }}>
         <div className="grid-bg" style={{ position: 'absolute', inset: 0, opacity: 0.7 }} />
