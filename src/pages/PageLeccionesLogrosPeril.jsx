@@ -1,11 +1,39 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../context/ProgressContext'
 import { LessonRow } from '../components/ui/LessonRow'
 import { XpBar } from '../components/ui/XpBar'
-import { Icon } from '../components/ui/Icon'
 import { useSignImages } from '../utils/wikimedia'
 import { T, DIFF } from '../styles/tokens'
+
+// ─────────────────────────────────────────────
+// Fa — thin wrapper around Font Awesome icons
+// Usage: <Fa icon="fa-bolt" size={14} color="#00e676" />
+// Requires Font Awesome 6 Free to be loaded in index.html:
+//   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+// ─────────────────────────────────────────────
+function Fa({ icon, size = 14, color, style = {} }) {
+  return (
+    <i
+      className={`fa-solid ${icon}`}
+      style={{ fontSize: size, color, lineHeight: 1, ...style }}
+    />
+  )
+}
+
+// Emoji → FA mapping used across lessons
+// fa-solid class names (FA 6)
+const LESSON_ICONS = {
+  1: 'fa-ban',           // Señales reglamentarias
+  2: 'fa-triangle-exclamation', // Señales preventivas
+  3: 'fa-traffic-light', // Semáforos
+  4: 'fa-gauge-high',    // Velocidades
+  5: 'fa-shield-halved', // Conducción defensiva
+}
+
+// ─────────────────────────────────────────────
+// PageLecciones
+// ─────────────────────────────────────────────
 
 const LECCIONES_STYLES = `
 @keyframes leccion-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
@@ -21,11 +49,11 @@ const LECCIONES_STYLES = `
 `
 
 const LESSONS = [
-  { id: 1, icon: '⛔', title: 'Señales reglamentarias',  desc: 'Señales de prohibición, límites y obligación', diff: 'fácil',   time: '5 min',  xp: 50,  locked: false, img: 'Colombia_road_sign_SR-01.svg', color: '#f87171' },
-  { id: 2, icon: '⚠️', title: 'Señales preventivas',     desc: 'Advertencias de peligro y condiciones de la vía', diff: 'fácil',   time: '6 min',  xp: 60,  locked: false, img: 'Colombia_road_sign_SP-01.svg', color: '#fbbf24' },
-  { id: 3, icon: '🚦', title: 'Semáforos y prioridades', desc: 'Luces de semáforo, pasos peatonales y emergencias', diff: 'medio',   time: '8 min',  xp: 80,  locked: false, img: 'Colombia_road_sign_SP-23.svg', color: '#60a5fa' },
-  { id: 4, icon: '🏎️', title: 'Velocidades máximas',     desc: 'Límites de velocidad según el tipo de vía', diff: 'fácil',   time: '7 min',  xp: 70,  locked: false, img: 'Colombia_road_sign_SR-30B.svg', color: '#34d399' },
-  { id: 5, icon: '🛡️', title: 'Conducción defensiva',    desc: 'Anticipación, distancia segura y prevención', diff: 'difícil', time: '10 min', xp: 100, locked: false, img: 'Colombia_road_sign_SP-44.svg', color: '#a78bfa' },
+  { id: 1, title: 'Señales reglamentarias',  desc: 'Señales de prohibición, límites y obligación',       diff: 'fácil',   time: '5 min',  xp: 50,  locked: false, img: 'Colombia_road_sign_SR-01.svg',  color: '#f87171' },
+  { id: 2, title: 'Señales preventivas',     desc: 'Advertencias de peligro y condiciones de la vía',    diff: 'fácil',   time: '6 min',  xp: 60,  locked: false, img: 'Colombia_road_sign_SP-01.svg',  color: '#fbbf24' },
+  { id: 3, title: 'Semáforos y prioridades', desc: 'Luces de semáforo, pasos peatonales y emergencias',  diff: 'medio',   time: '8 min',  xp: 80,  locked: false, img: 'Colombia_road_sign_SP-23.svg',  color: '#60a5fa' },
+  { id: 4, title: 'Velocidades máximas',     desc: 'Límites de velocidad según el tipo de vía',          diff: 'fácil',   time: '7 min',  xp: 70,  locked: false, img: 'Colombia_road_sign_SR-30B.svg', color: '#34d399' },
+  { id: 5, title: 'Conducción defensiva',    desc: 'Anticipación, distancia segura y prevención',        diff: 'difícil', time: '10 min', xp: 100, locked: false, img: 'Colombia_road_sign_SP-44.svg',  color: '#a78bfa' },
 ]
 
 function LeccionCard({ lesson, done, index, delay = 0 }) {
@@ -35,6 +63,7 @@ function LeccionCard({ lesson, done, index, delay = 0 }) {
   const [imgErr, setImgErr] = useState(false)
   const { urls } = useSignImages(lesson.img ? [lesson.img] : [])
   const imgUrl = lesson.img ? urls[lesson.img] : null
+  const faIcon = LESSON_ICONS[lesson.id]
 
   return (
     <div
@@ -42,7 +71,8 @@ function LeccionCard({ lesson, done, index, delay = 0 }) {
       onClick={() => { if (!lesson.locked && !done) nav(`/dashboard/leccion/${lesson.id}`) }}
       style={{
         borderRadius: 16, overflow: 'hidden', cursor: lesson.locked || done ? 'default' : 'pointer',
-        background: T.card, border: `1px solid ${lesson.locked ? 'rgba(255,255,255,0.05)' : done ? 'rgba(0,230,118,0.15)' : `${lesson.color}18`}`,
+        background: T.card,
+        border: `1px solid ${lesson.locked ? 'rgba(255,255,255,0.05)' : done ? 'rgba(0,230,118,0.15)' : `${lesson.color}18`}`,
         animationDelay: `${delay}ms`, position: 'relative',
         transition: 'all 0.3s cubic-bezier(.16,1,.3,1)',
         opacity: lesson.locked ? 0.35 : 1,
@@ -59,7 +89,7 @@ function LeccionCard({ lesson, done, index, delay = 0 }) {
           <>
             {!imgLoaded && (
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Icon icon={lesson.icon} size={28} />
+                <Fa icon={faIcon} size={28} color={lesson.color} />
               </div>
             )}
             <img
@@ -76,22 +106,20 @@ function LeccionCard({ lesson, done, index, delay = 0 }) {
           </>
         ) : (
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon icon={lesson.icon} size={40} />
+            <Fa icon={faIcon} size={40} color={lesson.color} />
           </div>
         )}
-        {/* Overlay gradient at bottom */}
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, height: 40,
           background: `linear-gradient(transparent, ${T.card})`,
         }} />
-        {/* Status badge on top right */}
         {done && (
           <div style={{
             position: 'absolute', top: 10, right: 10, width: 28, height: 28,
             borderRadius: '50%', background: 'rgba(0,230,118,0.15)', border: '1px solid rgba(0,230,118,0.3)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Icon icon="✓" size={12} color={T.green} />
+            <Fa icon="fa-check" size={11} color={T.green} />
           </div>
         )}
       </div>
@@ -105,14 +133,16 @@ function LeccionCard({ lesson, done, index, delay = 0 }) {
           {lesson.desc}
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span className={done ? 'leccion-badge-done' : ''} style={{ padding: '3px 8px', borderRadius: 99, fontSize: 9, fontWeight: 700, background: d.bg, color: d.color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            <Icon icon="⚡" size={9} /> {d.label}
+          <span className={done ? 'leccion-badge-done' : ''} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 99, fontSize: 9, fontWeight: 700, background: d.bg, color: d.color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            <Fa icon="fa-bolt" size={9} /> {d.label}
           </span>
-          <span style={{ fontSize: 10, color: T.faint }}><Icon icon="⏱" size={10} /> {lesson.time}</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, color: T.faint }}>
+            <Fa icon="fa-clock" size={10} /> {lesson.time}
+          </span>
           <span style={{ fontSize: 10, fontFamily: "'Space Mono', monospace", fontWeight: 700, color: T.gold }}>+{lesson.xp} XP</span>
           {!done && !lesson.locked && (
-            <span style={{ marginLeft: 'auto', fontSize: 11, color: lesson.color }}>
-              Empezar →
+            <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, color: lesson.color }}>
+              Empezar <Fa icon="fa-arrow-right" size={10} />
             </span>
           )}
         </div>
@@ -163,11 +193,11 @@ export function PageLecciones() {
           {/* Stats row */}
           <div style={{ display: 'flex', gap: 20, marginTop: 14 }}>
             {[
-              { icon: '⚡', value: xp.toLocaleString(), label: 'XP ganados', color: T.green },
-              { icon: '🔥', value: streak, label: 'días seguidos', color: T.orange },
+              { fa: 'fa-bolt',  value: xp.toLocaleString(), label: 'XP ganados',   color: T.green  },
+              { fa: 'fa-fire',  value: streak,               label: 'días seguidos', color: T.orange },
             ].map(s => (
               <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Icon icon={s.icon} size={14} color={s.color} />
+                <Fa icon={s.fa} size={13} color={s.color} />
                 <span className="mono" style={{ fontSize: 13, fontWeight: 700, color: s.color }}>{s.value}</span>
                 <span style={{ fontSize: 10, color: T.faint }}>{s.label}</span>
               </div>
@@ -189,6 +219,7 @@ export function PageLecciones() {
 // ─────────────────────────────────────────────
 // PageLogros
 // ─────────────────────────────────────────────
+
 const LOGRO_STYLE = `
 @keyframes lg-slide{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes lg-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
@@ -197,14 +228,12 @@ const LOGRO_STYLE = `
 @keyframes lg-shine{0%{background-position:-200% center}100%{background-position:200% center}}
 @keyframes lg-reveal{0%{opacity:0;transform:scale(0.8) rotateY(10deg)}50%{transform:scale(1.05) rotateY(-3deg)}100%{opacity:1;transform:scale(1) rotateY(0)}}
 @keyframes lg-sparkle{0%,100%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1)}}
-
 .lg-c{transition:all 0.4s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden}
 .lg-c:hover{transform:translateY(-6px)}
 .lg-c:hover .lg-c-glow{opacity:0.12}
 .lg-c:hover .lg-c-img{transform:scale(1.12)}
 .lg-c:hover .lg-c-line{opacity:0.6}
 .lg-c:active{transform:translateY(-3px)!important}
-
 .lg-c-glow{position:absolute;inset:0;opacity:0;transition:opacity 0.5s;pointer-events:none;
   background:radial-gradient(circle at 50% 30%,var(--lg-c)08,transparent 70%)}
 .lg-c-img{transition:transform 0.5s cubic-bezier(.16,1,.3,1)}
@@ -213,18 +242,12 @@ const LOGRO_STYLE = `
 `
 
 const ACHIEVEMENTS = [
-  { icon: '🎖️', title: 'Primera lección',    desc: 'Completaste tu primera lección',           done: cl => cl >= 1,
-    tier: 'bronce',  order: 0 },
-  { icon: '🔥', title: 'Racha de 7 días',     desc: 'Mantuviste 7 días consecutivos',           done: (cl, s) => s >= 7,
-    tier: 'plata',   order: 1 },
-  { icon: '⚡', title: '1000 XP',              desc: 'Alcanzaste 1000 puntos de experiencia',    done: (cl, s, x) => x >= 1000,
-    tier: 'plata',   order: 2 },
-  { icon: '📚', title: 'Módulo completo',      desc: 'Completaste 3 lecciones de un módulo',     done: cl => cl >= 3,
-    tier: 'oro',     order: 3 },
-  { icon: '🏆', title: 'Súper progreso',       desc: 'Llegaste al Nivel 5',                     done: (cl, s, x, l) => l >= 5,
-    tier: 'oro',     order: 4 },
-  { icon: '🌟', title: 'Maestro del tránsito', desc: 'Completaste todas las lecciones',          done: cl => cl >= 5,
-    tier: 'diamante', order: 5 },
+  { fa: 'fa-medal',        title: 'Primera lección',    desc: 'Completaste tu primera lección',        done: cl => cl >= 1,           tier: 'bronce'  },
+  { fa: 'fa-fire',         title: 'Racha de 7 días',    desc: 'Mantuviste 7 días consecutivos',        done: (cl,s) => s >= 7,        tier: 'plata'   },
+  { fa: 'fa-bolt',         title: '1000 XP',            desc: 'Alcanzaste 1000 puntos de experiencia', done: (cl,s,x) => x >= 1000,   tier: 'plata'   },
+  { fa: 'fa-book-open',    title: 'Módulo completo',    desc: 'Completaste 3 lecciones de un módulo',  done: cl => cl >= 3,           tier: 'oro'     },
+  { fa: 'fa-trophy',       title: 'Súper progreso',     desc: 'Llegaste al Nivel 5',                   done: (cl,s,x,l) => l >= 5,    tier: 'oro'     },
+  { fa: 'fa-star',         title: 'Maestro del tránsito', desc: 'Completaste todas las lecciones',     done: cl => cl >= 5,           tier: 'diamante'},
 ]
 
 const TIERS = {
@@ -240,9 +263,7 @@ function AchievementCard({ ach, unlocked, index }) {
   return (
     <div className="lg-c" style={{
       padding: 0, borderRadius: 18, background: T.card,
-      border: unlocked
-        ? `1px solid ${t.border}`
-        : '1px solid rgba(255,255,255,0.04)',
+      border: unlocked ? `1px solid ${t.border}` : '1px solid rgba(255,255,255,0.04)',
       opacity: unlocked ? 1 : 0.35,
       cursor: 'default',
       animation: `lg-reveal 0.5s ease ${index * 0.06}s both`,
@@ -251,14 +272,10 @@ function AchievementCard({ ach, unlocked, index }) {
       <div className="lg-c-line" />
       <div className="lg-c-glow" />
 
-      {/* Top: icon area */}
-      <div style={{
-        padding: '24px 24px 0',
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-      }}>
+      <div style={{ padding: '24px 24px 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div style={{
           width: 60, height: 60, borderRadius: 16,
-          background: unlocked ? `${t.bg}` : 'rgba(255,255,255,0.02)',
+          background: unlocked ? t.bg : 'rgba(255,255,255,0.02)',
           border: `1px solid ${unlocked ? t.border : 'rgba(255,255,255,0.04)'}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           position: 'relative', overflow: 'hidden',
@@ -270,11 +287,11 @@ function AchievementCard({ ach, unlocked, index }) {
               animation: 'lg-pulse 3s ease-in-out infinite',
             }} />
           )}
-          <div className="lg-c-img" style={{
-            fontSize: 28, lineHeight: 1,
-            filter: unlocked ? 'none' : 'grayscale(0.6)',
-          }}>
-            {unlocked ? ach.icon : '🔒'}
+          <div className="lg-c-img">
+            {unlocked
+              ? <Fa icon={ach.fa} size={26} color={t.color} />
+              : <Fa icon="fa-lock" size={22} color="rgba(255,255,255,0.2)" />
+            }
           </div>
         </div>
 
@@ -282,27 +299,20 @@ function AchievementCard({ ach, unlocked, index }) {
           <div style={{
             fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
             padding: '3px 8px', borderRadius: 99, whiteSpace: 'nowrap',
-            background: t.bg, border: `1px solid ${t.border}`,
-            color: t.color,
+            background: t.bg, border: `1px solid ${t.border}`, color: t.color,
+            display: 'inline-flex', alignItems: 'center', gap: 4,
           }}>
-            {ach.tier === 'diamante' ? '💎 ' : ''}{t.label}
+            {ach.tier === 'diamante' && <Fa icon="fa-gem" size={8} />}
+            {t.label}
           </div>
         )}
       </div>
 
-      {/* Body */}
       <div style={{ padding: '16px 24px 20px' }}>
-        <div style={{
-          fontSize: 15, fontWeight: 700,
-          color: unlocked ? T.text : T.muted,
-          marginBottom: 4,
-        }}>
+        <div style={{ fontSize: 15, fontWeight: 700, color: unlocked ? T.text : T.muted, marginBottom: 4 }}>
           {ach.title}
         </div>
-        <div style={{
-          fontSize: 12, color: T.faint, lineHeight: 1.4,
-          marginBottom: unlocked ? 16 : 12,
-        }}>
+        <div style={{ fontSize: 12, color: T.faint, lineHeight: 1.4, marginBottom: unlocked ? 16 : 12 }}>
           {ach.desc}
         </div>
 
@@ -310,10 +320,9 @@ function AchievementCard({ ach, unlocked, index }) {
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
             padding: '8px 12px', borderRadius: 10,
-            background: `${t.bg}`,
-            border: `1px solid ${t.border}`,
+            background: t.bg, border: `1px solid ${t.border}`,
           }}>
-            <span style={{ color: t.color, fontSize: 14 }}>🏅</span>
+            <Fa icon="fa-award" size={13} color={t.color} />
             <span style={{ fontSize: 11, fontWeight: 600, color: t.color }}>
               {ach.tier === 'diamante' ? 'Logro exclusivo' : 'Logro desbloqueado'}
             </span>
@@ -330,7 +339,6 @@ export function PageLogros() {
   const total = ACHIEVEMENTS.length
   const done = ACHIEVEMENTS.filter(a => a.done(completedLessons.length, streak, xp, level)).length
   const pct = Math.round((done / total) * 100)
-
   const tiersOrder = ['diamante', 'oro', 'plata', 'bronce']
 
   return (
@@ -344,22 +352,10 @@ export function PageLogros() {
         border: '1px solid rgba(255,215,0,0.08)',
         marginBottom: 22, padding: '30px 28px',
       }}>
-        {/* Animated orbs */}
-        <div style={{
-          position: 'absolute', top: -80, right: -40, width: 260, height: 260,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,215,0,0.05), transparent 70%)',
-          animation: 'lg-float 6s ease-in-out infinite',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: -60, left: -30, width: 200, height: 200,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(185,242,255,0.04), transparent 70%)',
-          animation: 'lg-float 8s ease-in-out infinite reverse',
-        }} />
+        <div style={{ position: 'absolute', top: -80, right: -40, width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,215,0,0.05), transparent 70%)', animation: 'lg-float 6s ease-in-out infinite' }} />
+        <div style={{ position: 'absolute', bottom: -60, left: -30, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(185,242,255,0.04), transparent 70%)', animation: 'lg-float 8s ease-in-out infinite reverse' }} />
 
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 24 }}>
-          {/* Icon */}
           <div style={{
             width: 72, height: 72, borderRadius: 20,
             background: 'linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,215,0,0.03))',
@@ -367,7 +363,7 @@ export function PageLogros() {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0, animation: 'lg-float 3s ease-in-out infinite',
           }}>
-            <span style={{ fontSize: 32 }}>🏆</span>
+            <Fa icon="fa-trophy" size={30} color="#ffd740" />
           </div>
 
           <div style={{ flex: 1 }}>
@@ -383,7 +379,6 @@ export function PageLogros() {
             </p>
           </div>
 
-          {/* Progress ring */}
           <div style={{ position: 'relative', flexShrink: 0, width: 64, height: 64 }}>
             <svg width="64" height="64" viewBox="0 0 64 64" style={{ transform: 'rotate(-90deg)' }}>
               <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="4" />
@@ -391,17 +386,13 @@ export function PageLogros() {
                 strokeDasharray={2 * Math.PI * 26} strokeDashoffset={2 * Math.PI * 26 * (1 - pct / 100)}
                 strokeLinecap="round" style={{ transition: 'stroke-dashoffset 1s cubic-bezier(.16,1,.3,1)' }} />
             </svg>
-            <div style={{
-              position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-              pointerEvents: 'none',
-            }}>
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
               <span className="mono" style={{ fontSize: 18, fontWeight: 700, color: T.gold }}>{pct}%</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Achievements by tier */}
       {tiersOrder.map(tierKey => {
         const tierAchs = ACHIEVEMENTS.filter(a => a.tier === tierKey)
         if (tierAchs.length === 0) return null
@@ -410,26 +401,13 @@ export function PageLogros() {
 
         return (
           <div key={tierKey} style={{ marginBottom: 22 }}>
-            {/* Tier header */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 10,
-              marginBottom: 12, padding: '0 2px',
-            }}>
-              <div style={{
-                width: 6, height: 6, borderRadius: '50%', background: t.color,
-                boxShadow: `0 0 8px ${t.color}`,
-              }} />
-              <span style={{
-                fontSize: 11, fontWeight: 700, color: t.color, textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-              }}>
-                {tierKey === 'diamante' ? '💎 ' : ''}{t.label}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, padding: '0 2px' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: t.color, boxShadow: `0 0 8px ${t.color}` }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: t.color, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                {tierKey === 'diamante' && <Fa icon="fa-gem" size={10} />}
+                {t.label}
               </span>
-              <span style={{
-                fontSize: 10, color: T.faint,
-                padding: '2px 6px', borderRadius: 99,
-                background: 'rgba(255,255,255,0.03)',
-              }}>
+              <span style={{ fontSize: 10, color: T.faint, padding: '2px 6px', borderRadius: 99, background: 'rgba(255,255,255,0.03)' }}>
                 {count}/{tierAchs.length}
               </span>
             </div>
@@ -437,15 +415,7 @@ export function PageLogros() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
               {tierAchs.map((ach, i) => {
                 const unlocked = ach.done(completedLessons.length, streak, xp, level)
-                return (
-                  <AchievementCard
-                    key={ach.title}
-                    ach={ach}
-                    unlocked={unlocked}
-                    index={i}
-                    tier={tierKey}
-                  />
-                )
+                return <AchievementCard key={ach.title} ach={ach} unlocked={unlocked} index={i} tier={tierKey} />
               })}
             </div>
           </div>
@@ -458,24 +428,6 @@ export function PageLogros() {
 // ─────────────────────────────────────────────
 // PagePerfil — helpers
 // ─────────────────────────────────────────────
-const P = {
-  green:  '#00e676',
-  gold:   '#ffd740',
-  purple: '#b39ddb',
-  muted:  '#9e9e9e',
-  faint:  '#616161',
-  orange: '#ffb74d',
-  danger: '#ef5350',
-  card:   'rgba(255,255,255,0.04)',
-  border: 'rgba(255,255,255,0.08)',
-}
-
-const GOALS = [
-  { value: 15,  label: '15 min / día' },
-  { value: 30,  label: '30 min / día' },
-  { value: 60,  label: '1 hora / día' },
-  { value: 120, label: '2 horas / día' },
-]
 
 const NOTIF_DEFS = [
   { key: 'racha',  label: 'Recordatorio de racha', sub: 'Cada día a las 8 PM' },
@@ -484,96 +436,114 @@ const NOTIF_DEFS = [
   { key: 'tips',   label: 'Consejos del día',       sub: 'Tips de aprendizaje' },
 ]
 
+const GOALS = [
+  { value: 5,  label: '5 min / día — Ritmo suave' },
+  { value: 10, label: '10 min / día — Casual' },
+  { value: 15, label: '15 min / día — Regular' },
+  { value: 30, label: '30 min / día — Comprometido' },
+  { value: 45, label: '45 min / día — Intenso' },
+  { value: 60, label: '60 min / día — Dedicado' },
+]
+
 function Toast({ msg }) {
   if (!msg) return null
   return (
     <div style={{
       position: 'fixed', bottom: 28, left: '50%', transform: 'translateX(-50%)',
-      background: 'rgba(0,230,118,0.12)', backdropFilter: 'blur(12px)',
-      border: '1px solid rgba(0,230,118,0.25)',
-      color: T.green, padding: '10px 20px',
-      borderRadius: 10, fontSize: 13, fontWeight: 600,
-      zIndex: 999, whiteSpace: 'nowrap', pointerEvents: 'none',
-      letterSpacing: '0.02em',
+      background: 'rgba(15,15,15,0.92)', color: '#fff',
+      padding: '10px 20px', borderRadius: 100,
+      fontSize: 13, fontWeight: 500,
+      border: '1px solid rgba(255,255,255,0.1)',
+      backdropFilter: 'blur(12px)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+      zIndex: 1000, whiteSpace: 'nowrap',
+      animation: 'fadeInUp 0.2s ease',
     }}>
       {msg}
     </div>
   )
 }
 
-function Toggle({ label, sub, checked, onChange }) {
+function ToggleRow({ label, sub, checked, onChange }) {
   return (
-    <div
-      onClick={onChange}
-      style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '14px 16px', borderRadius: 10, cursor: 'pointer',
-        background: checked ? 'rgba(0,230,118,0.04)' : 'transparent',
-        border: `1px solid ${checked ? 'rgba(0,230,118,0.15)' : 'rgba(255,255,255,0.06)'}`,
-        marginBottom: 8, transition: 'all 0.2s',
-      }}
-    >
-      <div>
-        <div style={{ fontSize: 14, fontWeight: 500, color: checked ? '#fff' : T.muted }}>{label}</div>
-        <div style={{ fontSize: 12, color: T.faint, marginTop: 2 }}>{sub}</div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 14, fontWeight: 500, color: '#e8e8e8', marginBottom: 2 }}>{label}</div>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>{sub}</div>
       </div>
-      <div style={{
-        width: 42, height: 24, borderRadius: 100, flexShrink: 0, marginLeft: 16,
-        background: checked ? T.green : 'rgba(255,255,255,0.1)',
-        position: 'relative', transition: 'background 0.2s',
-      }}>
-        <div style={{
-          position: 'absolute', top: 3,
-          left: checked ? 21 : 3,
-          width: 18, height: 18, borderRadius: '50%',
-          background: '#fff', transition: 'left 0.2s',
+      <button
+        role="switch"
+        aria-checked={checked}
+        onClick={onChange}
+        style={{
+          width: 44, height: 26, borderRadius: 13, flexShrink: 0,
+          border: 'none', cursor: 'pointer', padding: 0,
+          background: checked ? '#00e676' : 'rgba(255,255,255,0.1)',
+          transition: 'background 0.2s', position: 'relative',
+        }}
+      >
+        <span style={{
+          position: 'absolute', top: 3, borderRadius: '50%',
+          width: 20, height: 20, background: '#fff',
+          left: checked ? 21 : 3, transition: 'left 0.2s',
           boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
         }} />
-      </div>
+      </button>
     </div>
   )
 }
 
-function StatCard({ val, lbl, color, icon }) {
+function StatPill({ fa, value, label, color }) {
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.04)',
-      border: '1px solid rgba(255,255,255,0.07)',
-      borderRadius: 14, padding: '18px 12px', textAlign: 'center',
-      flex: 1,
+      flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+      gap: 4, padding: '14px 8px',
+      background: 'rgba(255,255,255,0.03)', borderRadius: 14,
+      border: '1px solid rgba(255,255,255,0.06)',
     }}>
-      <div style={{ fontSize: 11, color: T.faint, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>{icon} {lbl}</div>
-      <div style={{ fontSize: 26, fontWeight: 700, color, lineHeight: 1 }}>{val}</div>
+      <Fa icon={fa} size={13} color={color} style={{ opacity: 0.7 }} />
+      <span style={{ fontSize: 22, fontWeight: 700, color, letterSpacing: '-0.5px' }}>{value}</span>
+      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>{label}</span>
+    </div>
+  )
+}
+
+function FieldRow({ label, value, last }) {
+  return (
+    <div style={{ display: 'flex', gap: 20, padding: '14px 0', borderBottom: last ? 'none' : '1px solid rgba(255,255,255,0.05)' }}>
+      <span style={{ width: 80, flexShrink: 0, fontSize: 12, color: 'rgba(255,255,255,0.3)', paddingTop: 1 }}>{label}</span>
+      <span style={{ fontSize: 14, color: '#e8e8e8', lineHeight: 1.5 }}>{value || '—'}</span>
     </div>
   )
 }
 
 function ActivityGrid({ completedLessons }) {
-  // Generate a stable grid based on completed count
-  const cells = useMemo(() => Array.from({ length: 35 }, (_, i) => {
-    const filled = i < completedLessons.length * 7
-    const lvl = filled ? Math.floor(Math.random() * 3) + 1 : (Math.random() < 0.15 ? 1 : 0)
-    const colors = ['rgba(255,255,255,0.06)', 'rgba(0,230,118,0.25)', 'rgba(0,230,118,0.55)', '#00e676']
-    return { lvl, color: colors[lvl] }
-  }), [completedLessons.length])
+  const cells = Array.from({ length: 182 }, (_, i) => {
+    const done = completedLessons?.some?.(l => {
+      const d = new Date(l.date)
+      const ref = new Date()
+      ref.setDate(ref.getDate() - (181 - i))
+      return d.toDateString() === ref.toDateString()
+    })
+    return done ? 3 : Math.random() < 0.35 ? 0 : Math.floor(Math.random() * 3) + 1
+  })
 
   return (
     <div>
-      <div style={{ fontSize: 12, color: T.faint, marginBottom: 10 }}>Últimas 5 semanas</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 5 }}>
-        {cells.map((c, i) => (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(26, 1fr)', gap: 3 }}>
+        {cells.map((lvl, i) => (
           <div key={i} style={{
-            aspectRatio: '1', borderRadius: 4,
-            background: c.color,
-            transition: 'transform 0.15s',
+            aspectRatio: '1', borderRadius: 3,
+            background: lvl === 0 ? 'rgba(255,255,255,0.05)' : `rgba(0,230,118,${[0, 0.2, 0.45, 0.7, 1][lvl]})`,
           }} />
         ))}
       </div>
-      <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 10, justifyContent: 'flex-end' }}>
-        {['rgba(255,255,255,0.06)','rgba(0,230,118,0.25)','rgba(0,230,118,0.55)','#00e676'].map((c, i) => (
-          <div key={i} style={{ width: 10, height: 10, borderRadius: 2, background: c }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, justifyContent: 'flex-end' }}>
+        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Menos</span>
+        {[0.05, 0.2, 0.45, 0.7, 1].map((o, i) => (
+          <div key={i} style={{ width: 11, height: 11, borderRadius: 2, background: i === 0 ? 'rgba(255,255,255,0.05)' : `rgba(0,230,118,${o})` }} />
         ))}
-        <span style={{ fontSize: 11, color: T.faint, marginLeft: 2 }}>más actividad</span>
+        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Más</span>
       </div>
     </div>
   )
@@ -582,306 +552,334 @@ function ActivityGrid({ completedLessons }) {
 // ─────────────────────────────────────────────
 // PagePerfil
 // ─────────────────────────────────────────────
+
 export function PagePerfil({ user }) {
   const { xp, streak, levelInfo, completedLessons } = useProgress()
-  const level    = levelInfo?.level   ?? 1
+  const level    = levelInfo?.level    ?? 1
   const xpToNext = levelInfo?.xpToNext ?? 3000
-  const xpPct    = Math.min(100, Math.round((xp / xpToNext) * 100))
+  const xpPct = Math.min(100, Math.round((xp / xpToNext) * 100))
 
-  const [tab,    setTab]    = useState('info')
-  const [toast,  setToast]  = useState('')
+  const [tab,     setTab]     = useState('info')
+  const [toast,   setToast]   = useState('')
   const [editing, setEditing] = useState(false)
-  const [form,   setForm]   = useState({
-    name:  user?.name  ?? '',
-    email: user?.email ?? '',
-    bio:   user?.bio   ?? '',
+  const [photo,   setPhoto]   = useState(null)
+  const fileRef               = useRef(null)
+
+  const [form, setForm] = useState({
+    name:  user?.name  ?? 'María González',
+    email: user?.email ?? 'maria@ejemplo.com',
+    bio:   user?.bio   ?? 'Apasionada por el aprendizaje continuo.',
     goal:  30,
   })
   const [draft,  setDraft]  = useState(form)
   const [notifs, setNotifs] = useState({ racha: true, logros: true, nuevos: false, tips: true })
 
-  const showToast = (msg) => {
-    setToast(msg)
-    setTimeout(() => setToast(''), 2200)
-  }
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 2200) }
 
   const handleSave = () => {
     if (!draft.name.trim())         return showToast('El nombre no puede estar vacío')
     if (!draft.email.includes('@')) return showToast('Correo inválido')
-    setForm(draft)
-    setEditing(false)
-    showToast('Perfil actualizado ✓')
+    setForm(draft); setEditing(false); showToast('Perfil actualizado ✓')
   }
 
-  const handleCancel = () => {
-    setDraft(form)
-    setEditing(false)
-    showToast('Cambios descartados')
+  const handleCancel = () => { setDraft(form); setEditing(false); showToast('Cambios descartados') }
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => setPhoto(ev.target.result)
+    reader.readAsDataURL(file)
   }
 
   const initial = (form.name?.[0] ?? '?').toUpperCase()
 
-  const inputStyle = {
+  const input = {
     width: '100%', padding: '10px 14px', fontSize: 14,
     borderRadius: 10, outline: 'none', fontFamily: 'inherit',
     background: 'rgba(255,255,255,0.05)',
-    border: '1px solid rgba(255,255,255,0.12)',
-    color: '#fff',
+    border: '1px solid rgba(255,255,255,0.1)',
+    color: '#e8e8e8', transition: 'border-color 0.15s',
   }
 
+  const card = {
+    background: 'rgba(255,255,255,0.02)',
+    border: '1px solid rgba(255,255,255,0.07)',
+    borderRadius: 20, padding: '24px',
+  }
+
+  // Tab definitions with FA icons
+  const TABS = [
+    { id: 'info',      fa: 'fa-user',        label: 'Información' },
+    { id: 'actividad', fa: 'fa-chart-simple', label: 'Actividad'   },
+    { id: 'ajustes',   fa: 'fa-gear',         label: 'Ajustes'     },
+  ]
+
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column', gap: 0,
-      height: '100%', minHeight: '100vh',
-      padding: '0 0 40px',
-    }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '0 0 48px' }}>
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity:0; transform:translateX(-50%) translateY(8px) }
+          to   { opacity:1; transform:translateX(-50%) translateY(0) }
+        }
+        .perfil-tab-btn { transition: all 0.15s }
+        .perfil-tab-btn:hover { background: rgba(255,255,255,0.05) !important }
+        .perfil-input:focus { border-color: rgba(0,230,118,0.5) !important }
+        .perfil-edit-btn:hover { background: rgba(255,255,255,0.06) !important }
+        .perfil-save-btn:hover { opacity: 0.88 }
+        .perfil-danger-btn:hover { background: rgba(239,83,80,0.08) !important }
+        .avatar-upload-btn:hover { background: rgba(0,0,0,0.7) !important; opacity: 1 !important }
+      `}</style>
+
       <Toast msg={toast} />
 
-      {/* ── Hero header ── */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(0,230,118,0.08) 0%, rgba(0,0,0,0) 60%)',
-        border: '1px solid rgba(0,230,118,0.12)',
-        borderRadius: 18, padding: '28px 28px 24px', marginBottom: 16,
-      }}>
-        {/* Avatar + info */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, marginBottom: 24 }}>
-          <div style={{ position: 'relative', flexShrink: 0 }}>
-            <div style={{
-              width: 72, height: 72, borderRadius: '50%',
-              background: 'rgba(0,230,118,0.12)',
-              border: '2px solid rgba(0,230,118,0.4)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 28, fontWeight: 700, color: P.green,
-            }}>
-              {initial}
+      {/* ── HERO ── */}
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 22, overflow: 'hidden' }}>
+        <div style={{ padding: '28px 28px 24px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, marginBottom: 26 }}>
+
+            {/* Avatar */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <div style={{
+                width: 80, height: 80, borderRadius: '50%', overflow: 'hidden',
+                border: '2px solid rgba(255,255,255,0.12)',
+                background: 'rgba(0,230,118,0.08)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                {photo
+                  ? <img src={photo} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <span style={{ fontSize: 26, fontWeight: 700, color: '#00e676' }}>{initial}</span>
+                }
+              </div>
+              <button
+                className="avatar-upload-btn"
+                onClick={() => fileRef.current?.click()}
+                title="Cambiar foto"
+                style={{
+                  position: 'absolute', inset: 0, borderRadius: '50%',
+                  background: 'rgba(0,0,0,0)', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  opacity: 0, transition: 'opacity 0.18s, background 0.18s', color: '#fff',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = 1 }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = 0 }}
+              >
+                <Fa icon="fa-camera" size={18} />
+              </button>
+              <button
+                onClick={() => fileRef.current?.click()}
+                style={{
+                  position: 'absolute', bottom: 0, right: 0,
+                  width: 26, height: 26, borderRadius: '50%',
+                  background: '#1a1a1a', border: '2px solid rgba(255,255,255,0.15)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer',
+                }}
+                title="Cambiar foto"
+              >
+                <Fa icon="fa-camera" size={11} color="rgba(255,255,255,0.7)" />
+              </button>
+              <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoChange} />
             </div>
-            <div style={{
-              position: 'absolute', bottom: 0, right: 0,
-              width: 20, height: 20, borderRadius: '50%',
-              background: P.green, display: 'flex', alignItems: 'center',
-              justifyContent: 'center',
-              border: '2px solid #121212',
-            }}><Icon icon="✓" size={12} color="#000" /></div>
+
+            {/* Identity */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 21, fontWeight: 700, color: '#fff', letterSpacing: '-0.3px', lineHeight: 1.2, marginBottom: 4 }}>
+                {form.name || 'Sin nombre'}
+              </div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.38)', marginBottom: 12 }}>
+                {form.email}
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {[
+                  { fa: 'fa-layer-group', label: `Nivel ${level}`,    bg: 'rgba(0,230,118,0.1)',   color: '#00e676', border: 'rgba(0,230,118,0.2)'   },
+                  { fa: 'fa-fire',        label: `${streak} días`,     bg: 'rgba(255,167,38,0.1)',  color: '#ffa726', border: 'rgba(255,167,38,0.2)'  },
+                  { fa: 'fa-star',        label: 'Avanzado',           bg: 'rgba(186,104,200,0.1)', color: '#ba68c8', border: 'rgba(186,104,200,0.2)' },
+                ].map(b => (
+                  <span key={b.label} style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 5,
+                    fontSize: 11, fontWeight: 600,
+                    padding: '4px 11px', borderRadius: 100,
+                    background: b.bg, color: b.color, border: `1px solid ${b.border}`,
+                  }}>
+                    <Fa icon={b.fa} size={10} /> {b.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Edit button */}
+            <button
+              className="perfil-edit-btn"
+              onClick={() => { setEditing(!editing); setTab('info') }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '8px 16px', borderRadius: 10, fontSize: 13,
+                fontWeight: 600, cursor: 'pointer', flexShrink: 0,
+                background: editing ? 'rgba(0,230,118,0.08)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${editing ? 'rgba(0,230,118,0.25)' : 'rgba(255,255,255,0.1)'}`,
+                color: editing ? '#00e676' : 'rgba(255,255,255,0.5)',
+              }}
+            >
+              <Fa icon={editing ? 'fa-xmark' : 'fa-pen'} size={12} />
+              {editing ? 'Cancelar' : 'Editar'}
+            </button>
           </div>
 
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 3, lineHeight: 1.2 }}>
-              {form.name || 'Sin nombre'}
+          {/* XP Bar */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>Progreso al nivel {level + 1}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#00e676' }}>{xp.toLocaleString()} / {xpToNext.toLocaleString()} XP</span>
             </div>
-            <div style={{ fontSize: 13, color: P.muted, marginBottom: 12 }}>{form.email}</div>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {[
-                { label: `Nivel ${level}`,    bg: 'rgba(0,230,118,0.12)', color: P.green  },
-                { label: <><Icon icon="🔥" size={11} /> {streak} días</>, bg: 'rgba(255,183,77,0.12)', color: P.orange },
-                { label: <><Icon icon="⭐" size={11} /> Avanzado</>,        bg: 'rgba(179,157,219,0.12)', color: P.purple },
-              ].map(b => (
-                <span key={b.label} style={{
-                  fontSize: 11, fontWeight: 600, padding: '4px 10px',
-                  borderRadius: 100, background: b.bg, color: b.color,
-                  border: `1px solid ${b.color}22`,
-                }}>
-                  {b.label}
-                </span>
-              ))}
+            <div style={{ height: 7, borderRadius: 100, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${xpPct}%`, background: 'linear-gradient(90deg, rgba(0,230,118,0.5), #00e676)', borderRadius: 100, transition: 'width 0.9s cubic-bezier(.4,0,.2,1)' }} />
             </div>
-          </div>
-
-          <button
-            onClick={() => { setEditing(!editing); setTab('info') }}
-            style={{
-              background: editing ? 'rgba(0,230,118,0.12)' : 'rgba(255,255,255,0.05)',
-              border: `1px solid ${editing ? 'rgba(0,230,118,0.3)' : 'rgba(255,255,255,0.1)'}`,
-              color: editing ? P.green : P.muted,
-              padding: '8px 16px', borderRadius: 10, fontSize: 13,
-              cursor: 'pointer', fontWeight: 600, flexShrink: 0,
-              transition: 'all 0.2s',
-            }}
-          >
-            {editing ? <><Icon icon="✕" size={13} /> Cancelar</> : <><Icon icon="✏️" size={13} /> Editar</>}
-          </button>
-        </div>
-
-        {/* XP bar */}
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <span style={{ fontSize: 12, color: P.faint }}>Progreso al nivel {level + 1}</span>
-            <span style={{ fontSize: 12, fontWeight: 700, color: P.green }}>{xp.toLocaleString()} / {xpToNext.toLocaleString()} XP</span>
-          </div>
-          <div style={{ height: 8, background: 'rgba(255,255,255,0.07)', borderRadius: 100, overflow: 'hidden' }}>
-            <div style={{
-              height: '100%', width: `${xpPct}%`,
-              background: `linear-gradient(90deg, rgba(0,230,118,0.6), ${P.green})`,
-              borderRadius: 100, transition: 'width 0.8s cubic-bezier(.4,0,.2,1)',
-              boxShadow: '0 0 12px rgba(0,230,118,0.4)',
-            }} />
-          </div>
-          <div style={{ fontSize: 11, color: P.faint, marginTop: 6, textAlign: 'right' }}>
-            {xpToNext - xp} XP para el siguiente nivel
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginTop: 6, textAlign: 'right' }}>
+              {(xpToNext - xp).toLocaleString()} XP para el siguiente nivel
+            </div>
           </div>
         </div>
 
         {/* Stats row */}
-        <div style={{ display: 'flex', gap: 10 }}>
-          <StatCard val={xp.toLocaleString()} lbl="XP total"    icon={<Icon icon="⚡" size={11} />} color={P.green}  />
-          <StatCard val={streak}               lbl="Racha"       icon={<Icon icon="🔥" size={11} />} color={P.orange} />
-          <StatCard val={completedLessons.length} lbl="Completadas" icon={<Icon icon="✅" size={11} />} color={P.purple} />
+        <div style={{ display: 'flex', gap: 10, padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          <StatPill fa="fa-bolt"        value={xp.toLocaleString()}       label="XP total"     color="#00e676" />
+          <StatPill fa="fa-fire"        value={streak}                    label="Racha"        color="#ffa726" />
+          <StatPill fa="fa-circle-check" value={completedLessons.length}  label="Completadas"  color="#ba68c8" />
         </div>
       </div>
 
-      {/* ── Tabs ── */}
-      <div style={{
-        display: 'flex', gap: 4,
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: 12, padding: 4, marginBottom: 16,
-      }}>
-        {[['info',<><Icon icon="👤" size={13} /> Información</>], ['actividad',<><Icon icon="📊" size={13} /> Actividad</>], ['ajustes',<><Icon icon="⚙️" size={13} /> Ajustes</>]].map(([id, label]) => (
+      {/* ── TABS ── */}
+      <div style={{ display: 'flex', gap: 3, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: 4 }}>
+        {TABS.map(({ id, fa, label }) => (
           <button
             key={id}
+            className="perfil-tab-btn"
             onClick={() => setTab(id)}
             style={{
-              flex: 1, padding: '9px 8px', fontSize: 13, border: 'none',
-              borderRadius: 9, cursor: 'pointer', fontWeight: tab === id ? 600 : 400,
-              background: tab === id ? 'rgba(0,230,118,0.1)' : 'transparent',
-              color: tab === id ? P.green : P.muted,
-              border: tab === id ? '1px solid rgba(0,230,118,0.2)' : '1px solid transparent',
-              transition: 'all 0.18s',
+              flex: 1, padding: '9px 6px', fontSize: 13,
+              border: 'none', borderRadius: 10, cursor: 'pointer',
+              fontWeight: tab === id ? 600 : 400,
+              background: tab === id ? 'rgba(0,230,118,0.09)' : 'transparent',
+              color: tab === id ? '#00e676' : 'rgba(255,255,255,0.4)',
+              outline: tab === id ? '1px solid rgba(0,230,118,0.18)' : '1px solid transparent',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
             }}
           >
-            {label}
+            <Fa icon={fa} size={12} /> {label}
           </button>
         ))}
       </div>
 
-      {/* ── Tab: Información ── */}
+      {/* ── TAB: Información ── */}
       {tab === 'info' && (
-        <div style={{
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.07)',
-          borderRadius: 16, padding: 24,
-          display: 'flex', flexDirection: 'column', gap: 18,
-        }}>
+        <div style={card}>
           {editing ? (
-            <>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
               {[
                 { label: 'Nombre completo', key: 'name',  type: 'text',  placeholder: 'Tu nombre' },
                 { label: 'Correo',          key: 'email', type: 'email', placeholder: 'tu@correo.com' },
               ].map(f => (
                 <div key={f.key} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: P.muted, letterSpacing: '0.04em' }}>{f.label}</label>
+                  <label style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>
+                    {f.label.toUpperCase()}
+                  </label>
                   <input
+                    className="perfil-input"
                     type={f.type}
                     value={draft[f.key]}
                     placeholder={f.placeholder}
                     onChange={e => setDraft(d => ({ ...d, [f.key]: e.target.value }))}
-                    style={inputStyle}
+                    style={input}
                   />
                 </div>
               ))}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: P.muted, letterSpacing: '0.04em' }}>Biografía</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>BIOGRAFÍA</label>
                 <textarea
+                  className="perfil-input"
                   rows={3}
                   value={draft.bio}
-                  placeholder="Cuéntanos algo sobre ti..."
+                  placeholder="Cuéntanos algo sobre ti…"
                   onChange={e => setDraft(d => ({ ...d, bio: e.target.value }))}
-                  style={{ ...inputStyle, resize: 'none', lineHeight: 1.6 }}
+                  style={{ ...input, resize: 'none', lineHeight: 1.65 }}
                 />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: P.muted, letterSpacing: '0.04em' }}>Meta diaria</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>META DIARIA</label>
                 <select
+                  className="perfil-input"
                   value={draft.goal}
                   onChange={e => setDraft(d => ({ ...d, goal: Number(e.target.value) }))}
-                  style={{ ...inputStyle }}
+                  style={input}
                 >
                   {GOALS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
                 </select>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 4 }}>
-                <button onClick={handleCancel} style={{
-                  padding: '10px 20px', fontSize: 13, borderRadius: 10,
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  background: 'transparent', color: P.muted, cursor: 'pointer',
-                }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 6 }}>
+                <button onClick={handleCancel} style={{ padding: '10px 20px', fontSize: 13, borderRadius: 10, border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}>
                   Cancelar
                 </button>
-                <button onClick={handleSave} style={{
-                  padding: '10px 24px', fontSize: 13, borderRadius: 10,
-                  border: 'none', background: P.green,
-                  color: '#000', fontWeight: 700, cursor: 'pointer',
-                  boxShadow: '0 0 20px rgba(0,230,118,0.3)',
-                }}>
-                  Guardar cambios
+                <button className="perfil-save-btn" onClick={handleSave} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '10px 24px', fontSize: 13, borderRadius: 10, border: 'none', background: '#00e676', color: '#000', fontWeight: 700, cursor: 'pointer', transition: 'opacity 0.15s' }}>
+                  <Fa icon="fa-floppy-disk" size={13} /> Guardar cambios
                 </button>
               </div>
-            </>
+            </div>
           ) : (
-            /* Read-only view */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-              {[
-                { label: 'Nombre', value: form.name  || '—' },
-                { label: 'Correo', value: form.email || '—' },
-                { label: 'Bio',    value: form.bio   || 'Sin biografía' },
-                { label: 'Meta',   value: `${form.goal} min / día` },
-              ].map((row, i, arr) => (
-                <div key={row.label} style={{
-                  display: 'flex', gap: 16, padding: '14px 0',
-                  borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                }}>
-                  <div style={{ fontSize: 13, color: P.faint, width: 72, flexShrink: 0 }}>{row.label}</div>
-                  <div style={{ fontSize: 14, color: '#fff', fontWeight: 500 }}>{row.value}</div>
-                </div>
-              ))}
+            <div>
+              <FieldRow label="Nombre" value={form.name} />
+              <FieldRow label="Correo" value={form.email} />
+              <FieldRow label="Bio"    value={form.bio || 'Sin biografía'} />
+              <FieldRow label="Meta"   value={`${form.goal} min / día`} last />
               <button
+                className="perfil-edit-btn"
                 onClick={() => setEditing(true)}
                 style={{
-                  marginTop: 20, padding: '11px', fontSize: 13, borderRadius: 10,
+                  marginTop: 20, width: '100%', padding: '11px',
+                  fontSize: 13, fontWeight: 600, borderRadius: 12,
                   border: '1px solid rgba(0,230,118,0.2)',
-                  background: 'rgba(0,230,118,0.06)', color: P.green,
-                  fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
+                  background: 'rgba(0,230,118,0.05)', color: '#00e676', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
                 }}
               >
-                <Icon icon="✏️" size={13} /> Editar información
+                <Fa icon="fa-pen" size={12} /> Editar información
               </button>
             </div>
           )}
         </div>
       )}
 
-      {/* ── Tab: Actividad ── */}
+      {/* ── TAB: Actividad ── */}
       {tab === 'actividad' && (
-        <div style={{
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.07)',
-          borderRadius: 16, padding: 24,
-          display: 'flex', flexDirection: 'column', gap: 24,
-        }}>
+        <div style={card}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: 16 }}>
+            Actividad — últimos 6 meses
+          </div>
           <ActivityGrid completedLessons={completedLessons} />
 
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 24 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: P.muted, marginBottom: 14, textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 11 }}>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: 24, paddingTop: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: 14 }}>
               Logros recientes
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[
-                { icon: '🔥', label: `${streak} días seguidos`,          sub: 'Racha actual',    done: streak > 0 },
-                { icon: '⚡', label: `${xp} XP acumulados`,              sub: 'XP total',        done: xp > 0 },
-                { icon: '✅', label: `${completedLessons.length} lecciones`, sub: 'Completadas', done: completedLessons.length > 0 },
+                { fa: 'fa-fire',         label: `${streak} días seguidos`,             sub: 'Racha actual',   done: streak > 0,                  color: 'rgba(255,167,38,0.1)',  border: 'rgba(255,167,38,0.15)',  ic: '#ffa726' },
+                { fa: 'fa-bolt',         label: `${xp.toLocaleString()} XP`,           sub: 'XP total',       done: xp > 0,                      color: 'rgba(0,230,118,0.1)',   border: 'rgba(0,230,118,0.15)',   ic: '#00e676' },
+                { fa: 'fa-circle-check', label: `${completedLessons.length} lecciones`, sub: 'Completadas',   done: completedLessons.length > 0, color: 'rgba(186,104,200,0.1)', border: 'rgba(186,104,200,0.15)', ic: '#ba68c8' },
               ].map((a, i) => (
                 <div key={i} style={{
                   display: 'flex', alignItems: 'center', gap: 14,
-                  padding: '12px 16px', borderRadius: 12,
-                  background: a.done ? 'rgba(0,230,118,0.04)' : 'rgba(255,255,255,0.02)',
-                  border: `1px solid ${a.done ? 'rgba(0,230,118,0.12)' : 'rgba(255,255,255,0.05)'}`,
-                  opacity: a.done ? 1 : 0.4,
+                  padding: '12px 16px', borderRadius: 14,
+                  background: a.done ? a.color : 'rgba(255,255,255,0.02)',
+                  border: `1px solid ${a.done ? a.border : 'rgba(255,255,255,0.05)'}`,
+                  opacity: a.done ? 1 : 0.35,
                 }}>
-                  <div style={{ fontSize: 24 }}><Icon icon={a.icon} size={24} /></div>
+                  <Fa icon={a.fa} size={20} color={a.ic} />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>{a.label}</div>
-                    <div style={{ fontSize: 12, color: P.faint }}>{a.sub}</div>
+                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>{a.sub}</div>
                   </div>
-                  {a.done && <span style={{ color: P.green }}><Icon icon="✓" size={11} /></span>}
+                  {a.done && <Fa icon="fa-check" size={14} color="#00e676" />}
                 </div>
               ))}
             </div>
@@ -889,19 +887,15 @@ export function PagePerfil({ user }) {
         </div>
       )}
 
-      {/* ── Tab: Ajustes ── */}
+      {/* ── TAB: Ajustes ── */}
       {tab === 'ajustes' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 16, padding: 24,
-          }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: P.faint, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 16 }}>
+          <div style={card}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: 4 }}>
               Notificaciones
             </div>
             {NOTIF_DEFS.map(n => (
-              <Toggle
+              <ToggleRow
                 key={n.key}
                 label={n.label}
                 sub={n.sub}
@@ -915,33 +909,32 @@ export function PagePerfil({ user }) {
             ))}
           </div>
 
-          <div style={{
-            background: 'rgba(239,83,80,0.04)',
-            border: '1px solid rgba(239,83,80,0.2)',
-            borderRadius: 16, padding: 24,
-          }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: P.danger, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
+          {/* Danger zone */}
+          <div style={{ background: 'rgba(239,83,80,0.03)', border: '1px solid rgba(239,83,80,0.18)', borderRadius: 20, padding: '22px 24px' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: 'rgba(239,83,80,0.8)', textTransform: 'uppercase', marginBottom: 8 }}>
               Zona de peligro
             </div>
-            <div style={{ fontSize: 13, color: P.faint, marginBottom: 18, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', marginBottom: 18, lineHeight: 1.65 }}>
               Estas acciones son permanentes y no se pueden deshacer.
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {[
-                { label: <><Icon icon="🔄" size={13} /> Resetear progreso</>, msg: '¿Seguro? Esta acción no se puede deshacer' },
-                { label: <><Icon icon="🗑️" size={13} /> Eliminar cuenta</>,   msg: 'Contacta soporte para eliminar tu cuenta' },
+                { fa: 'fa-rotate-left', label: 'Resetear progreso', msg: '¿Seguro? Esta acción no se puede deshacer' },
+                { fa: 'fa-trash',       label: 'Eliminar cuenta',   msg: 'Contacta soporte para eliminar tu cuenta' },
               ].map(btn => (
                 <button
                   key={btn.label}
+                  className="perfil-danger-btn"
                   onClick={() => showToast(btn.msg)}
                   style={{
+                    display: 'flex', alignItems: 'center', gap: 7,
                     padding: '10px 18px', fontSize: 13, borderRadius: 10,
-                    border: '1px solid rgba(239,83,80,0.3)',
-                    background: 'transparent', color: P.danger,
-                    cursor: 'pointer', fontWeight: 500, transition: 'all 0.2s',
+                    border: '1px solid rgba(239,83,80,0.25)',
+                    background: 'transparent', color: 'rgba(239,83,80,0.8)',
+                    cursor: 'pointer', fontWeight: 500, transition: 'background 0.15s',
                   }}
                 >
-                  {btn.label}
+                  <Fa icon={btn.fa} size={12} /> {btn.label}
                 </button>
               ))}
             </div>

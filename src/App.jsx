@@ -38,7 +38,7 @@ function Logo({ small }) {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: small ? 14 : 18, color: '#000', fontWeight: 900,
         boxShadow: '0 0 16px rgba(0,230,118,0.35)',
-      }}><Icon icon="☸" size={small ? 14 : 18} /></div>
+      }}><i class="fa-solid fa-motorcycle"></i></div>
       <span className="mono" style={{
         fontSize: small ? 13 : 15, fontWeight: 700, color: T.text, letterSpacing: '0.08em',
       }}>

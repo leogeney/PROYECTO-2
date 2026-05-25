@@ -19,19 +19,19 @@ export function Logo({ small }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 25,
+          fontSize: 20,
           color: '#000',
           fontWeight: 900,
           boxShadow: '0 0 22px rgba(0,230,118,0.45)',
         }}
       >
-        <i className="fa-solid fa-car"></i>
+       <i class="fa-solid fa-motorcycle"></i>
       </div>
 
       <span
         className="mono"
         style={{
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: 800,
           color: T.text,
           letterSpacing: '0.12em',
