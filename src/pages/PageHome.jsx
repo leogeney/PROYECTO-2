@@ -74,12 +74,35 @@ export function PageHome({ user }) {
 
       {/* Módulos */}
       <div className="anim-up" style={{ animationDelay: '120ms' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 }}>
-          <h2 style={{ fontSize: 12, fontWeight: 700, color: T.faint, textTransform: 'uppercase', letterSpacing: '0.1em' }}><Icon icon="📚" size={12} /> Módulos</h2>
-          <span className="mono" style={{ fontSize: 10, color: T.faint }}>{MODULES.filter(m => m.unlocked).length}/{MODULES.length} activos</span>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          marginBottom: 16, padding: '0 2px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{
+              width: 7, height: 7, borderRadius: '50%', background: T.green,
+              boxShadow: `0 0 12px ${T.green}66`,
+              animation: 'glow-pulse 2s ease-in-out infinite',
+            }} />
+            <h2 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: 0, letterSpacing: '-0.01em' }}>
+              Módulos de aprendizaje
+            </h2>
+          </div>
+          <span className="mono" style={{
+            fontSize: 10, color: T.faint,
+            padding: '4px 10px', borderRadius: 99,
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            {MODULES.filter(m => m.unlocked).length}/{MODULES.length} activos
+          </span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
-          {MODULES.map(m => <ModuleCard key={m.id} mod={m} />)}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+          {MODULES.map((m, i) => (
+            <div key={m.id} style={{ animation: `slide-up 0.4s ease ${0.1 + i * 0.06}s both` }}>
+              <ModuleCard mod={m} />
+            </div>
+          ))}
         </div>
       </div>
     </div>

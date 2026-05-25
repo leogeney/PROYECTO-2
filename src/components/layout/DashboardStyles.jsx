@@ -13,6 +13,10 @@ const DASHBOARD_CSS = `
     0%, 100% { opacity: 0.6; }
     50%       { opacity: 1; }
   }
+  @keyframes hdr-glow {
+    0%, 100% { opacity: 0.3; transform: scaleX(0.8); }
+    50%      { opacity: 1;   transform: scaleX(1); }
+  }
   .anim-up   { animation: slide-up 0.4s cubic-bezier(0.16,1,0.3,1) both; }
   .anim-fade { animation: fade-in 0.3s ease both; }
   .mono { font-family: 'Space Mono', monospace; }

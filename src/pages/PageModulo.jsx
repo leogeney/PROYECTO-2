@@ -3,6 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { T } from '../styles/tokens'
 import { useProgress } from '../context/ProgressContext'
 import { Icon } from '../components/ui/Icon'
+import { SIGNS_DB } from '../data/signsData'
+
+const SIGN_BY_CODE = Object.fromEntries(SIGNS_DB.map(s => [s.code, s]))
+const CAT_COLORS = { reglamentaria: '#ff5252', preventiva: '#ffd740', informativa: '#448aff', transitoria: '#ff9100' }
+const CAT_LABELS = { reglamentaria: 'Reglamentaria', preventiva: 'Preventiva', informativa: 'Informativa', transitoria: 'Transitoria' }
+const CAT_ICONS = { reglamentaria: '⛔', preventiva: '⚠️', informativa: 'ℹ️', transitoria: '🚧' }
 
 // ═══════════════════════════════════════════════════════════════════
 // SEÑALES VIALES — Estrategia multi-fuente con fallback robusto
@@ -84,9 +90,9 @@ function SignImage({ srcs = [], emoji = '🔲', size = 80, style: extraStyle = {
       {!loaded && (
         <span style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          width: size, height: size, opacity: 0.25, fontSize: size * 0.5,
+          width: size, height: size,           opacity: 0.25,
           position: 'absolute',
-        }}>{emoji}</span>
+        }}><Icon icon={emoji} size={size * 0.5} /></span>
       )}
       <img
         key={validSrcs[idx]}
@@ -118,6 +124,239 @@ function SignContainer({ srcs, emoji, size = 80, style: extraStyle = {} }) {
     <div style={{ width: size, height: size, position: 'relative',
       display: 'flex', alignItems: 'center', justifyContent: 'center', ...extraStyle }}>
       <SignImage srcs={srcs} emoji={emoji} size={size} />
+    </div>
+  )
+}
+
+// ─── Sign Detail Modal ───────────────────────────────────────────
+function SignDetailModal({ sign, onClose }) {
+  useEffect(() => {
+    const handler = e => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
+
+  if (!sign) return null
+
+  // Look up extra info from SIGNS_DB by code
+  const code = sign.code || ''
+  const db = code ? SIGN_BY_CODE[code] : null
+  const cat = db?.cat || ''
+  const catColor = CAT_COLORS[cat] || sign.typeColor || sign.color || T.faint
+  const catLabel = CAT_LABELS[cat] || sign.type || sign.tag || ''
+  const catIcon = CAT_ICONS[cat] || '📋'
+  const name = sign.name || sign.title || db?.name || ''
+  const desc = sign.meaning || sign.desc || db?.desc || ''
+  const detail = sign.detail || db?.detail || ''
+  const tip = sign.tip || ''
+  const law = sign.law || ''
+  const rule = sign.rule || ''
+  const example = sign.example || ''
+  const hasExtended = detail || tip || law || rule || example
+
+  const srcs = sign.sign || (sign.srcs ? sign.srcs : null)
+  const firstSrc = Array.isArray(srcs) ? srcs[0] : (db?.img || null)
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position:'fixed', inset:0, zIndex:9999,
+        background:'rgba(0,0,0,0.8)',
+        display:'flex', alignItems:'center', justifyContent:'center',
+        backdropFilter:'blur(12px)',
+        animation:'fadeInUp 0.2s ease',
+      }}
+    >
+      <div onClick={e => e.stopPropagation()} style={{
+        background:'linear-gradient(160deg, #1a1a24, #14141c)',
+        borderRadius:24, maxWidth:520, width:'92%',
+        border:`1px solid ${catColor}22`,
+        boxShadow:`0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px ${catColor}0a`,
+        overflow:'hidden', animation:'lq-scaleUp 0.25s ease',
+        position:'relative',
+      }}>
+        {/* Decorative glow */}
+        <div style={{
+          position:'absolute', top:-80, left:'50%', transform:'translateX(-50%)',
+          width:200, height:200, borderRadius:'50%',
+          background:`radial-gradient(circle, ${catColor}18, transparent 70%)`,
+          pointerEvents:'none',
+        }} />
+
+        {/* Image area */}
+        <div style={{
+          height:240, display:'flex', alignItems:'center', justifyContent:'center',
+          background:`linear-gradient(160deg, ${catColor}10, rgba(255,255,255,0.02) 60%)`,
+          position:'relative', borderBottom:`1px solid ${catColor}15`,
+        }}>
+          {firstSrc ? (
+            <>
+              <div style={{
+                position:'absolute', width:180, height:180, borderRadius:'50%',
+                background:`radial-gradient(circle, ${catColor}0c, transparent 70%)`,
+              }} />
+              <img
+                src={firstSrc}
+                alt={name}
+                style={{
+                  height:170, width:170, objectFit:'contain',
+                  filter:`drop-shadow(0 8px 32px rgba(0,0,0,0.5))`,
+                  position:'relative',
+                }}
+                onError={e => {
+                  if (Array.isArray(srcs) && srcs[1]) { e.target.src = srcs[1]; e.target.onError = null }
+                  else { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }
+                }}
+              />
+            </>
+          ) : (
+            <div style={{
+              width:120, height:120, borderRadius:24,
+              background:`${catColor}18`, border:`1px solid ${catColor}30`,
+              display:'flex', alignItems:'center', justifyContent:'center',
+            }}>
+              <Icon icon={sign.emoji || '🚦'} size={56} />
+            </div>
+          )}
+
+          {/* Code badge */}
+          {code && (
+            <span style={{
+              position:'absolute', bottom:12, right:16,
+              padding:'3px 10px', borderRadius:99,
+              background:'rgba(0,0,0,0.4)',
+              border:`1px solid ${catColor}25`,
+              fontSize:10, fontWeight:700, fontFamily:"'Space Mono',monospace",
+              color:'rgba(255,255,255,0.5)', letterSpacing:'0.05em',
+            }}>
+              {code}
+            </span>
+          )}
+
+          <button onClick={onClose} style={{
+            position:'absolute', top:12, right:12, width:34, height:34,
+            borderRadius:'50%', border:`1px solid rgba(255,255,255,0.1)`,
+            background:'rgba(0,0,0,0.4)', backdropFilter:'blur(4px)',
+            color:'rgba(255,255,255,0.7)', fontSize:16, cursor:'pointer',
+            display:'flex', alignItems:'center', justifyContent:'center',
+            lineHeight:1, transition:'all 0.15s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.4)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)' }}
+          >✕</button>
+        </div>
+
+        {/* Info */}
+        <div style={{ padding:'22px 24px 26px' }}>
+          {/* Header */}
+          <div style={{ display:'flex', alignItems:'flex-start', gap:10, marginBottom:16 }}>
+            <div style={{ flex:1 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6, flexWrap:'wrap' }}>
+                <h2 style={{ fontSize:20, fontWeight:700, color:T.text, margin:0, lineHeight:1.2, letterSpacing:'-0.02em' }}>
+                  {name}
+                </h2>
+                {catLabel && (
+                  <span style={{
+                    padding:'3px 9px', borderRadius:99, fontSize:9, fontWeight:700,
+                    background:`${catColor}15`, border:`1px solid ${catColor}28`,
+                    color:catColor, textTransform:'uppercase', letterSpacing:'0.06em',
+                    fontFamily:"'Space Mono',monospace", whiteSpace:'nowrap',
+                  }}>
+                    {catIcon} {catLabel}
+                  </span>
+                )}
+              </div>
+              {desc && (
+                <p style={{ fontSize:14, color:'rgba(215,225,240,0.85)', lineHeight:1.7, margin:0 }}>
+                  {desc}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Extended info blocks */}
+          {hasExtended && (
+            <div style={{ display:'flex', flexDirection:'column', gap:10, marginTop:6 }}>
+              {detail && (
+                <div style={{
+                  padding:'14px 16px', borderRadius:12,
+                  background:`${catColor}08`, border:`1px solid ${catColor}16`,
+                }}>
+                  <div style={{ fontSize:10, fontWeight:700, color:catColor, textTransform:'uppercase', letterSpacing:'0.08em', fontFamily:"'Space Mono',monospace", marginBottom:6 }}>
+                    <Icon icon="📖" size={10} /> Detalle
+                  </div>
+                  <p style={{ fontSize:13, color:'rgba(215,225,240,0.82)', lineHeight:1.7, margin:0 }}>{detail}</p>
+                </div>
+              )}
+              {tip && (
+                <div style={{
+                  padding:'14px 16px', borderRadius:12,
+                  background:'rgba(251,191,36,0.07)', border:'1px solid rgba(251,191,36,0.18)',
+                }}>
+                  <div style={{ fontSize:10, fontWeight:700, color:'rgba(251,191,36,0.9)', textTransform:'uppercase', letterSpacing:'0.08em', fontFamily:"'Space Mono',monospace", marginBottom:6 }}>
+                    <Icon icon="💡" size={10} /> Consejo
+                  </div>
+                  <p style={{ fontSize:13, color:'rgba(215,225,240,0.82)', lineHeight:1.7, margin:0 }}>{tip}</p>
+                </div>
+              )}
+              {rule && (
+                <div style={{
+                  padding:'14px 16px', borderRadius:12,
+                  background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)',
+                }}>
+                  <div style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:'0.08em', fontFamily:"'Space Mono',monospace", marginBottom:6 }}>
+                    <Icon icon="📋" size={10} /> Normativa
+                  </div>
+                  <p style={{ fontSize:13, color:'rgba(215,225,240,0.7)', lineHeight:1.7, margin:0 }}>{rule}</p>
+                </div>
+              )}
+              {law && (
+                <div style={{
+                  padding:'12px 16px', borderRadius:12,
+                  background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.06)',
+                }}>
+                  <p style={{ fontSize:12, color:'rgba(215,225,240,0.45)', lineHeight:1.6, margin:0, fontStyle:'italic' }}>
+                    <Icon icon="⚖️" size={10} /> {law}
+                  </p>
+                </div>
+              )}
+              {example && (
+                <div style={{
+                  padding:'14px 16px', borderRadius:12,
+                  background:'rgba(52,211,153,0.06)', border:'1px solid rgba(52,211,153,0.18)',
+                }}>
+                  <div style={{ fontSize:10, fontWeight:700, color:'#34d399', textTransform:'uppercase', letterSpacing:'0.08em', fontFamily:"'Space Mono',monospace", marginBottom:6 }}>
+                    <Icon icon="🎯" size={10} /> Ejemplo práctico
+                  </div>
+                  <p style={{ fontSize:13, color:'rgba(215,225,240,0.82)', lineHeight:1.7, margin:0 }}>{example}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Fallback when no extended info */}
+          {!hasExtended && !desc && (
+            <p style={{ fontSize:13, color:T.muted, textAlign:'center', padding:'12px 0' }}>
+              Toca "Entendido, siguiente" para continuar la lección.
+            </p>
+          )}
+
+          {/* Close CTA */}
+          <button onClick={onClose} style={{
+            width:'100%', marginTop:18, padding:'12px', borderRadius:12,
+            border:`1px solid ${catColor}30`,
+            background:`${catColor}0C`,
+            color:catColor, fontWeight:600, fontSize:13,
+            cursor:'pointer', transition:'all 0.15s', letterSpacing:'0.01em',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = `${catColor}18`; e.currentTarget.style.transform = 'translateY(-1px)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = `${catColor}0C`; e.currentTarget.style.transform = 'translateY(0)' }}
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
@@ -302,7 +541,7 @@ function InfoBlock({ type, text, color }) {
       background:s.bg, border:s.border,
       fontSize:13, color:'rgba(220,228,240,0.85)', lineHeight:1.75,
     }}>
-      <span style={{ fontWeight:700, fontSize:10, color:s.tc, marginRight:6, letterSpacing:'0.1em' }}>{s.icon}</span>
+      <span style={{ marginRight:6 }}><Icon icon={s.icon} size={10} color={s.tc} /></span>
       {text}
     </div>
   )
@@ -311,7 +550,7 @@ function InfoBlock({ type, text, color }) {
 // ═══════════════════════════════════════════════════════════════════
 // TIPO A: EXPLAINER
 // ═══════════════════════════════════════════════════════════════════
-function ExplainerLesson({ steps, color, onComplete }) {
+function ExplainerLesson({ steps, color, onComplete, onShowSign }) {
   const [idx, setIdx] = useState(0)
   const [vis, setVis] = useState(true)
   const xpTotal = steps.length * 15
@@ -342,18 +581,61 @@ function ExplainerLesson({ steps, color, onComplete }) {
             background:`radial-gradient(circle, ${color}14, transparent 68%)`,
             pointerEvents:'none',
           }} />
-          {/* Señal real de Colombia */}
-          <div style={{ position:'relative', display:'flex', alignItems:'center', justifyContent:'center' }}>
-            {step.sign ? (
-              <SignContainer
-                srcs={step.sign}
-                emoji={step.visual}
-                size={120}
-                style={{ filter:`drop-shadow(0 0 24px ${color}50)` }}
-              />
-            ) : (
-              <div style={{ fontSize:80, lineHeight:1, filter:`drop-shadow(0 0 28px ${color}60)` }}>
-                {step.visual}
+          {/* Señal real de Colombia — tappable */}
+          <div
+            onClick={() => onShowSign?.({
+              ...step, sign: step.sign, emoji: step.visual,
+              title: step.title, color, code: step.code || '',
+            })}
+            style={{
+              position:'relative', display:'flex', alignItems:'center', justifyContent:'center',
+              cursor: step.sign ? 'pointer' : 'default',
+              transition:'all 0.25s cubic-bezier(.16,1,.3,1)',
+            }}
+            onMouseEnter={e => {
+              if (step.sign) {
+                e.currentTarget.style.transform = 'scale(1.06)'
+                e.currentTarget.style.filter = `drop-shadow(0 0 30px ${color}50)`
+              }
+            }}
+            onMouseLeave={e => {
+              if (step.sign) {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.filter = 'none'
+              }
+            }}
+          >
+            <div style={{
+              borderRadius:24, padding:16,
+              background:`linear-gradient(160deg, ${color}10, rgba(255,255,255,0.02))`,
+              border:`1px solid ${color}20`,
+              boxShadow:`0 8px 32px ${color}0a`,
+              transition:'all 0.25s',
+            }}>
+              {step.sign ? (
+                <SignContainer
+                  srcs={step.sign}
+                  emoji={step.visual}
+                  size={130}
+                  style={{ filter:`drop-shadow(0 0 24px ${color}40)` }}
+                />
+              ) : (
+                <div style={{ filter:`drop-shadow(0 0 28px ${color}60)` }}>
+                  <Icon icon={step.visual} size={80} />
+                </div>
+              )}
+            </div>
+            {step.sign && (
+              <div style={{
+                position:'absolute', bottom:6, right:6,
+                padding:'4px 10px', borderRadius:99,
+                background:`linear-gradient(135deg, ${color}, ${color}cc)`,
+                color:'#000', border:'none',
+                fontFamily:"'Space Mono',monospace", fontWeight:700,
+                fontSize:9, letterSpacing:'0.04em',
+                boxShadow:`0 2px 8px ${color}40`,
+              }}>
+                + info
               </div>
             )}
           </div>
@@ -386,7 +668,7 @@ function ExplainerLesson({ steps, color, onComplete }) {
           {step.tip    && <InfoBlock type="tip"    text={step.tip}    color={color} />}
           {step.law    && <InfoBlock type="law"    text={step.law}    color={color} />}
         </div>
-        <PrimaryButton onClick={goNext} label={isLast ? '¡Lección completada! ✓' : 'Entendido, siguiente →'} color={color} />
+        <PrimaryButton onClick={goNext} label={isLast ? <><Icon icon="✓" size={11} color="#0a0a0a" /> ¡Lección completada!</> : <>Entendido, siguiente →</>} color={color} />
       </div>
     </div>
   )
@@ -395,7 +677,7 @@ function ExplainerLesson({ steps, color, onComplete }) {
 // ═══════════════════════════════════════════════════════════════════
 // TIPO B: EXPLORER
 // ═══════════════════════════════════════════════════════════════════
-function ExplorerLesson({ items, color, intro, onComplete }) {
+function ExplorerLesson({ items, color, intro, onComplete, onShowSign }) {
   const [active, setActive] = useState(null)
   const [seen, setSeen] = useState(new Set())
 
@@ -483,13 +765,44 @@ function ExplorerLesson({ items, color, intro, onComplete }) {
           display:'grid', gridTemplateColumns:'100px 1fr', gap:24, alignItems:'flex-start',
         }}>
           <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:10 }}>
-            <div style={{
-              width:100, height:100, borderRadius:18,
-              background:`${color}10`, border:`1px solid ${color}25`,
-              display:'flex', alignItems:'center', justifyContent:'center', padding:8,
-              position:'relative',
-            }}>
+            <div
+              onClick={() => onShowSign?.({
+                ...active, sign: active.sign, emoji: active.emoji,
+                title: active.name, color, code: active.code || '',
+              })}
+              style={{
+                width:110, height:110, borderRadius:20,
+                background:`linear-gradient(160deg, ${color}12, rgba(255,255,255,0.02))`,
+                border:`1px solid ${color}28`,
+                display:'flex', alignItems:'center', justifyContent:'center', padding:10,
+                position:'relative', cursor:'pointer',
+                transition:'all 0.25s cubic-bezier(.16,1,.3,1)',
+                boxShadow:`0 4px 20px ${color}0a`,
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'scale(1.08)'
+                e.currentTarget.style.boxShadow = `0 8px 32px ${color}20`
+                e.currentTarget.style.borderColor = `${color}50`
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.boxShadow = `0 4px 20px ${color}0a`
+                e.currentTarget.style.borderColor = `${color}28`
+              }}
+            >
               <SignContainer srcs={active.sign} emoji={active.emoji} size={84} />
+              <div style={{
+                position:'absolute', top:-5, right:-5,
+                padding:'3px 8px', borderRadius:99,
+                background:`linear-gradient(135deg, ${color}, ${color}cc)`,
+                color:'#000',
+                fontFamily:"'Space Mono',monospace", fontWeight:700,
+                fontSize:8, letterSpacing:'0.04em',
+                boxShadow:`0 2px 8px ${color}40`,
+                border:'none',
+              }}>
+                + info
+              </div>
             </div>
             {active.code && (
               <span style={{ fontSize:9, color:T.faint, fontFamily:"'Space Mono',monospace" }}>{active.code}</span>
@@ -518,7 +831,7 @@ function ExplorerLesson({ items, color, intro, onComplete }) {
 // ═══════════════════════════════════════════════════════════════════
 // TIPO C: INTERACTIVE DEMO
 // ═══════════════════════════════════════════════════════════════════
-function InteractiveDemoLesson({ demos, color, onComplete }) {
+function InteractiveDemoLesson({ demos, color, onComplete, onShowSign }) {
   const [demoIdx, setDemoIdx] = useState(0)
   const [choice, setChoice] = useState(null)
   const [xpTotal, setXpTotal] = useState(0)
@@ -544,16 +857,23 @@ function InteractiveDemoLesson({ demos, color, onComplete }) {
           padding:'32px 24px', display:'flex', flexDirection:'column',
           alignItems:'center', justifyContent:'center', gap:16, textAlign:'center',
         }}>
-          {demo.sign ? (
-            <SignContainer srcs={demo.sign} emoji={demo.scene} size={80}
-              style={{ filter:`drop-shadow(0 0 20px ${color}40)` }} />
-          ) : (
-            <div style={{
-              width:80, height:80, borderRadius:24, background:`${color}14`,
-              border:`1px solid ${color}25`, display:'flex', alignItems:'center',
-              justifyContent:'center', fontSize:44,
-            }}>{demo.scene}</div>
-          )}
+          <div
+            onClick={() => onShowSign?.({ ...demo, sign: demo.sign, emoji: demo.scene, title: demo.situation, color, code: demo.code || '' })}
+            style={{ cursor: demo.sign ? 'pointer' : 'default', transition:'transform 0.2s' }}
+            onMouseEnter={e => { if (demo.sign) e.currentTarget.style.transform = 'scale(1.06)' }}
+            onMouseLeave={e => { if (demo.sign) e.currentTarget.style.transform = 'scale(1)' }}
+          >
+            {demo.sign ? (
+              <SignContainer srcs={demo.sign} emoji={demo.scene} size={80}
+                style={{ filter:`drop-shadow(0 0 20px ${color}40)` }} />
+            ) : (
+              <div style={{
+                width:80, height:80, borderRadius:24, background:`${color}14`,
+                border:`1px solid ${color}25`, display:'flex', alignItems:'center',
+                justifyContent:'center',
+              }}><Icon icon={demo.scene} size={44} /></div>
+            )}
+          </div>
           <h3 style={{ fontSize:16, fontWeight:700, color:T.text, lineHeight:1.5 }}>{demo.situation}</h3>
           {demo.context && <p style={{ fontSize:13, color:T.muted, lineHeight:1.65 }}>{demo.context}</p>}
           <Pill label="¿Qué harías?" color={color} />
@@ -603,7 +923,7 @@ function InteractiveDemoLesson({ demos, color, onComplete }) {
                 <div style={{ padding:'14px 18px', background:'rgba(255,255,255,0.025)', borderTop:`1px solid ${choice.positive?'rgba(52,211,153,0.1)':'rgba(251,146,60,0.1)'}` }}>
                   <div style={{ fontSize:10, fontWeight:700, color, fontFamily:"'Space Mono',monospace", letterSpacing:'0.08em', marginBottom:6 }}>[OK] LO IDEAL</div>
                   <p style={{ fontSize:12, color:T.muted, lineHeight:1.65 }}>{demo.idealExplanation}</p>
-                  {demo.law && <p style={{ fontSize:11, color:T.faint, marginTop:6, fontStyle:'italic' }}>📋 {demo.law}</p>}
+                  {demo.law && <p style={{ fontSize:11, color:T.faint, marginTop:6, fontStyle:'italic' }}><Icon icon="📋" size={11} /> {demo.law}</p>}
                 </div>
               </div>
               <PrimaryButton onClick={handleNext} label={isLast?'Completar →':'Siguiente situación →'} color={color} />
@@ -618,7 +938,7 @@ function InteractiveDemoLesson({ demos, color, onComplete }) {
 // ═══════════════════════════════════════════════════════════════════
 // TIPO D: STORY
 // ═══════════════════════════════════════════════════════════════════
-function StoryLesson({ storyTitle, intro, chapters, color, onComplete }) {
+function StoryLesson({ storyTitle, intro, chapters, color, onComplete, onShowSign }) {
   const [chIdx, setChIdx] = useState(0)
   const [decision, setDecision] = useState(null)
   const [hov, setHov] = useState(null)
@@ -660,8 +980,8 @@ function StoryLesson({ storyTitle, intro, chapters, color, onComplete }) {
             <div style={{
               width:60, height:60, borderRadius:18, background:`${color}14`,
               border:`1px solid ${color}22`, display:'flex', alignItems:'center',
-              justifyContent:'center', fontSize:32, marginBottom:18,
-            }}>{chapter.sceneEmoji}</div>
+              justifyContent:'center', marginBottom:18,
+            }}><Icon icon={chapter.sceneEmoji} size={32} /></div>
           )}
           <Pill label={chapter.location||'EN LA VÍA'} color={color} size="xs" />
           <p style={{ fontSize:15, color:T.text, lineHeight:1.9, marginTop:14, letterSpacing:'0.005em' }}>{chapter.narrative}</p>
@@ -680,7 +1000,7 @@ function StoryLesson({ storyTitle, intro, chapters, color, onComplete }) {
                       display:'flex', gap:12, alignItems:'flex-start',
                       transition:'all 0.18s', transform:hov===i?'translateX(4px)':'none',
                     }}>
-                    <span style={{ fontSize:18, flexShrink:0 }}>{path.emoji}</span>
+                    <span style={{ flexShrink:0 }}><Icon icon={path.emoji} size={18} /></span>
                     <span style={{ lineHeight:1.5 }}>{path.label}</span>
                   </button>
                 ))}
@@ -713,7 +1033,7 @@ function StoryLesson({ storyTitle, intro, chapters, color, onComplete }) {
 // ═══════════════════════════════════════════════════════════════════
 // TIPO E: CONCEPT MAP
 // ═══════════════════════════════════════════════════════════════════
-function ConceptMapLesson({ concepts, color, onComplete }) {
+function ConceptMapLesson({ concepts, color, onComplete, onShowSign }) {
   const [revealed, setRevealed] = useState(new Set())
   const [active, setActive] = useState(null)
 
@@ -758,13 +1078,33 @@ function ConceptMapLesson({ concepts, color, onComplete }) {
                 cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14,
                 transition:'all 0.25s',
               }}>
-                <div style={{
-                  width:46, height:46, borderRadius:13, flexShrink:0,
-                  background:isOpen?`${color}20`:wasSeen?`${color}10`:'rgba(255,255,255,0.05)',
-                  display:'flex', alignItems:'center', justifyContent:'center',
-                  padding:4, transition:'all 0.25s', position:'relative',
-                }}>
+                <div
+                  onClick={e => {
+                    e.stopPropagation()
+                    if (c.sign) onShowSign?.({ ...c, sign: c.sign, emoji: c.emoji, title: c.title, color, code: c.subtitle?.split(' — ')[0] || '' })
+                  }}
+                  style={{
+                    width:46, height:46, borderRadius:13, flexShrink:0,
+                    background:isOpen?`${color}20`:wasSeen?`${color}10`:'rgba(255,255,255,0.05)',
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    padding:4, transition:'all 0.25s', position:'relative',
+                    cursor: c.sign ? 'pointer' : 'default',
+                  }}
+                  onMouseEnter={e => { if (c.sign) e.currentTarget.style.transform = 'scale(1.12)' }}
+                  onMouseLeave={e => { if (c.sign) e.currentTarget.style.transform = 'scale(1)' }}
+                >
                   <SignContainer srcs={c.sign} emoji={c.emoji} size={38} />
+                  {c.sign && (
+                    <div style={{
+                      position:'absolute', top:-3, right:-3,
+                      width:14, height:14, borderRadius:'50%',
+                      background:color, color:'#000',
+                      fontSize:7, fontWeight:700, display:'flex',
+                      alignItems:'center', justifyContent:'center',
+                      fontFamily:"'Space Mono',monospace",
+                      boxShadow:`0 1px 4px ${color}50`,
+                    }}>i</div>
+                  )}
                 </div>
                 <div style={{ flex:1 }}>
                   <div style={{ fontSize:14, fontWeight:700, color:isOpen?color:T.text, transition:'color 0.2s' }}>{c.title}</div>
@@ -820,7 +1160,7 @@ function ConceptMapLesson({ concepts, color, onComplete }) {
 // ═══════════════════════════════════════════════════════════════════
 // TIPO F: STEP GUIDE
 // ═══════════════════════════════════════════════════════════════════
-function StepGuideLesson({ steps, color, onComplete }) {
+function StepGuideLesson({ steps, color, onComplete, onShowSign }) {
   const [current, setCurrent] = useState(0)
   const step = steps[current]
   const isLast = current === steps.length - 1
@@ -869,7 +1209,7 @@ function StepGuideLesson({ steps, color, onComplete }) {
             {step.sign ? (
               <SignContainer srcs={step.sign} emoji={step.emoji} size={80} />
             ) : (
-              <span style={{ fontSize:48 }}>{step.emoji}</span>
+              <span><Icon icon={step.emoji} size={48} /></span>
             )}
           </div>
           <Pill label={`${current+1}/${steps.length}`} color={color} size="xs" />
@@ -1236,16 +1576,16 @@ const MODULE_CONTENT = {
 }
 
 // ─── Dispatcher ───────────────────────────────────────────────────
-function LessonGame({ lesson, color, onComplete }) {
+function LessonGame({ lesson, color, onComplete, onShowSign }) {
   const { addXp, completeLesson } = useProgress()
   const handleComplete = xp => { addXp(xp); completeLesson(lesson.id); onComplete() }
   switch (lesson.type) {
-    case 'explainer':        return <ExplainerLesson      steps={lesson.steps}                                 color={color} onComplete={handleComplete} />
-    case 'explorer':         return <ExplorerLesson        items={lesson.items}   intro={lesson.intro}         color={color} onComplete={handleComplete} />
-    case 'interactive_demo': return <InteractiveDemoLesson demos={lesson.demos}                                color={color} onComplete={handleComplete} />
-    case 'story':            return <StoryLesson           storyTitle={lesson.storyTitle} intro={lesson.intro} chapters={lesson.chapters} color={color} onComplete={handleComplete} />
-    case 'concept_map':      return <ConceptMapLesson      concepts={lesson.concepts}                          color={color} onComplete={handleComplete} />
-    case 'step_guide':       return <StepGuideLesson       steps={lesson.steps}                                color={color} onComplete={handleComplete} />
+    case 'explainer':        return <ExplainerLesson      steps={lesson.steps}                                 color={color} onComplete={handleComplete} onShowSign={onShowSign} />
+    case 'explorer':         return <ExplorerLesson        items={lesson.items}   intro={lesson.intro}         color={color} onComplete={handleComplete} onShowSign={onShowSign} />
+    case 'interactive_demo': return <InteractiveDemoLesson demos={lesson.demos}                                color={color} onComplete={handleComplete} onShowSign={onShowSign} />
+    case 'story':            return <StoryLesson           storyTitle={lesson.storyTitle} intro={lesson.intro} chapters={lesson.chapters} color={color} onComplete={handleComplete} onShowSign={onShowSign} />
+    case 'concept_map':      return <ConceptMapLesson      concepts={lesson.concepts}                          color={color} onComplete={handleComplete} onShowSign={onShowSign} />
+    case 'step_guide':       return <StepGuideLesson       steps={lesson.steps}                                color={color} onComplete={handleComplete} onShowSign={onShowSign} />
     default: return <div style={{ color:T.muted, textAlign:'center', padding:40 }}>Tipo: {lesson.type}</div>
   }
 }
@@ -1273,12 +1613,12 @@ function LessonCard({ lesson, index, done, color, onClick }) {
       }}>{done?'✓':index+1}</div>
       <div style={{ flex:1, minWidth:0 }}>
         <div style={{ fontSize:14, fontWeight:600, color:done?color:T.text, marginBottom:6 }}>
-          {lesson.icon} {lesson.title}
+          <Icon icon={lesson.icon} size={18} /> {lesson.title}
         </div>
         <div style={{ display:'flex', gap:6, alignItems:'center', flexWrap:'wrap' }}>
           <Pill label={lesson.diff} color={DIFF_COLOR[lesson.diff]} size="xs" />
-          <span style={{ fontSize:11, color:T.faint }}>⏱ {lesson.time}</span>
-          <span style={{ fontSize:11, color:'rgba(251,191,36,0.65)' }}>⚡ {lesson.xp} XP</span>
+          <span style={{ fontSize:11, color:T.faint }}><Icon icon="⏱" size={11} /> {lesson.time}</span>
+          <span style={{ fontSize:11, color:'rgba(251,191,36,0.65)' }}><Icon icon="⚡" size={11} /> {lesson.xp} XP</span>
           <span style={{ fontSize:10, color:T.faint }}>{TYPE_LABELS[lesson.type]}</span>
         </div>
       </div>
@@ -1311,14 +1651,37 @@ function ModuleView({ mod, onSelectLesson, completedIds }) {
           }} />
           <div style={{ position:'absolute', inset:0, background:`linear-gradient(135deg, rgba(10,10,14,0.85) 40%, ${mod.color}18)` }} />
           <div style={{ position:'relative', padding:'36px 36px 32px' }}>
-            <div style={{ width:64, height:64, borderRadius:20, marginBottom:20, background:`${mod.color}18`, border:`1px solid ${mod.color}30`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:34 }}>{mod.icon}</div>
+            <div style={{
+              width:72, height:72, borderRadius:20, marginBottom:22,
+              background:`linear-gradient(145deg, ${mod.color}18, rgba(255,255,255,0.03))`,
+              border:`1px solid ${mod.color}30`,
+              display:'flex', alignItems:'center', justifyContent:'center',
+              overflow:'hidden', position:'relative',
+              boxShadow:`0 0 30px ${mod.color}15`,
+            }}>
+              {mod.img ? (
+                <img
+                  src={`https://commons.wikimedia.org/wiki/Special:FilePath/${mod.img}`}
+                  alt={mod.title}
+                  style={{
+                    width:'100%', height:'100%', objectFit:'contain', padding:8,
+                    opacity:0.92,
+                    filter:'drop-shadow(0 4px 12px rgba(0,0,0,0.35))',
+                  }}
+                  onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex' }}
+                />
+              ) : null}
+              <div style={{ position:'absolute', display: mod.img ? 'none' : 'flex', alignItems:'center', justifyContent:'center', inset:0 }}>
+                <Icon icon={mod.icon} size={34} />
+              </div>
+            </div>
             <h1 style={{ fontSize:28, fontWeight:700, color:T.text, marginBottom:10, letterSpacing:'-0.03em', lineHeight:1.15 }}>{mod.title}</h1>
             <p style={{ fontSize:14, color:T.muted, lineHeight:1.65, maxWidth:460 }}>{mod.description}</p>
           </div>
         </div>
 
         <div>
-          <div style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,0.25)', textTransform:'uppercase', letterSpacing:'0.12em', fontFamily:"'Space Mono',monospace", marginBottom:12 }}>📚 LECCIONES DEL MÓDULO</div>
+          <div style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,0.25)', textTransform:'uppercase', letterSpacing:'0.12em', fontFamily:"'Space Mono',monospace", marginBottom:12 }}><Icon icon="📚" size={10} /> LECCIONES DEL MÓDULO</div>
           <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
             {mod.lessons.map((lesson,i) => (
               <LessonCard key={lesson.id} lesson={lesson} index={i} done={completedIds.includes(lesson.id)} color={mod.color} onClick={() => onSelectLesson(lesson)} />
@@ -1356,7 +1719,7 @@ function ModuleView({ mod, onSelectLesson, completedIds }) {
             return (
               <div>
                 <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:14 }}>
-                  <div style={{ width:40, height:40, borderRadius:12, background:`${mod.color}14`, border:`1px solid ${mod.color}22`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>{next.icon}</div>
+                  <div style={{ width:40, height:40, borderRadius:12, background:`${mod.color}14`, border:`1px solid ${mod.color}22`, display:'flex', alignItems:'center', justifyContent:'center' }}><Icon icon={next.icon} size={20} /></div>
                   <div>
                     <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:3 }}>{next.title}</div>
                     <div style={{ display:'flex', gap:6 }}>
@@ -1397,10 +1760,11 @@ export function PageModulo() {
   const [activeLesson, setActiveLesson] = useState(null)
   const [confetti, setConfetti] = useState(false)
   const [showXP, setShowXP] = useState(false)
+  const [signDetail, setSignDetail] = useState(null)
 
   if (!mod) return (
     <div style={{ padding:48, textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center', gap:16 }}>
-      <div style={{ width:72, height:72, borderRadius:22, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:36 }}>🔒</div>
+        <div style={{ width:72, height:72, borderRadius:22, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'center' }}><Icon icon="🔒" size={36} color="rgba(255,255,255,0.25)" /></div>
       <h2 style={{ fontSize:18, color:T.text }}>Módulo no disponible</h2>
       <p style={{ color:T.muted, fontSize:14 }}>Este módulo aún no está desbloqueado.</p>
       <button onClick={() => navigate(-1)} style={{ padding:'11px 22px', borderRadius:12, border:'1px solid rgba(255,255,255,0.1)', background:'transparent', color:T.text, cursor:'pointer', fontSize:13 }}>← Volver</button>
@@ -1447,6 +1811,8 @@ export function PageModulo() {
       <Confetti active={confetti} />
       {showXP && <XPFloat visible={showXP} />}
 
+      <SignDetailModal sign={signDetail} onClose={() => setSignDetail(null)} />
+
       <div style={{ position:'relative', zIndex:1, padding:'0 8px' }}>
         {activeLesson ? (
           <div className="fin">
@@ -1457,18 +1823,18 @@ export function PageModulo() {
               >← {mod.title}</button>
               <div style={{ width:1, height:16, background:'rgba(255,255,255,0.1)' }} />
               <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                <div style={{ width:34, height:34, borderRadius:10, flexShrink:0, background:`${mod.color}14`, border:`1px solid ${mod.color}25`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>{activeLesson.icon}</div>
+                <div style={{ width:34, height:34, borderRadius:10, flexShrink:0, background:`${mod.color}14`, border:`1px solid ${mod.color}25`, display:'flex', alignItems:'center', justifyContent:'center' }}><Icon icon={activeLesson.icon} size={18} /></div>
                 <div>
                   <div style={{ fontSize:14, fontWeight:700, color:T.text }}>{activeLesson.title}</div>
                   <div style={{ display:'flex', gap:6, marginTop:3 }}>
                     <Pill label={activeLesson.diff} color={DIFF_COLOR[activeLesson.diff]} size="xs" />
-                    <span style={{ fontSize:11, color:T.faint }}>⏱ {activeLesson.time}</span>
-                    <span style={{ fontSize:11, color:'rgba(251,191,36,0.65)' }}>⚡ {activeLesson.xp} XP</span>
+                    <span style={{ fontSize:11, color:T.faint }}><Icon icon="⏱" size={11} /> {activeLesson.time}</span>
+                    <span style={{ fontSize:11, color:'rgba(251,191,36,0.65)' }}><Icon icon="⚡" size={11} /> {activeLesson.xp} XP</span>
                   </div>
                 </div>
               </div>
             </div>
-            <LessonGame lesson={activeLesson} color={mod.color} onComplete={handleComplete} />
+            <LessonGame lesson={activeLesson} color={mod.color} onComplete={handleComplete} onShowSign={setSignDetail} />
           </div>
         ) : (
           <div className="fin">

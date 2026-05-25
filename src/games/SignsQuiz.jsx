@@ -86,82 +86,83 @@ const TYPE_META = {
 const LETTERS = ['A', 'B', 'C', 'D']
 
 const QUIZ_CSS = `
-  @keyframes sq-slide-in {
-    from { opacity: 0; transform: translateX(32px) scale(0.97); }
-    to   { opacity: 1; transform: translateX(0) scale(1); }
+  @keyframes sq-fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
   @keyframes sq-pop {
     0%   { transform: scale(1); }
-    40%  { transform: scale(1.12); }
+    40%  { transform: scale(1.06); }
     100% { transform: scale(1); }
   }
   @keyframes sq-shake {
     0%,100% { transform: translateX(0); }
-    20%     { transform: translateX(-10px); }
-    40%     { transform: translateX(10px); }
-    60%     { transform: translateX(-7px); }
-    80%     { transform: translateX(7px); }
+    20%     { transform: translateX(-6px); }
+    40%     { transform: translateX(6px); }
+    60%     { transform: translateX(-4px); }
+    80%     { transform: translateX(4px); }
   }
   @keyframes sq-countdown-warn {
     0%, 100% { color: #ff5252; transform: scale(1); }
-    50%      { color: #ff1744; transform: scale(1.15); }
+    50%      { color: #ff1744; transform: scale(1.12); }
   }
   @keyframes sq-xp-float {
     0%   { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-48px) scale(1.3); }
+    100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
   }
   @keyframes sq-sign-enter {
-    from { opacity: 0; transform: scale(0.65) rotate(-6deg); }
-    to   { opacity: 1; transform: scale(1) rotate(0deg); }
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
   }
   @keyframes sq-spin-load {
     to { transform: rotate(360deg); }
   }
+  @keyframes sq-glow-pulse {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 0.8; }
+  }
 
-  .sq-slide  { animation: sq-slide-in 0.38s cubic-bezier(0.16,1,0.3,1) both; }
+  .sq-sign-enter { animation: sq-fade-in 0.4s cubic-bezier(0.16,1,0.3,1) both; }
   .sq-pop    { animation: sq-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
-  .sq-shake  { animation: sq-shake 0.4s ease both; }
-  .sq-sign-img { animation: sq-sign-enter 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .sq-shake  { animation: sq-shake 0.35s ease both; }
 
-  .sq-option {
+  .sq-opt {
     position: relative; overflow: hidden;
-    background: #131720;
-    border: 1.5px solid rgba(255,255,255,0.07);
-    border-radius: 14px; padding: 0; cursor: pointer;
-    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 0; cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
     text-align: left; width: 100%;
     font-family: 'DM Sans', sans-serif;
   }
-  .sq-option:hover:not(:disabled) {
-    border-color: rgba(255,255,255,0.18);
-    transform: translateX(4px);
-    box-shadow: -4px 0 0 0 #448aff;
+  .sq-opt:hover:not(:disabled) {
+    border-color: rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.02);
+    transform: translateX(3px);
   }
-  .sq-option:disabled { cursor: default; }
-  .sq-option.correct {
+  .sq-opt:disabled { cursor: default; }
+  .sq-opt.correct {
     border-color: #00e676 !important;
-    box-shadow: 0 0 0 1px #00e676, -4px 0 0 0 #00e676 !important;
-    animation: sq-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+    background: rgba(0,230,118,0.04) !important;
   }
-  .sq-option.wrong {
+  .sq-opt.wrong {
     border-color: #ff5252 !important;
-    box-shadow: 0 0 0 1px #ff5252, -4px 0 0 0 #ff5252 !important;
-    animation: sq-shake 0.4s ease both;
+    background: rgba(255,82,82,0.04) !important;
   }
-  .sq-option.dimmed { opacity: 0.3; }
+  .sq-opt.dimmed { opacity: 0.25; }
 
   .sq-timer-track {
-    height: 3px; background: rgba(255,255,255,0.06);
+    height: 2px; background: rgba(255,255,255,0.06);
     border-radius: 99px; overflow: hidden;
   }
   .sq-timer-fill { height: 100%; border-radius: 99px; transition: width 0.95s linear; }
   .sq-step-dot {
-    width: 6px; height: 6px; border-radius: 50%;
+    width: 5px; height: 5px; border-radius: 50%;
     transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
   }
   .sq-spinner {
-    width: 28px; height: 28px;
-    border: 3px solid rgba(255,255,255,0.08);
+    width: 24px; height: 24px;
+    border: 2px solid rgba(255,255,255,0.06);
     border-top-color: #448aff;
     border-radius: 50%;
     animation: sq-spin-load 0.8s linear infinite;
@@ -223,34 +224,37 @@ function OptionButton({ label, letter, index, selected, correctIdx, disabled, on
   const isCorrect  = index === correctIdx
   const isSelected = index === selected
   const isRevealed = selected !== null
-  let cls = 'sq-option'
+  let cls = 'sq-opt'
   if (isRevealed) {
-    if (isCorrect) cls += ' correct'
-    else if (isSelected) cls += ' wrong'
+    if (isCorrect) cls += ' correct sq-pop'
+    else if (isSelected) cls += ' wrong sq-shake'
     else cls += ' dimmed'
   }
   return (
     <button className={cls} onClick={onClick} disabled={disabled}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{
-          width: 48, height: 56,
+          width: 40, height: 48,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          borderRight: '1.5px solid rgba(255,255,255,0.06)', flexShrink: 0,
+          flexShrink: 0,
         }}>
           <span style={{
-            fontFamily: "'Space Mono', monospace", fontSize: 12, fontWeight: 700,
-            color: isRevealed && isCorrect ? '#00e676' : isRevealed && isSelected ? '#ff5252' : 'rgba(255,255,255,0.25)',
+            fontFamily: "'Space Mono', monospace", fontSize: 11, fontWeight: 700,
+            color: isRevealed && isCorrect ? '#00e676' : isRevealed && isSelected ? '#ff5252' : 'rgba(255,255,255,0.2)',
             transition: 'color 0.2s',
           }}>{letter}</span>
         </div>
         <span style={{
-          flex: 1, padding: '0 16px', fontSize: 13, fontWeight: 500,
+          flex: 1, padding: '0 12px 0 0', fontSize: 13, fontWeight: 500,
           color: isRevealed && isCorrect ? '#00e676' : isRevealed && isSelected && !isCorrect ? '#ff5252' : '#f0f4f8',
           transition: 'color 0.2s', lineHeight: 1.4,
         }}>{label}</span>
         {isRevealed && (isCorrect || isSelected) && (
-          <div style={{ width: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>
-            {isCorrect ? <Icon icon="✓" size={14} /> : <Icon icon="✗" size={14} />}
+          <div style={{
+            width: 32, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 12, flexShrink: 0,
+          }}>
+            {isCorrect ? '✓' : '✗'}
           </div>
         )}
       </div>
@@ -415,40 +419,29 @@ export function SignsQuiz({ onBack }) {
         </div>
 
         {/* Sign card */}
-        <div key={slideKey} className="sq-slide" style={{
+        <div key={slideKey} className="sq-sign-enter" style={{
           background: '#0e1118',
-          border: `1px solid ${meta.border}`,
-          borderRadius: 20, padding: '32px 28px',
-          marginBottom: 16, position: 'relative', overflow: 'hidden',
+          border: '1px solid rgba(255,255,255,0.04)',
+          borderRadius: 16, padding: '28px 24px',
+          marginBottom: 14, position: 'relative', overflow: 'hidden',
         }}>
           <div style={{
             position: 'absolute', inset: 0,
-            background: `radial-gradient(ellipse at 50% 0%, ${meta.color}0d 0%, transparent 65%)`,
+            background: `radial-gradient(ellipse at 50% 0%, ${meta.color}08 0%, transparent 65%)`,
             pointerEvents: 'none',
           }} />
 
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            background: meta.bg, border: `1px solid ${meta.border}`,
-            borderRadius: 99, padding: '4px 12px', marginBottom: 24, position: 'relative',
+            display: 'flex', alignItems: 'center', gap: 24, position: 'relative', justifyContent: 'center',
+            flexDirection: 'column',
           }}>
-            <span style={{ fontSize: 11 }}>{meta.icon}</span>
-            <span style={{
-              fontSize: 9, fontWeight: 800, letterSpacing: '0.12em',
-              textTransform: 'uppercase', color: meta.color,
-              fontFamily: "'Space Mono', monospace",
-            }}>{meta.label}</span>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 28, position: 'relative' }}>
-            {/* Imagen real desde Wikimedia */}
+            {/* Imagen */}
             <div style={{
-              width: 110, height: 110, flexShrink: 0,
-              borderRadius: 16,
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              width: 140, height: 140,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: 8, overflow: 'hidden',
+              padding: 10, borderRadius: 14,
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(255,255,255,0.04)',
             }}>
               {loading || !imgUrl ? (
                 <div className="sq-spinner" />
@@ -457,30 +450,44 @@ export function SignsQuiz({ onBack }) {
                   key={`img-${slideKey}`}
                   src={imgUrl}
                   alt={q.meaning}
-                  className="sq-sign-img"
                   style={{
                     width: '100%', height: '100%',
                     objectFit: 'contain',
-                    filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.6))',
+                    filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.5))',
+                    animation: 'sq-sign-enter 0.4s cubic-bezier(0.34,1.56,0.64,1) both',
                   }}
                 />
               )}
             </div>
 
-            <div style={{ flex: 1 }}>
-              <div style={{
-                fontSize: 11, color: 'rgba(255,255,255,0.3)',
-                textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, marginBottom: 8,
-              }}>
-                Pregunta {step + 1} de {SIGNS_QUIZ_DATA.length}
-              </div>
-              <p style={{ fontSize: 18, fontWeight: 700, color: '#f0f4f8', lineHeight: 1.35, margin: 0 }}>
-                ¿Qué significa esta señal?
-              </p>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              background: meta.bg, border: `1px solid ${meta.border}`,
+              borderRadius: 99, padding: '4px 12px',
+            }}>
+              <span style={{ fontSize: 11 }}>{meta.icon}</span>
+              <span style={{
+                fontSize: 9, fontWeight: 700, letterSpacing: '0.1em',
+                textTransform: 'uppercase', color: meta.color,
+              }}>{meta.label}</span>
             </div>
+
+            <p style={{
+              fontSize: 16, fontWeight: 600, color: '#f0f4f8',
+              lineHeight: 1.4, margin: 0, textAlign: 'center',
+            }}>
+              ¿Qué significa esta señal?
+            </p>
+
+            <span style={{
+              fontSize: 10, color: 'rgba(255,255,255,0.15)',
+              letterSpacing: '0.08em', fontWeight: 500,
+            }}>
+              Pregunta {step + 1} de {SIGNS_QUIZ_DATA.length}
+            </span>
           </div>
 
-          <div style={{ position: 'absolute', top: 16, right: 20 }}>
+          <div style={{ position: 'absolute', top: 12, right: 16 }}>
             <XpFloat visible={showXp} />
           </div>
         </div>

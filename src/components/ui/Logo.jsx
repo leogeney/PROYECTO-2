@@ -14,7 +14,7 @@ export function Logo({ small }) {
       <span className="mono" style={{
         fontSize: small ? 13 : 15, fontWeight: 700, color: T.text, letterSpacing: '0.08em',
       }}>
-        TRANSI<span style={{ color: T.green }}>+</span>
+        TRANSI<span style={{ color: T.green }}>+</span>: SEGURIDAD VIAL
       </span>
     </div>
   )

@@ -5,7 +5,6 @@ import { WordSearch } from './WordSearch'
 import { MemoryMatch } from './MemoryMatch'
 import { SignsQuiz } from './SignsQuiz'
 import { VirtualDriver } from './VirtualDriver'
-import { Icon } from '../components/ui/Icon'
 
 const GAMES_CONFIG = [
   {
@@ -87,123 +86,29 @@ const DIFFICULTY_LEVELS = {
   },
 }
 
-// ⚙️ Selector Modal de Dificultad
-function DifficultySelector({ game, onSelect, onCancel }) {
-  return (
-    <div style={{
-      position: 'fixed', inset: 0,
-      background: 'rgba(0,0,0,.6)', backdropFilter: 'blur(4px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 1000, animation: 'fade-in .2s ease'
-    }}>
-      <div className="anim-up" style={{
-        background: T.card, borderRadius: 20,
-        border: `1px solid ${T.border}`,
-        padding: '32px', maxWidth: 420, width: '90%',
-        boxShadow: '0 20px 60px rgba(0,0,0,.5)'
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}><Icon icon={game.emoji} size={48} /></div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: T.text, marginBottom: 6 }}>
-            {game.title}
-          </h2>
-          <p style={{ fontSize: 13, color: T.muted }}>
-            Elige tu nivel de dificultad
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
-          {Object.entries(DIFFICULTY_LEVELS).map(([key, diff]) => (
-            <button
-              key={key}
-              onClick={() => onSelect(key)}
-              className="option-btn"
-              style={{
-                background: diff.bg,
-                borderColor: `${diff.color}44`,
-                borderWidth: '2px',
-                padding: '14px 16px',
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-                <span style={{ fontSize: 20 }}><Icon icon={diff.icon} size={20} /></span>
-                <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: diff.color }}>
-                    {diff.label} {diff.recommended && <Icon icon="⭐" size={13} />}
-                  </div>
-                  <div style={{ fontSize: 11, color: T.muted }}>
-                    {diff.desc} • ×{diff.multiplier} XP
-                  </div>
-                </div>
-              </div>
-              <div style={{
-                fontSize: 20,
-                color: diff.color,
-                opacity: 0,
-                transition: 'all .2s',
-              }} className="difficulty-arrow">
-                →
-              </div>
-              <style>{`
-                button:hover .difficulty-arrow { 
-                  opacity: 1;
-                  transform: translateX(4px);
-                }
-              `}</style>
-            </button>
-          ))}
-        </div>
-
-        <button
-          onClick={onCancel}
-          className="btn-game secondary"
-          style={{ width: '100%', marginTop: 12 }}
-        >
-          ← Cancelar
-        </button>
-      </div>
-    </div>
-  )
-}
-
 // 🏆 Panel de Logros Compacto
 function AchievementsPanel({ achievements }) {
   const unlockedCount = Object.values(achievements).filter(a => a.unlocked).length
   const totalCount = Object.keys(achievements).length
 
   return (
-    <div className="anim-up" style={{
-      padding: '16px 20px', borderRadius: 12,
-      background: `linear-gradient(135deg, rgba(255,215,64,.08) 0%, rgba(255,215,64,.02) 100%)`,
-      border: `1px solid rgba(255,215,64,.2)`,
+    <div style={{
+      padding: '12px 16px', borderRadius: 12,
+      border: '1px solid rgba(255,215,64,0.08)',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      marginBottom: 16
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <Icon icon="🏆" size={24} />
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>
-            Logros desbloqueados
-          </div>
-          <div style={{ fontSize: 11, color: T.muted }}>
-            {unlockedCount} de {totalCount} completados
-          </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 14, opacity: 0.6 }}>🏆</span>
+        <div style={{ fontSize: 11, color: T.muted }}>
+          {unlockedCount}/{totalCount} logros
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 2 }}>
+      <div style={{ display: 'flex', gap: 3 }}>
         {Array.from({ length: totalCount }).map((_, i) => (
-          <div
-            key={i}
-            style={{
-              width: 8, height: 8, borderRadius: '50%',
-              background: Object.values(achievements)[i]?.unlocked ? T.gold : T.faint,
-              opacity: Object.values(achievements)[i]?.unlocked ? 1 : 0.3,
-              transition: 'all .3s'
-            }}
-          />
+          <div key={i} style={{
+            width: 5, height: 5, borderRadius: '50%',
+            background: Object.values(achievements)[i]?.unlocked ? T.gold : 'rgba(255,255,255,0.05)',
+          }} />
         ))}
       </div>
     </div>
@@ -212,106 +117,95 @@ function AchievementsPanel({ achievements }) {
 
 // 📊 Tarjeta de Juego Premium
 function GameCard({ game, onPlay, isNew }) {
-  const diff = DIFFICULTY_LEVELS[game.diff]
+  const [hover, setHover] = useState(false)
   
   return (
     <div
-      className="game-card anim-up"
+      className="anim-up"
       onClick={onPlay}
       style={{
-        background: T.card,
-        border: `1px solid ${game.color}22`,
-        borderRadius: 16,
-        overflow: 'hidden',
+        background: hover
+          ? `linear-gradient(145deg, ${T.card}, ${game.color}04)`
+          : T.card,
+        borderRadius: 14,
         cursor: 'pointer',
         position: 'relative',
-        transition: 'all .3s cubic-bezier(.16,1,.3,1)',
+        transition: 'all 0.4s cubic-bezier(.16,1,.3,1)',
+        transform: hover ? 'translateY(-3px)' : 'translateY(0)',
+        boxShadow: hover
+          ? `0 20px 50px rgba(0,0,0,0.3), 0 0 0 1px ${game.color}10`
+          : '0 1px 3px rgba(0,0,0,0.2)',
+        padding: '24px 22px 18px',
+        display: 'flex', flexDirection: 'column',
+        minHeight: 200,
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-6px)'
-        e.currentTarget.style.boxShadow = `0 12px 32px ${game.color}1a`
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = 'none'
-      }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
-      <div style={{
-        height: 4,
-        background: `linear-gradient(90deg, ${game.color}, transparent)`,
-        opacity: 0.8
-      }} />
-
       {isNew && (
         <div style={{
           position: 'absolute', top: 10, right: 10,
-          background: T.green, color: '#000',
-          padding: '4px 10px', borderRadius: 99,
-          fontSize: 9, fontWeight: 700,
-          zIndex: 10, animation: 'pulse 2s infinite'
+          display: 'flex', alignItems: 'center', gap: 5,
         }}>
-          <> <Icon icon="✨" size={9} /> NUEVO</>
+          <span style={{
+            width: 5, height: 5, borderRadius: '50%',
+            background: T.green,
+            boxShadow: `0 0 6px ${T.green}`,
+          }} />
+          <span style={{
+            fontSize: 8, color: T.faint, fontWeight: 500,
+            textTransform: 'uppercase', letterSpacing: '0.08em',
+          }}>Nuevo</span>
         </div>
       )}
 
-      <div style={{ padding: '18px 20px' }}>
-        <div style={{
-          display: 'flex', alignItems: 'flex-start',
-          justifyContent: 'space-between', marginBottom: 12, gap: 10
-        }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: 12,
-            background: `${game.color}14`, border: `1px solid ${game.color}28`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 24, boxShadow: `0 0 16px ${game.color}10`, flexShrink: 0
-          }}>
-            <Icon icon={game.emoji} size={24} />
-          </div>
-          <div style={{
-            padding: '4px 10px', borderRadius: 99, background: diff.bg,
-            color: diff.color, fontSize: 9, fontWeight: 700,
-            textTransform: 'uppercase', letterSpacing: '.06em', whiteSpace: 'nowrap'
-          }}>
-            {diff.label}
-          </div>
-        </div>
-
-        <h3 style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6, lineHeight: 1.3 }}>
-          {game.title}
-        </h3>
-        <p style={{ fontSize: 12, color: T.muted, lineHeight: 1.4, marginBottom: 12, minHeight: 32 }}>
-          {game.desc}
-        </p>
-
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          paddingTop: 10, borderTop: `1px solid ${T.border}`
-        }}>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {game.tags.slice(0, 2).map(tag => (
-              <span key={tag} style={{
-                fontSize: 9, color: T.faint, background: T.surface,
-                border: `1px solid ${T.border}`, borderRadius: 99,
-                padding: '2px 8px', whiteSpace: 'nowrap'
-              }}>
-                #{tag}
-              </span>
-            ))}
-          </div>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            fontSize: 12, fontWeight: 700, color: T.gold,
-            fontFamily: "'Space Mono', monospace"
-          }}>
-            <Icon icon="⚡" size={12} /> {game.baseXp}
-            <span style={{ fontSize: 16, opacity: 0, transition: 'all .2s' }} className="play-arrow">→</span>
-          </div>
-        </div>
+      {/* Icon */}
+      <div style={{
+        width: 36, height: 36, borderRadius: 10,
+        background: `${game.color}0a`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 16, marginBottom: 14,
+      }}>
+        {game.emoji}
       </div>
 
-      <style>{`
-        .game-card:hover .play-arrow { opacity: 1; transform: translateX(4px); }
-      `}</style>
+      {/* Title */}
+      <h3 style={{
+        fontSize: 15, fontWeight: 600, color: T.text,
+        marginBottom: 6, lineHeight: 1.3,
+      }}>
+        {game.title}
+      </h3>
+
+      {/* Description */}
+      <p style={{
+        fontSize: 11, color: T.muted, lineHeight: 1.5,
+        margin: 0, flex: 1,
+      }}>
+        {game.desc}
+      </p>
+
+      {/* Footer */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        marginTop: 14, paddingTop: 12,
+        borderTop: '1px solid rgba(255,255,255,0.03)',
+      }}>
+        <span style={{
+          fontSize: 10, color: T.faint,
+          fontFamily: "'Space Mono', monospace",
+          fontWeight: 500,
+        }}>
+          ⚡ {game.baseXp} XP
+        </span>
+
+        <span style={{
+          fontSize: 11, fontWeight: 500, color: hover ? game.color : 'rgba(255,255,255,0.15)',
+          transition: 'color 0.3s',
+        }}>
+          {hover ? 'Jugar →' : 'Empezar'}
+        </span>
+      </div>
     </div>
   )
 }
@@ -320,8 +214,6 @@ function GameCard({ game, onPlay, isNew }) {
 function GameHubInner() {
   const { achievements } = useAchievements()
   const [activeGame, setActiveGame] = useState(null)
-  const [selectedDifficulty, setSelectedDifficulty] = useState(null)
-  const [showDifficultySelector, setShowDifficultySelector] = useState(false)
   const [gameStats, setGameStats] = useState({})
 
   const currentGame = useMemo(() =>
@@ -331,17 +223,10 @@ function GameHubInner() {
 
   const handlePlayGame = useCallback((gameId) => {
     setActiveGame(gameId)
-    setShowDifficultySelector(true)
-  }, [])
-
-  const handleDifficultySelect = useCallback((difficulty) => {
-    setSelectedDifficulty(difficulty)
-    setShowDifficultySelector(false)
   }, [])
 
   const handleGameBack = useCallback(() => {
     setActiveGame(null)
-    setSelectedDifficulty(null)
   }, [])
 
   const handleGameComplete = useCallback((score, maxScore) => {
@@ -356,13 +241,14 @@ function GameHubInner() {
   }, [activeGame])
 
   const renderGame = () => {
-    if (!currentGame || !selectedDifficulty) return null
+    if (!currentGame) return null
     const GameComponent = currentGame.component
-    const diffMultiplier = DIFFICULTY_LEVELS[selectedDifficulty].multiplier
+    const diff = 'medio'
+    const diffMultiplier = DIFFICULTY_LEVELS[diff].multiplier
     return (
       <GameComponent
         onBack={handleGameBack}
-        difficulty={selectedDifficulty}
+        difficulty={diff}
         diffMultiplier={diffMultiplier}
         baseXp={currentGame.baseXp}
         onComplete={handleGameComplete}
@@ -374,45 +260,30 @@ function GameHubInner() {
     <>
       <GameStyles />
 
-      {showDifficultySelector && currentGame && (
-        <DifficultySelector
-          game={currentGame}
-          onSelect={handleDifficultySelect}
-          onCancel={() => setShowDifficultySelector(false)}
-        />
-      )}
-
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, animation: 'fade-in .3s ease' }}>
         {!activeGame && (
           <>
-            <div className="anim-up" style={{
-              padding: '32px 28px', borderRadius: 18, position: 'relative', overflow: 'hidden',
-              background: `linear-gradient(135deg, ${T.card} 40%, rgba(0,230,118,.05) 100%)`,
-              border: `1px solid rgba(0,230,118,.15)`,
-              boxShadow: '0 8px 32px rgba(0,230,118,.08)'
+            <div style={{
+              borderRadius: 14, position: 'relative', overflow: 'hidden',
+              background: `linear-gradient(145deg, ${T.card}, #0d101a)`,
+              padding: '24px 22px 20px',
+              boxShadow: '0 0 0 1px rgba(0,230,118,0.04)',
             }}>
-              <div className="grid-bg" style={{ position: 'absolute', inset: 0, opacity: 0.3 }} />
-              <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ position: 'relative' }}>
                 <div style={{
-                  fontSize: 10, color: T.green, fontWeight: 700, letterSpacing: '.14em',
-                  textTransform: 'uppercase', marginBottom: 12,
-                  display: 'flex', alignItems: 'center', gap: 6
+                  fontSize: 9, color: T.green, fontWeight: 600, letterSpacing: '.16em',
+                  textTransform: 'uppercase', marginBottom: 8,
                 }}>
-                  <div style={{
-                    width: 6, height: 6, borderRadius: '50%',
-                    background: T.green, animation: 'glow-pulse 2s infinite'
-                  }} />
-                  Centro de Juegos Interactivo
+                  Centro de Juegos
                 </div>
                 <h1 style={{
-                  fontSize: 32, fontWeight: 800, marginBottom: 8,
-                  lineHeight: 1.2, color: T.text, letterSpacing: '-0.5px'
+                  fontSize: 22, fontWeight: 600, margin: 0,
+                  lineHeight: 1.2, color: T.text, letterSpacing: '-0.02em',
                 }}>
-                  Aprende jugando <Icon icon="🎮" size={32} color={T.green} />
+                  Aprende jugando
                 </h1>
-                <p style={{ fontSize: 14, color: T.muted, maxWidth: 480, lineHeight: 1.6 }}>
-                  Domina las normas de tránsito a través de juegos interactivos y desafiantes.
-                  Elige tu dificultad, desbloquea logros y compite por la puntuación más alta.
+                <p style={{ fontSize: 12, color: T.muted, lineHeight: 1.5, marginTop: 6, marginBottom: 0 }}>
+                  Elige tu juego, define la dificultad y gana XP.
                 </p>
               </div>
             </div>
@@ -423,8 +294,8 @@ function GameHubInner() {
 
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: 16, marginTop: 8
+              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              gap: 12,
             }}>
               {GAMES_CONFIG.map((game, idx) => (
                 <GameCard
@@ -435,51 +306,38 @@ function GameHubInner() {
                 />
               ))}
             </div>
-
-            <div style={{
-              padding: '20px', borderRadius: 12,
-              background: `rgba(${68},${138},${255},.05)`,
-              border: `1px solid ${T.borderHi}`,
-              textAlign: 'center', fontSize: 12, color: T.muted, marginTop: 12
-            }}>
-              <Icon icon="💡" size={12} /> Completa todos los juegos y desbloquea logros épicos.
-              Tu puntuación se guarda automáticamente.
-            </div>
           </>
         )}
 
-        {activeGame && currentGame && selectedDifficulty &&(
+        {activeGame && currentGame &&(
           <div className="anim-fade">
             <div className="anim-fade" style={{
               display: 'flex', alignItems: 'center', gap: 14,
-              padding: '14px 18px', background: T.surface,
+              padding: '12px 16px', background: T.surface,
               border: `1px solid ${T.border}`, borderRadius: 12,
-              marginBottom: 20, marginTop: -4
+              marginBottom: 20,
             }}>
               <button
                 className="btn-game secondary"
                 onClick={handleGameBack}
-                style={{ padding: '8px 14px', fontSize: 12, transition: 'all .2s' }}
+                style={{ padding: '7px 12px', fontSize: 11 }}
               >
                 ← Atrás
               </button>
               <div style={{
-                width: 36, height: 36, borderRadius: 9,
-                background: `${currentGame.color}18`, border: `1px solid ${currentGame.color}30`,
+                width: 32, height: 32, borderRadius: 8,
+                background: `${currentGame.color}18`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 18, flexShrink: 0
+                fontSize: 16, flexShrink: 0
               }}>
-                <Icon icon={currentGame.emoji} size={18} />
+                {currentGame.emoji}
               </div>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>{currentGame.title}</div>
-                <div style={{ fontSize: 10, color: T.muted, marginTop: 2 }}>
-                  {DIFFICULTY_LEVELS[selectedDifficulty].label} • ×{DIFFICULTY_LEVELS[selectedDifficulty].multiplier} XP
-                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{currentGame.title}</div>
               </div>
               <div style={{ marginLeft: 'auto' }}>
-                <span className="mono" style={{ fontSize: 12, color: T.gold, fontWeight: 700 }}>
-                  <Icon icon="⚡" size={12} /> {Math.round(currentGame.baseXp * DIFFICULTY_LEVELS[selectedDifficulty].multiplier)} XP
+                <span className="mono" style={{ fontSize: 11, color: T.gold, fontWeight: 600 }}>
+                  ⚡ {currentGame.baseXp} XP
                 </span>
               </div>
             </div>
@@ -497,6 +355,8 @@ function GameHubInner() {
 
       <style>{`
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        @keyframes gc-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        @keyframes gc-pulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:0.7;transform:scale(1.08)}}
       `}</style>
     </>
   )

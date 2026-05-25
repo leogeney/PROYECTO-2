@@ -74,7 +74,7 @@ function App() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (fb) => {
-      setUser(fb ? { email: fb.email, name: fb.displayName || fb.email } : null)
+      setUser(fb ? { email: fb.email, name: fb.displayName || fb.email, isAdmin: fb.email === 'admin@transi.com' } : null)
       setChecking(false)
     })
     return unsub

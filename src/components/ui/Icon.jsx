@@ -119,6 +119,7 @@ const EMOJI_MAP = {
   '❓': CircleHelp,
   'ℹ️': Info,
   '✗': X,
+  '✕': X,
   '✓': Check,
   '💪': Dumbbell,
   '🔎': Search,
@@ -144,19 +145,7 @@ const EMOJI_MAP = {
   '←': ArrowLeft,
   '→': ArrowRight,
   '🔔': Bell,
-  '🎮': Gamepad2,
-  '🏎️': Gauge,
-  '🟢': CheckCircle,
-  '🟡': Circle,
-  '🔴': Circle,
-  '💪': Dumbbell,
-  '🏫': School,
   '🚶‍♂️': PersonStanding,
-  '🔒': Lock,
-  '🚦': TriangleAlert,
-  '❤️': Heart,
-  '⚡': Zap,
-  '🔥': Flame,
 }
 
 const COLORED = {
