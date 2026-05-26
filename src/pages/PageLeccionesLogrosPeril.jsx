@@ -575,6 +575,31 @@ function ActivityGrid({ completedLessons }) {
 // PagePerfil
 // ─────────────────────────────────────────────
 
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
+function resizeImage(dataUrl, maxW = 400, quality = 0.7) {
+  return new Promise(resolve => {
+    const img = new Image()
+    img.onload = () => {
+      let w = img.width, h = img.height
+      if (w > maxW) { h = h * maxW / w; w = maxW }
+      const c = document.createElement('canvas')
+      c.width = w; c.height = h
+      const ctx = c.getContext('2d')
+      ctx.drawImage(img, 0, 0, w, h)
+      resolve(c.toDataURL('image/jpeg', quality))
+    }
+    img.src = dataUrl
+  })
+}
+
 export function PagePerfil({ user }) {
   const { xp, streak, levelInfo, completedLessons } = useProgress()
   const { refresh: refreshUser } = useUser()
@@ -645,12 +670,24 @@ export function PagePerfil({ user }) {
 
   const handleCancel = () => { setDraft(form); setEditing(false); showToast('Cambios descartados') }
 
-  const handlePhotoChange = (e) => {
+  const handlePhotoChange = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => { setPhoto(ev.target.result); refreshUser() }
-    reader.readAsDataURL(file)
+    try {
+      const dataUrl = await readFileAsDataURL(file)
+      // Redimensionar a un máximo de 200px para que la cadena Base64 sea super compacta (~15KB) y guarde rápido en Firestore
+      const resized = await resizeImage(dataUrl, 200, 0.75)
+      setPhoto(resized)
+
+      const fb = auth.currentUser
+      if (fb?.uid) {
+        await Firestore.set('users', fb.uid, { photo: resized })
+        showToast('Foto de perfil actualizada ✓')
+      }
+      refreshUser()
+    } catch (err) {
+      showToast('Error al actualizar la foto')
+    }
   }
 
   const initial = (form.name?.[0] ?? '?').toUpperCase()

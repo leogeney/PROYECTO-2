@@ -126,12 +126,27 @@ export function DashboardLayout({ user, onLogout }) {
           {/* User card + XP */}
           <div style={{ padding: '12px', background: T.card, borderRadius: 10, border: `1px solid ${T.border}` }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 12 }}>
-              <div style={{
-                width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
-                background: 'rgba(0,230,118,0.12)', border: '1px solid rgba(0,230,118,0.28)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 13, fontWeight: 700, color: T.green,
-              }}>{user.name?.[0]?.toUpperCase() ?? '?'}</div>
+              {user.photo ? (
+                <img
+                  src={user.photo}
+                  alt="Avatar"
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    flexShrink: 0,
+                    border: '1px solid rgba(0,230,118,0.28)',
+                  }}
+                />
+              ) : (
+                <div style={{
+                  width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+                  background: 'rgba(0,230,118,0.12)', border: '1px solid rgba(0,230,118,0.28)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 13, fontWeight: 700, color: T.green,
+                }}>{user.name?.[0]?.toUpperCase() ?? '?'}</div>
+              )}
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 12, fontWeight: 600, color: T.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {user.name.split(' ')[0]}

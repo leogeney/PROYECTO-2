@@ -4,12 +4,71 @@ import { useForum } from '../context/ForumContext'
 import { T } from '../styles/tokens'
 
 const FS = `
-@keyframes fo-slide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fo-fade{from{opacity:0}to{opacity:1}}
-.fo-card{transition:all 0.3s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden}
-.fo-card:hover{transform:translateY(-2px)}
-.fo-card:hover .fo-card-glow{opacity:1}
-.fo-card-glow{position:absolute;inset:0;opacity:0;transition:opacity 0.3s;pointer-events:none}
+@keyframes kid-pop {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fo-slide {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fo-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes float-emoji {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+@keyframes heart-beat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+.kid-card {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+  position: relative;
+  overflow: hidden;
+}
+.kid-card:hover {
+  transform: translateY(-4px) scale(1.008);
+}
+.kid-button-3d {
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+.kid-button-3d:active {
+  transform: translateY(3px) !important;
+  box-shadow: none !important;
+}
+.reaction-btn {
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+}
+.reaction-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+.reaction-btn:hover .reaction-emoji {
+  animation: wiggle 0.4s ease infinite;
+}
+.reaction-btn:active {
+  transform: scale(0.9);
+}
+.doodle {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.15;
+  font-size: 28px;
+  animation: float-emoji 6s ease-in-out infinite;
+}
 `
 
 function timeAgo(date) {
@@ -24,46 +83,220 @@ function timeAgo(date) {
   return `${Math.floor(d / 7)}sem`
 }
 
+// Avatares de animalitos tiernos para los niños
+function getKidAvatar(authorName, authorId) {
+  const emojis = ['🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐰', '🐸', '🐙', '🦄', '🐶', '🐱', '🐹', '🐒', '🦖', '🐧', '🦉', '🐝']
+  const colors = [
+    'linear-gradient(135deg, #ff7675, #e84393)',
+    'linear-gradient(135deg, #74b9ff, #0984e3)',
+    'linear-gradient(135deg, #55efc4, #00b894)',
+    'linear-gradient(135deg, #ffeaa7, #fdcb6e)',
+    'linear-gradient(135deg, #a29bfe, #6c5ce7)',
+    'linear-gradient(135deg, #fd79a8, #e84393)',
+    'linear-gradient(135deg, #fab1a0, #ff7675)',
+    'linear-gradient(135deg, #00cec9, #00b894)',
+  ]
+  const str = authorId || authorName || 'Anónimo'
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const emojiIndex = Math.abs(hash) % emojis.length
+  const colorIndex = Math.abs(hash) % colors.length
+  return { emoji: emojis[emojiIndex], bg: colors[colorIndex] }
+}
+
+function UserAvatar({ authorName, authorId, photoUrl, size = 36 }) {
+  if (photoUrl) {
+    return (
+      <img
+        src={photoUrl}
+        alt={authorName}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: '50%',
+          objectFit: 'cover',
+          border: '2px solid rgba(255, 255, 255, 0.15)',
+          display: 'block',
+        }}
+      />
+    )
+  }
+  const { emoji, bg } = getKidAvatar(authorName, authorId)
+  return (
+    <div style={{
+      width: size,
+      height: size,
+      borderRadius: '50%',
+      background: bg,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: size * 0.55,
+      border: '2px solid rgba(255, 255, 255, 0.15)',
+      boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+      flexShrink: 0,
+      userSelect: 'none',
+    }}>
+      {emoji}
+    </div>
+  )
+}
+
+const STICKER_COLORS = [
+  { border: '#ff7675', badge: '#ff767522' },
+  { border: '#74b9ff', badge: '#74b9ff22' },
+  { border: '#55efc4', badge: '#55efc422' },
+  { border: '#ffeaa7', badge: '#ffeaa722' },
+  { border: '#a29bfe', badge: '#a29bfe22' },
+  { border: '#fd79a8', badge: '#fd79a822' },
+]
+
+function getCardTheme(postId) {
+  const str = postId || '1'
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  return STICKER_COLORS[Math.abs(hash) % STICKER_COLORS.length]
+}
+
+const REACTION_TYPES = [
+  { type: 'like', emoji: '👍', label: '¡Súper!', color: '#74b9ff' },
+  { type: 'love', emoji: '❤️', label: '¡Me encanta!', color: '#ff7675' },
+  { type: 'star', emoji: '🌟', label: '¡Estrella!', color: '#ffeaa7' },
+  { type: 'party', emoji: '🎉', label: '¡Fiesta!', color: '#fd79a8' },
+  { type: 'idea', emoji: '💡', label: '¡Brillante!', color: '#55efc4' },
+]
+
 function PostCard({ post, onClick }) {
   const navigate = useNavigate()
+  const theme = getCardTheme(post.id)
+  const { reactToPost } = useForum()
+
   return (
-    <div className="fo-card" onClick={onClick} style={{
-      padding: '18px 20px', borderRadius: 14, cursor: 'pointer',
-      background: T.card, border: '1px solid rgba(255,255,255,0.04)',
-      animation: 'fo-slide 0.3s ease',
-    }}>
-      <div className="fo-card-glow" style={{ background: `radial-gradient(circle at 80% 20%, rgba(0,230,118,0.03), transparent 60%)` }} />
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-        <div style={{
-          fontSize: 15, fontWeight: 600, color: T.text,
-          lineHeight: 1.3, flex: 1,
-        }}>
-          {post.title}
-        </div>
-        <div style={{
-          fontSize: 10, color: T.faint, whiteSpace: 'nowrap', marginLeft: 12, marginTop: 2,
-          fontFamily: "'Space Mono', monospace",
-        }}>
-          {timeAgo(post.date)}
+    <div 
+      className="kid-card" 
+      onClick={onClick} 
+      style={{
+        padding: '20px', 
+        borderRadius: 20, 
+        cursor: 'pointer',
+        background: T.card, 
+        border: `2px solid ${theme.border}44`,
+        boxShadow: `0 6px 0px ${theme.border}11, 0 8px 16px rgba(0,0,0,0.15)`,
+        animation: 'fo-slide 0.3s ease',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+        marginBottom: 8,
+      }}
+    >
+      {/* Header Info */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <UserAvatar authorName={post.author} authorId={post.authorId} size={36} />
+          <div>
+            <div 
+              onClick={e => { e.stopPropagation(); if (post.authorId) navigate(`/dashboard/perfil/${post.authorId}`) }} 
+              style={{
+                fontSize: 13, 
+                fontWeight: 700, 
+                color: T.text, 
+                cursor: post.authorId ? 'pointer' : 'default',
+              }}
+              onMouseEnter={e => { if (post.authorId) e.currentTarget.style.color = T.green }}
+              onMouseLeave={e => { if (post.authorId) e.currentTarget.style.color = T.text }}
+            >
+              {post.author}
+            </div>
+            <div style={{ fontSize: 10, color: T.faint, fontFamily: "'Space Mono', monospace", display: 'flex', alignItems: 'center', gap: 4 }}>
+              <i className="fa-regular fa-clock" style={{ fontSize: 9 }}></i>
+              <span>{timeAgo(post.date)}</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Title */}
+      <h3 style={{
+        fontSize: 16, 
+        fontWeight: 700, 
+        color: '#ffffff',
+        lineHeight: 1.3, 
+        margin: 0,
+      }}>
+        {post.title}
+      </h3>
+
+      {/* Post Image */}
       {post.img && (
-        <div style={{ marginBottom: 10, borderRadius: 8, overflow: 'hidden', maxHeight: 120 }}>
-          <img src={post.img} alt="" style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
+        <div style={{ borderRadius: 14, overflow: 'hidden', maxHeight: 150, border: '1px solid rgba(255,255,255,0.06)' }}>
+          <img src={post.img} alt="" style={{ width: '100%', height: 150, objectFit: 'cover', display: 'block' }} />
         </div>
       )}
+
+      {/* Content Text */}
       <p style={{
-        fontSize: 12, color: T.muted, lineHeight: 1.5,
-        marginBottom: 12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+        fontSize: 13, 
+        color: T.muted, 
+        lineHeight: 1.5,
+        margin: 0,
+        display: '-webkit-box', 
+        WebkitLineClamp: 2, 
+        WebkitBoxOrient: 'vertical', 
+        overflow: 'hidden',
       }}>
         {post.content}
       </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 11, color: T.faint }}>
-        <span onClick={e => { e.stopPropagation(); if (post.authorId) navigate(`/dashboard/perfil/${post.authorId}`) }} style={post.authorId ? { cursor: 'pointer', color: T.green, fontWeight: 600 } : {}}>
-          {post.author}
-        </span>
-        <span>·</span>
-        <span>{post.comments.length} comentarios</span>
+
+      {/* Divider */}
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.04)', margin: '4px 0' }} />
+
+      {/* Footer / Actions */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+        {/* Reactions List */}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {REACTION_TYPES.map(rx => {
+            const count = (post.reactions && post.reactions[rx.type]) || 0
+            const active = count > 0
+            return (
+              <button
+                key={rx.type}
+                className="reaction-btn"
+                onClick={e => {
+                  e.stopPropagation()
+                  reactToPost(post.id, rx.type)
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: '5px 9px',
+                  borderRadius: 14,
+                  border: '1px solid',
+                  borderColor: active ? rx.color : 'rgba(255,255,255,0.06)',
+                  background: active ? `${rx.color}15` : 'rgba(255,255,255,0.02)',
+                  color: active ? '#ffffff' : T.muted,
+                  cursor: 'pointer',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  outline: 'none',
+                }}
+              >
+                <span className="reaction-emoji" style={{ fontSize: 13 }}>{rx.emoji}</span>
+                {count > 0 && <span>{count}</span>}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Comment Count Link */}
+        <div style={{ fontSize: 12, color: T.faint, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <i className="fa-regular fa-comment" style={{ fontSize: 12 }}></i>
+          <span>{post.comments.length} {post.comments.length === 1 ? 'comentario' : 'comentarios'}</span>
+        </div>
       </div>
     </div>
   )
@@ -110,48 +343,111 @@ function NewPostModal({ onClose, onSubmit }) {
     setImg(resized)
   }
 
+  const isFormValid = title.trim() && content.trim()
+
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+      background: 'rgba(5, 7, 15, 0.8)', backdropFilter: 'blur(6px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
       animation: 'fo-fade 0.2s ease',
     }}>
       <div style={{
-        background: T.card, borderRadius: 16,
-        border: '1px solid rgba(255,255,255,0.06)',
-        padding: '28px 24px', maxWidth: 480, width: '100%',
-        animation: 'fo-slide 0.3s ease',
+        background: T.card, 
+        borderRadius: 24,
+        border: '2px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+        padding: '24px', 
+        maxWidth: 520, 
+        width: '100%',
+        animation: 'kid-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16,
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: T.text, margin: 0 }}>
-            Nuevo tema
+        {/* Modal Title */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <i className="fa-solid fa-pen-to-square" style={{ color: T.green }}></i> ¡Crear nuevo tema!
           </h2>
-          <div onClick={onClose} style={{ cursor: 'pointer', fontSize: 18, color: T.faint, lineHeight: 1 }}>✕</div>
+          <div 
+            onClick={onClose} 
+            style={{ 
+              cursor: 'pointer', 
+              fontSize: 16, 
+              color: T.faint, 
+              fontWeight: 'bold', 
+              width: 32, 
+              height: 32,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.03)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+          >
+            <i className="fa-solid fa-xmark"></i>
+          </div>
         </div>
-        <input
-          placeholder="Título del tema"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          style={{
-            width: '100%', padding: '10px 14px', fontSize: 14, borderRadius: 10, outline: 'none',
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-            color: T.text, marginBottom: 14, fontFamily: 'inherit',
-          }}
-        />
-        <textarea
-          placeholder="Escribe tu publicación..."
-          value={content}
-          onChange={e => setContent(e.target.value)}
-          rows={4}
-          style={{
-            width: '100%', padding: '10px 14px', fontSize: 13, borderRadius: 10, outline: 'none',
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-            color: T.text, resize: 'none', fontFamily: 'inherit', lineHeight: 1.5, marginBottom: 14,
-          }}
-        />
+
+        {/* Title Input */}
+        <div>
+          <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: T.muted, marginBottom: 6 }}>
+            Título de tu tema 🏷️
+          </label>
+          <input
+            placeholder="Ej: ¡Miren mi dibujo de una moto! 🏍️"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            style={{
+              width: '100%', 
+              padding: '12px 14px', 
+              fontSize: 14, 
+              borderRadius: 14, 
+              outline: 'none',
+              background: 'rgba(255,255,255,0.03)', 
+              border: '2px solid rgba(255,255,255,0.06)',
+              color: T.text, 
+              fontFamily: 'inherit',
+              transition: 'border-color 0.2s',
+            }}
+            onFocus={e => e.currentTarget.style.borderColor = T.green}
+            onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
+          />
+        </div>
+
+        {/* Content Textarea */}
+        <div>
+          <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: T.muted, marginBottom: 6 }}>
+            Cuéntanos más detalles 💬
+          </label>
+          <textarea
+            placeholder="¡Escribe aquí lo que quieras compartir con la comunidad!..."
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            rows={4}
+            style={{
+              width: '100%', 
+              padding: '12px 14px', 
+              fontSize: 13, 
+              borderRadius: 14, 
+              outline: 'none',
+              background: 'rgba(255,255,255,0.03)', 
+              border: '2px solid rgba(255,255,255,0.06)',
+              color: T.text, 
+              resize: 'none', 
+              fontFamily: 'inherit', 
+              lineHeight: 1.5,
+            }}
+            onFocus={e => e.currentTarget.style.borderColor = T.green}
+            onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
+          />
+        </div>
+
         {/* Image upload */}
-        <div style={{ marginBottom: 18 }}>
+        <div>
           <input
             type="file"
             accept="image/*"
@@ -160,38 +456,82 @@ function NewPostModal({ onClose, onSubmit }) {
             style={{ display: 'none' }}
           />
           {img ? (
-            <div style={{ position: 'relative', display: 'inline-block', borderRadius: 10, overflow: 'hidden' }}>
-              <img src={img} alt="preview" style={{ height: 100, borderRadius: 10, display: 'block' }} />
-              <div onClick={() => { setImg(''); setImgError('') }} style={{
-                position: 'absolute', top: 4, right: 4,
-                width: 22, height: 22, borderRadius: '50%',
-                background: 'rgba(0,0,0,0.6)', color: '#fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 12, cursor: 'pointer', lineHeight: 1,
-              }}>✕</div>
+            <div style={{ position: 'relative', display: 'inline-block', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <img src={img} alt="preview" style={{ height: 100, borderRadius: 14, display: 'block' }} />
+              <div 
+                onClick={() => { setImg(''); setImgError('') }} 
+                style={{
+                  position: 'absolute', top: 6, right: 6,
+                  width: 24, height: 24, borderRadius: '50%',
+                  background: 'rgba(0,0,0,0.7)', color: '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, cursor: 'pointer', lineHeight: 1, fontWeight: 'bold'
+                }}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </div>
             </div>
           ) : (
-            <label htmlFor="fo-img-input" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '8px 14px', borderRadius: 8, fontSize: 12,
-              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-              color: T.faint, cursor: 'pointer', fontFamily: 'inherit',
-            }}>
-              + Imagen
+            <label 
+              htmlFor="fo-img-input" 
+              className="kid-button-3d"
+              style={{
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: 6,
+                padding: '9px 15px', 
+                borderRadius: 14, 
+                fontSize: 12,
+                fontWeight: 700,
+                background: 'rgba(255,255,255,0.03)', 
+                border: 'none',
+                borderBottom: '3px solid rgba(0,0,0,0.3)',
+                color: '#ffffff', 
+                cursor: 'pointer',
+              }}
+            >
+              <i className="fa-solid fa-image" style={{ color: T.green }}></i> Subir Imagen
             </label>
           )}
-          {imgError && <div style={{ fontSize: 11, color: '#ff6b6b', marginTop: 6 }}>{imgError}</div>}
+          {imgError && <div style={{ fontSize: 11, color: '#ff5252', marginTop: 6, fontWeight: 600 }}>⚠️ {imgError}</div>}
         </div>
-        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button onClick={onClose} style={{
-            padding: '9px 18px', borderRadius: 10, fontSize: 13, cursor: 'pointer',
-            background: 'transparent', color: T.faint, border: '1px solid rgba(255,255,255,0.08)', fontWeight: 500,
-          }}>Cancelar</button>
-          <button onClick={() => { if (title.trim() && content.trim()) { onSubmit(title, content, img); setTitle(''); setContent(''); setImg('') } }} style={{
-            padding: '9px 20px', borderRadius: 10, fontSize: 13, cursor: 'pointer',
-            background: T.green, color: '#000', border: 'none', fontWeight: 700,
-            opacity: title.trim() && content.trim() ? 1 : 0.4,
-          }}>Publicar</button>
+
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+          <button 
+            onClick={onClose} 
+            className="kid-button-3d"
+            style={{
+              padding: '10px 18px', 
+              borderRadius: 14, 
+              fontSize: 13, 
+              background: 'transparent', 
+              color: T.muted, 
+              border: '2px solid rgba(255,255,255,0.06)', 
+              fontWeight: 700,
+            }}
+          >
+            <i className="fa-solid fa-xmark"></i> Cancelar
+          </button>
+          <button 
+            onClick={() => { if (isFormValid) { onSubmit(title, content, img) } }} 
+            className="kid-button-3d"
+            disabled={!isFormValid}
+            style={{
+              padding: '10px 22px', 
+              borderRadius: 14, 
+              fontSize: 13, 
+              background: T.green, 
+              color: '#000000', 
+              border: 'none', 
+              borderBottom: `4px solid ${T.greenDim}`,
+              fontWeight: 700,
+              opacity: isFormValid ? 1 : 0.4,
+              cursor: isFormValid ? 'pointer' : 'not-allowed',
+            }}
+          >
+            <i className="fa-solid fa-paper-plane"></i> ¡Publicar!
+          </button>
         </div>
       </div>
     </div>
@@ -199,81 +539,236 @@ function NewPostModal({ onClose, onSubmit }) {
 }
 
 function PostDetail({ post, onBack }) {
-  const { addComment, deletePost } = useForum()
+  const { addComment, reactToPost } = useForum()
   const [text, setText] = useState('')
   const navigate = useNavigate()
+  const theme = getCardTheme(post.id)
 
   return (
-    <div style={{ animation: 'fo-slide 0.3s ease' }}>
-      <button onClick={onBack} style={{
-        background: 'transparent', border: 'none', color: T.faint, cursor: 'pointer',
-        fontSize: 13, fontWeight: 500, padding: 0, marginBottom: 16, fontFamily: 'inherit',
-      }}>
-        ← Volver al foro
-      </button>
-
-      <div style={{ padding: '20px 22px', borderRadius: 14, background: T.card, border: '1px solid rgba(255,255,255,0.04)', marginBottom: 16 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: T.text, margin: 0, lineHeight: 1.3 }}>{post.title}</h2>
-        </div>
-        <div style={{ fontSize: 11, color: T.faint, marginBottom: 14 }}>
-          <span onClick={() => { if (post.authorId) navigate(`/dashboard/perfil/${post.authorId}`) }} style={post.authorId ? { cursor: 'pointer', color: T.green, fontWeight: 600 } : {}}>{post.author}</span> · <span className="mono">{timeAgo(post.date)}</span>
-        </div>
-        {post.img && (
-          <div style={{ marginBottom: 14, borderRadius: 10, overflow: 'hidden' }}>
-            <img src={post.img} alt="" style={{ width: '100%', maxHeight: 400, objectFit: 'contain', display: 'block', background: '#000' }} />
-          </div>
-        )}
-        <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
-          {post.content}
-        </p>
+    <div style={{ animation: 'fo-slide 0.3s ease', display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Back Button */}
+      <div>
+        <button 
+          onClick={onBack} 
+          className="kid-button-3d"
+          style={{
+            background: 'rgba(255,255,255,0.03)', 
+            border: 'none', 
+            borderBottom: '3px solid rgba(0,0,0,0.3)',
+            borderRadius: 12,
+            color: '#ffffff', 
+            fontSize: 12, 
+            fontWeight: 700, 
+            padding: '8px 14px', 
+            fontFamily: 'inherit',
+          }}
+        >
+          <i className="fa-solid fa-arrow-left"></i> Volver al Foro
+        </button>
       </div>
 
-      {/* Comments */}
-      <div style={{ marginBottom: 16 }}>
-        <h3 style={{ fontSize: 13, fontWeight: 600, color: T.faint, marginBottom: 12 }}>
-          {post.comments.length} {post.comments.length === 1 ? 'comentario' : 'comentarios'}
+      {/* Main Post Card Details */}
+      <div style={{ 
+        padding: '24px', 
+        borderRadius: 20, 
+        background: T.card, 
+        border: `2px solid ${theme.border}44`,
+        boxShadow: `0 6px 0px ${theme.border}11, 0 8px 16px rgba(0,0,0,0.15)`,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16
+      }}>
+        {/* Header author and tag */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <UserAvatar authorName={post.author} authorId={post.authorId} size={40} />
+            <div>
+              <span 
+                onClick={() => { if (post.authorId) navigate(`/dashboard/perfil/${post.authorId}`) }} 
+                style={{ 
+                  fontSize: 14, 
+                  fontWeight: 700, 
+                  cursor: post.authorId ? 'pointer' : 'default', 
+                  color: T.green 
+                }}
+              >
+                {post.author}
+              </span>
+              <div style={{ fontSize: 10, color: T.faint, fontFamily: "'Space Mono', monospace", marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <i className="fa-regular fa-clock" style={{ fontSize: 9 }}></i>
+                <span>Publicado {timeAgo(post.date)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Post Title */}
+        <h2 style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', margin: 0, lineHeight: 1.3 }}>
+          {post.title}
+        </h2>
+
+        {/* Post image */}
+        {post.img && (
+          <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <img src={post.img} alt="" style={{ width: '100%', maxHeight: 400, objectFit: 'contain', display: 'block', background: '#090b11' }} />
+          </div>
+        )}
+
+        {/* Post content text */}
+        <p style={{ fontSize: 14, color: T.text, lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>
+          {post.content}
+        </p>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', margin: '4px 0' }} />
+
+        {/* Post Reactions */}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {REACTION_TYPES.map(rx => {
+            const count = (post.reactions && post.reactions[rx.type]) || 0
+            const active = count > 0
+            return (
+              <button
+                key={rx.type}
+                className="reaction-btn"
+                onClick={() => reactToPost(post.id, rx.type)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 12px',
+                  borderRadius: 16,
+                  border: '1px solid',
+                  borderColor: active ? rx.color : 'rgba(255,255,255,0.06)',
+                  background: active ? `${rx.color}15` : 'rgba(255,255,255,0.02)',
+                  color: active ? '#ffffff' : T.muted,
+                  cursor: 'pointer',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  outline: 'none',
+                }}
+              >
+                <span className="reaction-emoji" style={{ fontSize: 14 }}>{rx.emoji}</span>
+                {count > 0 && <span>{count}</span>}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      <div style={{ marginTop: 8 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: T.muted, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <i className="fa-solid fa-comments" style={{ color: T.green }}></i>
+          <span>{post.comments.length} {post.comments.length === 1 ? 'comentario' : 'comentarios'}</span>
         </h3>
+
         {post.comments.length === 0 ? (
-          <div style={{ fontSize: 12, color: T.faint, padding: '16px 0', textAlign: 'center' }}>
-            Sin comentarios aún. Sé el primero en responder.
+          <div style={{ 
+            fontSize: 13, 
+            color: T.faint, 
+            padding: '24px', 
+            textAlign: 'center',
+            background: T.card,
+            borderRadius: 16,
+            border: '2px dashed rgba(255,255,255,0.04)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+          }}>
+            <i className="fa-regular fa-face-smile" style={{ fontSize: 16 }}></i>
+            <span>¡Aún no hay comentarios! Sé el primero en escribir algo amigable.</span>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {post.comments.map(c => (
-              <div key={c.id} style={{
-                padding: '12px 16px', borderRadius: 12,
-                background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <span onClick={() => { if (c.authorId) navigate(`/dashboard/perfil/${c.authorId}`) }} style={{ fontSize: 11, fontWeight: 600, cursor: c.authorId ? 'pointer' : 'default', color: c.authorId ? T.green : T.text }}>{c.author}</span>
-                  <span className="mono" style={{ fontSize: 9, color: T.faint }}>{timeAgo(c.date)}</span>
+              <div 
+                key={c.id} 
+                style={{
+                  display: 'flex',
+                  gap: 10,
+                  alignItems: 'flex-start',
+                  animation: 'kid-pop 0.3s ease',
+                }}
+              >
+                <UserAvatar authorName={c.author} authorId={c.authorId} size={32} />
+                <div style={{
+                  flex: 1,
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                  borderRadius: 16,
+                  borderTopLeftRadius: 2,
+                  padding: '12px 14px',
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, alignItems: 'center' }}>
+                    <span 
+                      onClick={() => { if (c.authorId) navigate(`/dashboard/perfil/${c.authorId}`) }} 
+                      style={{ 
+                        fontSize: 12, 
+                        fontWeight: 700, 
+                        cursor: c.authorId ? 'pointer' : 'default', 
+                        color: T.green 
+                      }}
+                    >
+                      {c.author}
+                    </span>
+                    <span className="mono" style={{ fontSize: 9, color: T.faint, display: 'flex', alignItems: 'center', gap: 3 }}>
+                      <i className="fa-regular fa-clock" style={{ fontSize: 8 }}></i>
+                      <span>{timeAgo(c.date)}</span>
+                    </span>
+                  </div>
+                  <p style={{ fontSize: 13, color: T.text, lineHeight: 1.5, margin: 0 }}>
+                    {c.text}
+                  </p>
                 </div>
-                <p style={{ fontSize: 12, color: T.muted, lineHeight: 1.5, margin: 0 }}>{c.text}</p>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Add comment */}
-      <div style={{ display: 'flex', gap: 10 }}>
+      {/* Add comment Form */}
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 8 }}>
         <input
-          placeholder="Escribe un comentario..."
+          placeholder="Escribe un comentario amigable... ✍️"
           value={text}
           onChange={e => setText(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && text.trim()) { addComment(post.id, text); setText('') } }}
           style={{
-            flex: 1, padding: '10px 14px', fontSize: 13, borderRadius: 10, outline: 'none',
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-            color: T.text, fontFamily: 'inherit',
+            flex: 1, 
+            padding: '12px 16px', 
+            fontSize: 13, 
+            borderRadius: 16, 
+            outline: 'none',
+            background: 'rgba(255,255,255,0.03)', 
+            border: '2px solid rgba(255,255,255,0.06)',
+            color: T.text, 
+            fontFamily: 'inherit',
           }}
+          onFocus={e => e.currentTarget.style.borderColor = T.green}
+          onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
         />
-        <button onClick={() => { if (text.trim()) { addComment(post.id, text); setText('') } }} style={{
-          padding: '10px 18px', borderRadius: 10, fontSize: 13, cursor: 'pointer',
-          background: T.green, color: '#000', border: 'none', fontWeight: 700,
-          fontFamily: 'inherit', opacity: text.trim() ? 1 : 0.4,
-        }}>Enviar</button>
+        <button 
+          onClick={() => { if (text.trim()) { addComment(post.id, text); setText('') } }} 
+          className="kid-button-3d"
+          style={{
+            padding: '11px 20px', 
+            borderRadius: 16, 
+            fontSize: 13, 
+            background: T.green, 
+            color: '#000000', 
+            border: 'none', 
+            borderBottom: `4px solid ${T.greenDim}`,
+            fontWeight: 700,
+            fontFamily: 'inherit', 
+            opacity: text.trim() ? 1 : 0.4,
+            cursor: text.trim() ? 'pointer' : 'not-allowed',
+          }}
+          disabled={!text.trim()}
+        >
+          <i className="fa-solid fa-paper-plane"></i> ¡Enviar!
+        </button>
       </div>
     </div>
   )
@@ -300,46 +795,103 @@ export function PageForo() {
       {selectedPost ? (
         <PostDetail post={selectedPost} onBack={() => setSelected(null)} />
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {/* Header */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Kids colorful banner */}
           <div style={{
-            borderRadius: 14, padding: '22px 22px 18px',
-            background: `linear-gradient(145deg, ${T.card}, #0d101a)`,
-            border: '1px solid rgba(0,230,118,0.04)',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            borderRadius: 20, 
+            padding: '24px',
+            background: `linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)`,
+            boxShadow: '0 6px 0px rgba(108, 92, 231, 0.2), 0 10px 20px rgba(0,0,0,0.15)',
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            position: 'relative',
+            overflow: 'hidden',
           }}>
-            <div>
-              <div style={{ fontSize: 9, color: T.green, fontWeight: 600, letterSpacing: '.16em', textTransform: 'uppercase', marginBottom: 6 }}>
-                Comunidad
+            {/* Animated floating doodles for the kids banner */}
+            <div className="doodle" style={{ top: 10, left: '10%' }}>🌟</div>
+            <div className="doodle" style={{ bottom: 15, left: '30%' }}>🎨</div>
+            <div className="doodle" style={{ top: 15, right: '25%' }}>🚀</div>
+            <div className="doodle" style={{ bottom: 10, right: '40%' }}>💬</div>
+
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ fontSize: 10, color: '#ffeaa7', fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
+                <i className="fa-solid fa-rainbow"></i>
+                <span>COMUNIDAD INFANTIL</span>
               </div>
-              <h1 style={{ fontSize: 20, fontWeight: 600, color: T.text, margin: 0, lineHeight: 1.2, letterSpacing: '-0.02em' }}>
-                Foro de discusión
+              <h1 style={{ fontSize: 24, fontWeight: 800, color: '#ffffff', margin: 0, lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+                ¡Foro de los Exploradores!
               </h1>
-              <p style={{ fontSize: 11, color: T.muted, marginTop: 4, margin: '4px 0 0' }}>
-                {posts.length} temas · comparte y aprende
+              <p style={{ fontSize: 12, color: '#f1f2f6', marginTop: 4, margin: '4px 0 0', fontWeight: 600 }}>
+                {posts.length} temas activos · Comparte tus dudas
               </p>
             </div>
-            <button onClick={() => setShowNew(true)} style={{
-              padding: '9px 18px', borderRadius: 10, fontSize: 12, cursor: 'pointer',
-              background: T.green, color: '#000', border: 'none', fontWeight: 700,
-              fontFamily: 'inherit', whiteSpace: 'nowrap',
-            }}>
-              + Nuevo tema
+
+            <button 
+              onClick={() => setShowNew(true)} 
+              className="kid-button-3d"
+              style={{
+                padding: '10px 20px', 
+                borderRadius: 16, 
+                fontSize: 13, 
+                background: '#ffd740', 
+                color: '#000000', 
+                border: 'none', 
+                borderBottom: '4px solid #d8a000',
+                fontWeight: 800,
+                fontFamily: 'inherit', 
+                whiteSpace: 'nowrap',
+                position: 'relative',
+                zIndex: 1,
+                boxShadow: '0 4px 0 rgba(0,0,0,0.1)',
+              }}
+            >
+              <i className="fa-solid fa-pen-to-square"></i> ¡Crear Tema!
             </button>
           </div>
 
-          {/* Posts */}
+          {/* Posts Feed */}
           {posts.length === 0 ? (
             <div style={{
-              padding: '32px 20px', borderRadius: 14, textAlign: 'center',
-              background: T.card, border: '1px solid rgba(255,255,255,0.04)',
+              padding: '40px 20px', 
+              borderRadius: 20, 
+              textAlign: 'center',
+              background: T.card, 
+              border: '2px dashed rgba(255,255,255,0.05)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 12,
             }}>
-              <div style={{ fontSize: 28, marginBottom: 10 }}>💬</div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: T.text, marginBottom: 4 }}>Aún no hay temas</div>
-              <div style={{ fontSize: 12, color: T.faint }}>Sé el primero en iniciar una conversación.</div>
+              <div style={{ fontSize: 44, animation: 'float-emoji 3s ease-in-out infinite' }}>🐼💤</div>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#ffffff', marginBottom: 4 }}>
+                  ¡El foro está vacío!
+                </div>
+                <div style={{ fontSize: 12, color: T.muted }}>
+                  ¡Sé el primero en iniciar una divertida conversación!
+                </div>
+              </div>
+              <button
+                onClick={() => setShowNew(true)}
+                className="kid-button-3d"
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 12,
+                  fontSize: 12,
+                  background: T.green,
+                  color: '#000000',
+                  border: 'none',
+                  borderBottom: `3px solid ${T.greenDim}`,
+                  fontWeight: 700,
+                  marginTop: 6,
+                }}
+              >
+                <i className="fa-solid fa-pen-to-square"></i> Crear Publicación
+              </button>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {posts.map(p => (
                 <PostCard key={p.id} post={p} onClick={() => setSelected(p.id)} />
               ))}

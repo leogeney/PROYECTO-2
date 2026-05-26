@@ -75,7 +75,7 @@ export function ForumProvider({ children, user }) {
     localStorage.setItem(storageKey(userId), JSON.stringify(posts))
   }, [posts, userId])
 
-  const addPost = useCallback(async (title, content, img) => {
+  const addPost = useCallback(async (title, content, img, category) => {
     const post = {
       title: title.trim(),
       content: content.trim(),
@@ -85,6 +85,8 @@ export function ForumProvider({ children, user }) {
       authorId: userId || '',
       date: Date.now(),
       comments: [],
+      category: category || '💬 Charla',
+      reactions: { love: 0, like: 0, star: 0, party: 0, idea: 0 },
     }
     if (userId) {
       try {
@@ -122,7 +124,23 @@ export function ForumProvider({ children, user }) {
     }
   }, [userId])
 
-  const value = useMemo(() => ({ posts, addPost, addComment, deletePost }), [posts, addPost, addComment, deletePost])
+  const reactToPost = useCallback(async (postId, reactionType) => {
+    setPosts(prev => prev.map(p => {
+      if (p.id !== postId) return p
+      const rx = p.reactions || { love: 0, like: 0, star: 0, party: 0, idea: 0 }
+      const updatedReactions = {
+        ...rx,
+        [reactionType]: (rx[reactionType] || 0) + 1
+      }
+      const updated = { ...p, reactions: updatedReactions }
+      if (userId) {
+        Firestore.update('forum_posts', postId, { reactions: updatedReactions }).catch(() => {})
+      }
+      return updated
+    }))
+  }, [userId])
+
+  const value = useMemo(() => ({ posts, addPost, addComment, deletePost, reactToPost }), [posts, addPost, addComment, deletePost, reactToPost])
 
   return (
     <ForumContext.Provider value={value}>
