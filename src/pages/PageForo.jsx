@@ -163,17 +163,17 @@ function getCardTheme(postId) {
 }
 
 const REACTION_TYPES = [
-  { type: 'like', emoji: '👍', label: '¡Súper!', color: '#74b9ff' },
-  { type: 'love', emoji: '❤️', label: '¡Me encanta!', color: '#ff7675' },
-  { type: 'star', emoji: '🌟', label: '¡Estrella!', color: '#ffeaa7' },
-  { type: 'party', emoji: '🎉', label: '¡Fiesta!', color: '#fd79a8' },
-  { type: 'idea', emoji: '💡', label: '¡Brillante!', color: '#55efc4' },
+  { type: 'like', iconClass: 'fa-solid fa-thumbs-up', label: '¡Súper!', color: '#74b9ff' },
+  { type: 'love', iconClass: 'fa-solid fa-heart', label: '¡Me encanta!', color: '#ff7675' },
+  { type: 'star', iconClass: 'fa-solid fa-star', label: '¡Estrella!', color: '#ffeaa7' },
+  { type: 'party', iconClass: 'fa-solid fa-fire', label: '¡Fiesta!', color: '#fd79a8' },
+  { type: 'idea', iconClass: 'fa-solid fa-lightbulb', label: '¡Brillante!', color: '#55efc4' },
 ]
 
 function PostCard({ post, onClick }) {
   const navigate = useNavigate()
   const theme = getCardTheme(post.id)
-  const { reactToPost } = useForum()
+  const { reactToPost, userId } = useForum()
 
   return (
     <div 
@@ -260,7 +260,7 @@ function PostCard({ post, onClick }) {
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {REACTION_TYPES.map(rx => {
             const count = (post.reactions && post.reactions[rx.type]) || 0
-            const active = count > 0
+            const active = post.userReactions && post.userReactions[userId || 'guest'] === rx.type
             return (
               <button
                 key={rx.type}
@@ -285,7 +285,9 @@ function PostCard({ post, onClick }) {
                   outline: 'none',
                 }}
               >
-                <span className="reaction-emoji" style={{ fontSize: 13 }}>{rx.emoji}</span>
+                <span className="reaction-emoji" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <i className={rx.iconClass} style={{ fontSize: 12 }}></i>
+                </span>
                 {count > 0 && <span>{count}</span>}
               </button>
             )
@@ -394,56 +396,64 @@ function NewPostModal({ onClose, onSubmit }) {
 
         {/* Title Input */}
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: T.muted, marginBottom: 6 }}>
-            Título de tu tema 🏷️
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: T.muted, marginBottom: 6 }}>
+            <span>Título de tu tema</span>
+            <i className="fa-solid fa-tag" style={{ color: T.green }}></i>
           </label>
-          <input
-            placeholder="Ej: ¡Miren mi dibujo de una moto! 🏍️"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            style={{
-              width: '100%', 
-              padding: '12px 14px', 
-              fontSize: 14, 
-              borderRadius: 14, 
-              outline: 'none',
-              background: 'rgba(255,255,255,0.03)', 
-              border: '2px solid rgba(255,255,255,0.06)',
-              color: T.text, 
-              fontFamily: 'inherit',
-              transition: 'border-color 0.2s',
-            }}
-            onFocus={e => e.currentTarget.style.borderColor = T.green}
-            onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
-          />
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+            <i className="fa-solid fa-heading" style={{ position: 'absolute', left: 14, color: T.faint, fontSize: 12 }}></i>
+            <input
+              placeholder="Ej: ¡Miren mi dibujo de una moto!..."
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              style={{
+                width: '100%', 
+                padding: '12px 14px 12px 36px', 
+                fontSize: 14, 
+                borderRadius: 14, 
+                outline: 'none',
+                background: 'rgba(255,255,255,0.03)', 
+                border: '2px solid rgba(255,255,255,0.06)',
+                color: T.text, 
+                fontFamily: 'inherit',
+                transition: 'border-color 0.2s',
+              }}
+              onFocus={e => e.currentTarget.style.borderColor = T.green}
+              onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
+            />
+          </div>
         </div>
 
         {/* Content Textarea */}
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: T.muted, marginBottom: 6 }}>
-            Cuéntanos más detalles 💬
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: T.muted, marginBottom: 6 }}>
+            <span>Cuéntanos más detalles</span>
+            <i className="fa-solid fa-comment-dots" style={{ color: T.green }}></i>
           </label>
-          <textarea
-            placeholder="¡Escribe aquí lo que quieras compartir con la comunidad!..."
-            value={content}
-            onChange={e => setContent(e.target.value)}
-            rows={4}
-            style={{
-              width: '100%', 
-              padding: '12px 14px', 
-              fontSize: 13, 
-              borderRadius: 14, 
-              outline: 'none',
-              background: 'rgba(255,255,255,0.03)', 
-              border: '2px solid rgba(255,255,255,0.06)',
-              color: T.text, 
-              resize: 'none', 
-              fontFamily: 'inherit', 
-              lineHeight: 1.5,
-            }}
-            onFocus={e => e.currentTarget.style.borderColor = T.green}
-            onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
-          />
+          <div style={{ position: 'relative', display: 'flex', width: '100%' }}>
+            <i className="fa-solid fa-align-left" style={{ position: 'absolute', left: 14, top: 14, color: T.faint, fontSize: 12 }}></i>
+            <textarea
+              placeholder="¡Escribe aquí lo que quieras compartir con la comunidad!..."
+              value={content}
+              onChange={e => setContent(e.target.value)}
+              rows={4}
+              style={{
+                width: '100%', 
+                padding: '12px 14px 12px 36px', 
+                fontSize: 13, 
+                borderRadius: 14, 
+                outline: 'none',
+                background: 'rgba(255,255,255,0.03)', 
+                border: '2px solid rgba(255,255,255,0.06)',
+                color: T.text, 
+                resize: 'none', 
+                fontFamily: 'inherit', 
+                lineHeight: 1.5,
+              }}
+              onFocus={e => e.currentTarget.style.borderColor = T.green}
+              onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
+            />
+          </div>
         </div>
 
         {/* Image upload */}
@@ -493,7 +503,7 @@ function NewPostModal({ onClose, onSubmit }) {
               <i className="fa-solid fa-image" style={{ color: T.green }}></i> Subir Imagen
             </label>
           )}
-          {imgError && <div style={{ fontSize: 11, color: '#ff5252', marginTop: 6, fontWeight: 600 }}>⚠️ {imgError}</div>}
+          {imgError && <div style={{ fontSize: 11, color: '#ff5252', marginTop: 6, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}><i className="fa-solid fa-circle-exclamation"></i> {imgError}</div>}
         </div>
 
         {/* Action Buttons */}
@@ -539,7 +549,7 @@ function NewPostModal({ onClose, onSubmit }) {
 }
 
 function PostDetail({ post, onBack }) {
-  const { addComment, reactToPost } = useForum()
+  const { addComment, reactToPost, userId } = useForum()
   const [text, setText] = useState('')
   const navigate = useNavigate()
   const theme = getCardTheme(post.id)
@@ -626,7 +636,7 @@ function PostDetail({ post, onBack }) {
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {REACTION_TYPES.map(rx => {
             const count = (post.reactions && post.reactions[rx.type]) || 0
-            const active = count > 0
+            const active = post.userReactions && post.userReactions[userId || 'guest'] === rx.type
             return (
               <button
                 key={rx.type}
@@ -648,7 +658,9 @@ function PostDetail({ post, onBack }) {
                   outline: 'none',
                 }}
               >
-                <span className="reaction-emoji" style={{ fontSize: 14 }}>{rx.emoji}</span>
+                <span className="reaction-emoji" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <i className={rx.iconClass} style={{ fontSize: 13 }}></i>
+                </span>
                 {count > 0 && <span>{count}</span>}
               </button>
             )
@@ -729,26 +741,29 @@ function PostDetail({ post, onBack }) {
       </div>
 
       {/* Add comment Form */}
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 8 }}>
-        <input
-          placeholder="Escribe un comentario amigable... ✍️"
-          value={text}
-          onChange={e => setText(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter' && text.trim()) { addComment(post.id, text); setText('') } }}
-          style={{
-            flex: 1, 
-            padding: '12px 16px', 
-            fontSize: 13, 
-            borderRadius: 16, 
-            outline: 'none',
-            background: 'rgba(255,255,255,0.03)', 
-            border: '2px solid rgba(255,255,255,0.06)',
-            color: T.text, 
-            fontFamily: 'inherit',
-          }}
-          onFocus={e => e.currentTarget.style.borderColor = T.green}
-          onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
-        />
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 8, width: '100%' }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flex: 1 }}>
+          <i className="fa-solid fa-pen" style={{ position: 'absolute', left: 14, color: T.faint, fontSize: 12 }}></i>
+          <input
+            placeholder="Escribe un comentario amigable..."
+            value={text}
+            onChange={e => setText(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter' && text.trim()) { addComment(post.id, text); setText('') } }}
+            style={{
+              flex: 1, 
+              padding: '12px 16px 12px 36px', 
+              fontSize: 13, 
+              borderRadius: 16, 
+              outline: 'none',
+              background: 'rgba(255,255,255,0.03)', 
+              border: '2px solid rgba(255,255,255,0.06)',
+              color: T.text, 
+              fontFamily: 'inherit',
+            }}
+            onFocus={e => e.currentTarget.style.borderColor = T.green}
+            onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
+          />
+        </div>
         <button 
           onClick={() => { if (text.trim()) { addComment(post.id, text); setText('') } }} 
           className="kid-button-3d"
@@ -809,10 +824,10 @@ export function PageForo() {
             overflow: 'hidden',
           }}>
             {/* Animated floating doodles for the kids banner */}
-            <div className="doodle" style={{ top: 10, left: '10%' }}>🌟</div>
-            <div className="doodle" style={{ bottom: 15, left: '30%' }}>🎨</div>
-            <div className="doodle" style={{ top: 15, right: '25%' }}>🚀</div>
-            <div className="doodle" style={{ bottom: 10, right: '40%' }}>💬</div>
+            <div className="doodle" style={{ top: 10, left: '10%', color: '#ffd740' }}><i className="fa-solid fa-star"></i></div>
+            <div className="doodle" style={{ bottom: 15, left: '30%', color: '#ff7675' }}><i className="fa-solid fa-palette"></i></div>
+            <div className="doodle" style={{ top: 15, right: '25%', color: '#74b9ff' }}><i className="fa-solid fa-rocket"></i></div>
+            <div className="doodle" style={{ bottom: 10, right: '40%', color: '#55efc4' }}><i className="fa-solid fa-comment-dots"></i></div>
 
             <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ fontSize: 10, color: '#ffeaa7', fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -863,7 +878,16 @@ export function PageForo() {
               alignItems: 'center',
               gap: 12,
             }}>
-              <div style={{ fontSize: 44, animation: 'float-emoji 3s ease-in-out infinite' }}>🐼💤</div>
+              <div style={{ 
+                width: 64, height: 64, borderRadius: '50%', 
+                background: 'rgba(255,255,255,0.02)', 
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                animation: 'float-emoji 3s ease-in-out infinite',
+                border: '1px solid rgba(255,255,255,0.05)',
+                marginBottom: 4
+              }}>
+                <i className="fa-solid fa-comments" style={{ fontSize: 28, color: T.faint }}></i>
+              </div>
               <div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: '#ffffff', marginBottom: 4 }}>
                   ¡El foro está vacío!

@@ -125,22 +125,43 @@ export function ForumProvider({ children, user }) {
   }, [userId])
 
   const reactToPost = useCallback(async (postId, reactionType) => {
+    const uid = userId || 'guest'
     setPosts(prev => prev.map(p => {
       if (p.id !== postId) return p
+      
       const rx = p.reactions || { love: 0, like: 0, star: 0, party: 0, idea: 0 }
-      const updatedReactions = {
-        ...rx,
-        [reactionType]: (rx[reactionType] || 0) + 1
+      const userRx = p.userReactions || {}
+      
+      const prevReaction = userRx[uid]
+      const updatedUserReactions = { ...userRx }
+      const updatedReactions = { ...rx }
+      
+      if (prevReaction === reactionType) {
+        // Si el usuario vuelve a dar click a la misma reacción, se la quitamos (Toggle off)
+        delete updatedUserReactions[uid]
+        updatedReactions[reactionType] = Math.max(0, (rx[reactionType] || 0) - 1)
+      } else {
+        // Si tenía otra reacción diferente, primero decrementamos la anterior
+        if (prevReaction) {
+          updatedReactions[prevReaction] = Math.max(0, (rx[prevReaction] || 0) - 1)
+        }
+        // Asignamos la nueva reacción e incrementamos su contador
+        updatedUserReactions[uid] = reactionType
+        updatedReactions[reactionType] = (rx[reactionType] || 0) + 1
       }
-      const updated = { ...p, reactions: updatedReactions }
+      
+      const updated = { ...p, reactions: updatedReactions, userReactions: updatedUserReactions }
       if (userId) {
-        Firestore.update('forum_posts', postId, { reactions: updatedReactions }).catch(() => {})
+        Firestore.update('forum_posts', postId, { 
+          reactions: updatedReactions, 
+          userReactions: updatedUserReactions 
+        }).catch(() => {})
       }
       return updated
     }))
   }, [userId])
 
-  const value = useMemo(() => ({ posts, addPost, addComment, deletePost, reactToPost }), [posts, addPost, addComment, deletePost, reactToPost])
+  const value = useMemo(() => ({ posts, addPost, addComment, deletePost, reactToPost, userId }), [posts, addPost, addComment, deletePost, reactToPost, userId])
 
   return (
     <ForumContext.Provider value={value}>

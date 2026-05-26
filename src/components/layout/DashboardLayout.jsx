@@ -29,7 +29,7 @@ import { PublicProfile } from '../../pages/PublicProfile'
 import { T } from '../../styles/tokens'
 
 const NAV_ITEMS = [
-  { icon: '⊞',  label: 'Inicio',    to: '/dashboard/inicio'    },
+  { icon: <i className="fa-solid fa-house"></i>,  label: 'Inicio',    to: '/dashboard/inicio'    },
   { icon: <Icon icon="📚" size={16} />, label: 'Pruebas', to: '/dashboard/lecciones' },
   { icon: <Icon icon="🪧" size={16} />, label: 'Biblioteca',to: '/dashboard/biblioteca' },
   { icon: <Icon icon="🏆" size={16} />, label: 'Logros',    to: '/dashboard/logros'    },
@@ -37,8 +37,8 @@ const NAV_ITEMS = [
   { icon: <Icon icon="👤" size={16} />, label: 'Perfil',    to: '/dashboard/perfil'    },
   { icon: <Icon icon="🎮" size={16} />, label: 'Juegos',    to: '/dashboard/juegos'    },
   { icon: <Icon icon="📰" size={16} />, label: 'Noticias', to: '/dashboard/noticias' },
-  { icon: '☰',  label: 'Foro',     to: '/dashboard/foro'      },
-  { icon: '⚑',  label: 'Soporte', to: '/dashboard/soporte' },
+  { icon: <i className="fa-solid fa-comments"></i>,  label: 'Foro',     to: '/dashboard/foro'      },
+  { icon: <i className="fa-solid fa-circle-question"></i>,  label: 'Soporte', to: '/dashboard/soporte' },
 ]
 
 export function DashboardLayout({ user, onLogout }) {
