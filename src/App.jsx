@@ -1,8 +1,10 @@
 // App.jsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from './config/firebase'
+import { Firestore } from './services/firestore'
+import { UserContext } from './context/UserContext'
 import Login from './components/Login/Login'
 import { AchievementsProvider } from './games/GameAchievements'
 import { Icon } from './components/ui/Icon'
@@ -72,24 +74,40 @@ function App() {
   const [user, setUser]         = useState(null)
   const [checking, setChecking] = useState(true)
 
+  // Load profile from Firestore and merge with auth user
+  const loadProfile = useCallback(async (fb) => {
+    if (!fb) { setUser(null); setChecking(false); return }
+    const base = { email: fb.email, name: fb.displayName || fb.email, isAdmin: fb.email === 'admin@transi.com' }
+    try {
+      const data = await Firestore.get('users', fb.uid)
+      if (data?.name) base.name = data.name
+      if (data?.email) base.email = data.email
+      if (data?.photo) base.photo = data.photo
+      if (data?.bio) base.bio = data.bio
+    } catch {}
+    setUser(base)
+    setChecking(false)
+  }, [])
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (fb) => {
-      setUser(fb ? { email: fb.email, name: fb.displayName || fb.email, isAdmin: fb.email === 'admin@transi.com' } : null)
-      setChecking(false)
+      loadProfile(fb)
     })
     return unsub
-  }, [])
+  }, [loadProfile])
 
   if (checking) return <Loader />
 
   return (
     <>
       <GlobalStyles />
+      <UserContext.Provider value={{ user, refresh: () => { const fb = auth.currentUser; if (fb) loadProfile(fb) } }}>
       <Routes>
         <Route path="/login"       element={user ? <Navigate to="/dashboard/inicio" replace /> : <Login />} />
         <Route path="/dashboard/*" element={user ? <DashboardLayout user={user} onLogout={() => signOut(auth)} /> : <Navigate to="/login" replace />} />
         <Route path="*"            element={<Navigate to={user ? '/dashboard/inicio' : '/login'} replace />} />
       </Routes>
+      </UserContext.Provider>
     </>
   )
 }

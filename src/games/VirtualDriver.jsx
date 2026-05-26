@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import * as THREE from 'three'
 import { useNotification } from '../context/NotificationContext'
+import { useProgress } from '../context/ProgressContext'
 
 const CarIcon = () => (
   <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
@@ -204,6 +205,8 @@ function makeCarMesh(bodyColor, isPlayer, THREE) {
 }
 
 export function VirtualDriver({ onBack }) {
+  const { addXp } = useProgress()
+  const xpAwardedRef = useRef(false)
   const mountRef = useRef(null)
   const threeRef = useRef(null)
   const stateRef = useRef(null)
@@ -228,6 +231,11 @@ export function VirtualDriver({ onBack }) {
 
   useEffect(() => {
     if (phase === 'dead') {
+      const g = stateRef.current || {}
+      if ((g.score || 0) > 0 && !xpAwardedRef.current) {
+        addXp(g.score)
+        xpAwardedRef.current = true
+      }
       const dist = stateRef.current?.distance || 0
       if (dist >= 5) {
         showNotification?.('performance', 'Eres un experto del volante! Recorriste una gran distancia.', 6000)
@@ -237,7 +245,7 @@ export function VirtualDriver({ onBack }) {
         showNotification?.('performance', 'Cuidado en la via! Intentarlo de nuevo para llegar mas lejos.', 5000)
       }
     }
-  }, [phase, showNotification])
+  }, [phase, showNotification, addXp])
 
   const addFloat = useCallback((text, color, screenX) => {
     const id = Math.random()
@@ -1028,6 +1036,7 @@ export function VirtualDriver({ onBack }) {
   }, [moveLane, activateNitro])
 
   const startGame = useCallback(() => {
+    xpAwardedRef.current = false
     setPhase('playing')
     setFloats([])
     setHud({

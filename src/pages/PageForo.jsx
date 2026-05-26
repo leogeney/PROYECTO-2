@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useForum } from '../context/ForumContext'
 import { T } from '../styles/tokens'
 
@@ -24,6 +25,7 @@ function timeAgo(date) {
 }
 
 function PostCard({ post, onClick }) {
+  const navigate = useNavigate()
   return (
     <div className="fo-card" onClick={onClick} style={{
       padding: '18px 20px', borderRadius: 14, cursor: 'pointer',
@@ -57,7 +59,9 @@ function PostCard({ post, onClick }) {
         {post.content}
       </p>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 11, color: T.faint }}>
-        <span>{post.author}</span>
+        <span onClick={e => { e.stopPropagation(); if (post.authorId) navigate(`/dashboard/perfil/${post.authorId}`) }} style={post.authorId ? { cursor: 'pointer', color: T.green, fontWeight: 600 } : {}}>
+          {post.author}
+        </span>
         <span>·</span>
         <span>{post.comments.length} comentarios</span>
       </div>
@@ -197,6 +201,7 @@ function NewPostModal({ onClose, onSubmit }) {
 function PostDetail({ post, onBack }) {
   const { addComment, deletePost } = useForum()
   const [text, setText] = useState('')
+  const navigate = useNavigate()
 
   return (
     <div style={{ animation: 'fo-slide 0.3s ease' }}>
@@ -212,7 +217,7 @@ function PostDetail({ post, onBack }) {
           <h2 style={{ fontSize: 18, fontWeight: 600, color: T.text, margin: 0, lineHeight: 1.3 }}>{post.title}</h2>
         </div>
         <div style={{ fontSize: 11, color: T.faint, marginBottom: 14 }}>
-          {post.author} · <span className="mono">{timeAgo(post.date)}</span>
+          <span onClick={() => { if (post.authorId) navigate(`/dashboard/perfil/${post.authorId}`) }} style={post.authorId ? { cursor: 'pointer', color: T.green, fontWeight: 600 } : {}}>{post.author}</span> · <span className="mono">{timeAgo(post.date)}</span>
         </div>
         {post.img && (
           <div style={{ marginBottom: 14, borderRadius: 10, overflow: 'hidden' }}>
@@ -241,7 +246,7 @@ function PostDetail({ post, onBack }) {
                 background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: T.text }}>{c.author}</span>
+                  <span onClick={() => { if (c.authorId) navigate(`/dashboard/perfil/${c.authorId}`) }} style={{ fontSize: 11, fontWeight: 600, cursor: c.authorId ? 'pointer' : 'default', color: c.authorId ? T.green : T.text }}>{c.author}</span>
                   <span className="mono" style={{ fontSize: 9, color: T.faint }}>{timeAgo(c.date)}</span>
                 </div>
                 <p style={{ fontSize: 12, color: T.muted, lineHeight: 1.5, margin: 0 }}>{c.text}</p>

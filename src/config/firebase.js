@@ -1,6 +1,7 @@
 
 import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
    apiKey: "AIzaSyCIgR7dEos95gwCOO5HrIq5sm8vMM7MLLI",
@@ -23,6 +24,8 @@ export const googleProvider = new GoogleAuthProvider()
 googleProvider.setCustomParameters({ prompt: 'select_account' })
 googleProvider.addScope('profile')
 googleProvider.addScope('email')
+
+export const db = getFirestore(app)
 
 export default app
 

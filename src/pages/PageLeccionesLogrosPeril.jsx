@@ -1,10 +1,14 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../context/ProgressContext'
+import { useUser } from '../context/UserContext'
 import { LessonRow } from '../components/ui/LessonRow'
 import { XpBar } from '../components/ui/XpBar'
 import { useSignImages } from '../utils/wikimedia'
 import { T, DIFF } from '../styles/tokens'
+import { Firestore } from '../services/firestore'
+import { auth } from '../config/firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 
 // ─────────────────────────────────────────────
 // Fa — thin wrapper around Font Awesome icons
@@ -152,8 +156,8 @@ function LeccionCard({ lesson, done, index, delay = 0 }) {
 }
 
 export function PageLecciones() {
-  const { xp, streak, completedLessons } = useProgress()
-  const myLessons = LESSONS.map(l => ({ ...l, done: completedLessons.includes(l.id) }))
+  const { xp, streak, completedLessons, lessonIds } = useProgress()
+  const myLessons = LESSONS.map(l => ({ ...l, done: lessonIds.includes(l.id) }))
   const done = myLessons.filter(l => l.done).length
   const total = myLessons.length
   const pct = Math.round((done / total) * 100)
@@ -518,18 +522,36 @@ function FieldRow({ label, value, last }) {
 }
 
 function ActivityGrid({ completedLessons }) {
+  const today = new Date()
   const cells = Array.from({ length: 182 }, (_, i) => {
     const done = completedLessons?.some?.(l => {
-      const d = new Date(l.date)
-      const ref = new Date()
+      const d = new Date(typeof l === 'object' ? l.date : l)
+      const ref = new Date(today)
       ref.setDate(ref.getDate() - (181 - i))
       return d.toDateString() === ref.toDateString()
     })
-    return done ? 3 : Math.random() < 0.35 ? 0 : Math.floor(Math.random() * 3) + 1
+    return done ? 3 : 0
   })
+
+  // Month labels: each column = 1 week
+  const monthLabels = []
+  let prev = ''
+  for (let col = 0; col < 26; col++) {
+    const d = new Date(today)
+    d.setDate(d.getDate() - (181 - col * 7 - 3))
+    const m = d.toLocaleString('es', { month: 'short' }).replace('.', '')
+    if (m !== prev) monthLabels.push({ label: m, start: col })
+    prev = m
+  }
 
   return (
     <div>
+      <div style={{ display: 'flex', gap: 3, marginBottom: 4, fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>
+        {monthLabels.map((m, i) => {
+          const span = ((monthLabels[i + 1]?.start || 26) - m.start)
+          return <span key={m.label} style={{ width: `calc(${span} / 26 * 100%)` }}>{m.label}</span>
+        })}
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(26, 1fr)', gap: 3 }}>
         {cells.map((lvl, i) => (
           <div key={i} style={{
@@ -555,6 +577,7 @@ function ActivityGrid({ completedLessons }) {
 
 export function PagePerfil({ user }) {
   const { xp, streak, levelInfo, completedLessons } = useProgress()
+  const { refresh: refreshUser } = useUser()
   const level    = levelInfo?.level    ?? 1
   const xpToNext = levelInfo?.xpToNext ?? 3000
   const xpPct = Math.min(100, Math.round((xp / xpToNext) * 100))
@@ -574,12 +597,50 @@ export function PagePerfil({ user }) {
   const [draft,  setDraft]  = useState(form)
   const [notifs, setNotifs] = useState({ racha: true, logros: true, nuevos: false, tips: true })
 
+  // Load profile from Firestore
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (fb) => {
+      if (!fb?.uid) return
+      try {
+        const data = await Firestore.get('users', fb.uid)
+        if (data) {
+          const next = {
+            name: data.name || user?.name || 'María González',
+            email: data.email || user?.email || 'maria@ejemplo.com',
+            bio: data.bio || '',
+            goal: data.goal || 30,
+          }
+          setForm(next)
+          setDraft(next)
+          if (data.photo) setPhoto(data.photo)
+          if (data.notifs) setNotifs(data.notifs)
+        }
+      } catch {}
+    })
+    return unsub
+  }, [])
+
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 2200) }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!draft.name.trim())         return showToast('El nombre no puede estar vacío')
     if (!draft.email.includes('@')) return showToast('Correo inválido')
-    setForm(draft); setEditing(false); showToast('Perfil actualizado ✓')
+    setForm(draft); setEditing(false)
+    try {
+      const fb = auth.currentUser
+      if (fb?.uid) {
+        await Firestore.set('users', fb.uid, {
+          name: draft.name.trim(),
+          email: draft.email.trim(),
+          bio: draft.bio.trim(),
+          goal: draft.goal,
+          notifs,
+          ...(photo ? { photo } : {}),
+        })
+      }
+    } catch {}
+    refreshUser()
+    showToast('Perfil actualizado ✓')
   }
 
   const handleCancel = () => { setDraft(form); setEditing(false); showToast('Cambios descartados') }
@@ -588,7 +649,7 @@ export function PagePerfil({ user }) {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
-    reader.onload = (ev) => setPhoto(ev.target.result)
+    reader.onload = (ev) => { setPhoto(ev.target.result); refreshUser() }
     reader.readAsDataURL(file)
   }
 
@@ -902,7 +963,10 @@ export function PagePerfil({ user }) {
                 checked={notifs[n.key]}
                 onChange={() => {
                   const next = !notifs[n.key]
-                  setNotifs(prev => ({ ...prev, [n.key]: next }))
+                  const updated = { ...notifs, [n.key]: next }
+                  setNotifs(updated)
+                  const fb = auth.currentUser
+                  if (fb?.uid) Firestore.set('users', fb.uid, { notifs: updated }).catch(() => {})
                   showToast(next ? `${n.label} activado` : `${n.label} desactivado`)
                 }}
               />

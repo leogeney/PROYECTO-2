@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Icon } from './Icon'
 import { useSignImages } from '../../utils/wikimedia'
 import { useState } from 'react'
+import { useProgress } from '../../context/ProgressContext'
+import { MODULE_CONTENT } from '../../pages/PageModulo'
 
 const CS = `
 @keyframes mc-border{0%,100%{border-color:var(--mc-c);opacity:0.1}50%{border-color:var(--mc-c);opacity:0.35}}
@@ -62,7 +64,14 @@ export function StatChip({ icon, value, label, color = T.muted }) {
 
 export function ModuleCard({ mod }) {
   const navigate = useNavigate()
-  const pct = Math.round((mod.done / mod.lessons) * 100)
+  const { lessonIds } = useProgress()
+  
+  // Calculate dynamic progress
+  const modContent = MODULE_CONTENT[mod.id]
+  const totalLessons = modContent?.lessons?.length || mod.lessons
+  const doneLessons = modContent?.lessons?.filter(l => lessonIds.includes(l.id))?.length || 0
+  const pct = Math.round((doneLessons / totalLessons) * 100)
+
   const { urls } = useSignImages(mod.img ? [mod.img] : [])
   const imgUrl = mod.img ? urls[mod.img] : null
   const [imgLoaded, setImgLoaded] = useState(false)
@@ -73,12 +82,12 @@ export function ModuleCard({ mod }) {
   }
 
   const statusLabel = !mod.unlocked ? 'Bloqueado'
-    : mod.done === mod.lessons ? 'Completado'
-    : mod.done > 0 ? 'En progreso' : 'Comenzar'
+    : doneLessons === totalLessons ? 'Completado'
+    : doneLessons > 0 ? 'En progreso' : 'Comenzar'
 
   const statusColor = !mod.unlocked ? T.faint
-    : mod.done === mod.lessons ? T.green
-    : mod.done > 0 ? T.gold : T.cyan
+    : doneLessons === totalLessons ? T.green
+    : doneLessons > 0 ? T.gold : T.cyan
 
   return (
     <>
@@ -171,7 +180,7 @@ export function ModuleCard({ mod }) {
           </div>
           <div style={{ fontSize: 11, color: T.faint, marginBottom: 20, lineHeight: 1.4 }}>
             {mod.unlocked
-              ? `${mod.lessons} lecciones ${mod.done > 0 ? `· ${pct}% completado` : ''}`
+              ? `${totalLessons} lecciones ${doneLessons > 0 ? `· ${pct}% completado` : ''}`
               : 'Completa módulos anteriores para acceder'}
           </div>
         </div>
@@ -198,10 +207,10 @@ export function ModuleCard({ mod }) {
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, marginBottom: 5 }}>
                 <span style={{ color: T.faint, fontWeight: 600 }}>
-                  {mod.done === mod.lessons ? 'Completado' : 'Progreso'}
+                  {doneLessons === totalLessons ? 'Completado' : 'Progreso'}
                 </span>
                 <span className="mono" style={{ color: mod.color, fontWeight: 700 }}>
-                  {mod.done}/{mod.lessons}
+                  {doneLessons}/{totalLessons}
                 </span>
               </div>
               <div style={{

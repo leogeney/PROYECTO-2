@@ -25,6 +25,7 @@ import { PageLecciones, PageLogros, PagePerfil } from '../../pages/PageLecciones
 import { PageRanking } from '../../pages/PageRanking'
 import { PageForo } from '../../pages/PageForo'
 import { PageSoporte } from '../../pages/PageSoporte'
+import { PublicProfile } from '../../pages/PublicProfile'
 import { T } from '../../styles/tokens'
 
 const NAV_ITEMS = [
@@ -55,33 +56,54 @@ export function DashboardLayout({ user, onLogout }) {
         {/* Header */}
         <header style={{
           gridColumn: '1 / -1',
-          background: `linear-gradient(135deg, ${T.surface}, #0f131e)`,
-          borderBottom: '1px solid rgba(0,230,118,0.08)',
-          display: 'flex', alignItems: 'center', padding: '0 20px', gap: 10,
-          position: 'relative',
+          background: `linear-gradient(135deg, rgba(14,17,24,0.92), rgba(15,19,30,0.96))`,
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(0,230,118,0.06)',
+          display: 'flex', alignItems: 'center', padding: '0 24px', gap: 12,
+          position: 'relative', zIndex: 10,
         }}>
+          {/* Top subtle glow */}
+          <div style={{
+            position: 'absolute', top: 0, left: '15%', right: '15%', height: 1,
+            background: `linear-gradient(90deg, transparent, ${T.green}22, transparent)`,
+          }} />
           {/* Animated bottom glow line */}
           <div style={{
-            position: 'absolute', bottom: 0, left: '10%', right: '10%', height: 1,
-            background: `linear-gradient(90deg, transparent, ${T.green}33, transparent)`,
+            position: 'absolute', bottom: 0, left: '5%', right: '5%', height: 1,
+            background: `linear-gradient(90deg, transparent, ${T.green}44, transparent)`,
             animation: 'hdr-glow 3s ease-in-out infinite',
           }} />
           <Logo small />
+          <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.06)', margin: '0 4px' }} />
+          <div style={{
+            fontSize: 11, color: T.faint, fontWeight: 500, letterSpacing: '0.04em',
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
+            Dashboard
+          </div>
           <div style={{ flex: 1 }} />
-          <StatChip icon={<span style={{ fontSize: 13 }}>🔥</span>} value={streak} label="racha" color={T.orange} />
-          <StatChip icon={<span style={{ fontSize: 13 }}>❤️</span>} value="4/5"  color={T.red} />
-          <StatChip icon={<span style={{ fontSize: 13 }}>⚡</span>} value={xp}     label="xp"    color={T.green} />
-          <div style={{ width: 1, height: 24, background: T.border, margin: '0 4px' }} />
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '6px 10px', borderRadius: 10,
+            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.04)',
+          }}>
+            <StatChip icon={<span style={{ fontSize: 13 }}>🔥</span>} value={streak} label="racha" color={T.orange} />
+            <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.04)' }} />
+            <StatChip icon={<span style={{ fontSize: 13 }}>❤️</span>} value="4/5"  color={T.red} />
+            <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.04)' }} />
+            <StatChip icon={<span style={{ fontSize: 13 }}>⚡</span>} value={xp}     label="xp"    color={T.green} />
+          </div>
+          <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.06)' }} />
           <button
             onClick={onLogout}
             style={{
-              background: 'transparent', border: '1px solid rgba(255,255,255,0.06)',
+              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: 8, color: T.faint, cursor: 'pointer',
-              fontSize: 11, padding: '6px 14px', fontWeight: 500,
+              fontSize: 11, padding: '7px 14px', fontWeight: 500,
               transition: 'all 0.2s', fontFamily: "'DM Sans', sans-serif",
             }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = T.text }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = T.faint }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = T.text; e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = T.faint; e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
           >
             Salir
           </button>
@@ -139,6 +161,7 @@ export function DashboardLayout({ user, onLogout }) {
               <Route path="modulo/:id" element={<PageModulo />} />
               <Route path="noticias" element={<PageNoticias />} />
               <Route path="ranking" element={<PageRanking user={user} />} />
+              <Route path="perfil/:uid" element={<PublicProfile />} />
               <Route path="foro" element={<PageForo />} />
               <Route path="soporte" element={<PageSoporte isAdmin={user.isAdmin} />} />
             </Routes>

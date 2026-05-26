@@ -1250,7 +1250,7 @@ function StepGuideLesson({ steps, color, onComplete, onShowSign }) {
 // Los campos que antes eran signSrc: null ahora usan emoji apropiados
 // o señales informativas cuando existe el recurso.
 // ═══════════════════════════════════════════════════════════════════
-const MODULE_CONTENT = {
+export const MODULE_CONTENT = {
   1: {
     icon:'🚦', title:'Señales de tránsito', color:'#f87171',
     description:'Las señales viales son el lenguaje universal de la carretera. Conocerlas puede salvarte la vida.',
@@ -1755,7 +1755,7 @@ function ModuleView({ mod, onSelectLesson, completedIds }) {
 export function PageModulo() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { completedLessons } = useProgress()
+  const { lessonIds } = useProgress()
   const mod = MODULE_CONTENT[Number(id)]
   const [activeLesson, setActiveLesson] = useState(null)
   const [confetti, setConfetti] = useState(false)
@@ -1838,7 +1838,7 @@ export function PageModulo() {
           </div>
         ) : (
           <div className="fin">
-            <ModuleView mod={mod} onSelectLesson={setActiveLesson} completedIds={completedLessons} />
+            <ModuleView mod={mod} onSelectLesson={setActiveLesson} completedIds={lessonIds} />
           </div>
         )}
       </div>

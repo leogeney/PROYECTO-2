@@ -1,24 +1,53 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { T } from '../styles/tokens'
 import { Icon } from '../components/ui/Icon'
+import { Firestore } from '../services/firestore'
+import { getLevelInfo } from '../context/ProgressContext'
 
-// Datos de prueba para el mockup
 const DUMMY_RANKING = [
-  { id: 1, name: 'Sofia M.', xp: 12500, level: 15, streak: 12 },
-  { id: 2, name: 'Mateo R.', xp: 11200, level: 14, streak: 8 },
-  { id: 3, name: 'Valeria G.', xp: 10800, level: 13, streak: 21 },
-  { id: 4, name: 'Lucas T.', xp: 9500, level: 12, streak: 5 },
-  { id: 5, name: 'Isabella C.', xp: 8900, level: 11, streak: 3 },
-  { id: 6, name: 'Diego A.', xp: 8200, level: 10, streak: 14 },
-  { id: 7, name: 'Camila P.', xp: 7500, level: 9, streak: 2 },
-  { id: 8, name: 'Emilio V.', xp: 7100, level: 9, streak: 7 },
-  { id: 9, name: 'Martina S.', xp: 6800, level: 8, streak: 1 },
-  { id: 10, name: 'Alejandro G.', xp: 6400, level: 8, streak: 0 },
+  { xp: 12500, streak: 12 }, { xp: 11200, streak: 8 }, { xp: 10800, streak: 21 },
+  { xp: 9500, streak: 5 }, { xp: 8900, streak: 3 }, { xp: 8200, streak: 14 },
+  { xp: 7500, streak: 2 }, { xp: 7100, streak: 7 }, { xp: 6800, streak: 1 },
+  { xp: 6400, streak: 0 },
 ]
 
 export function PageRanking({ user }) {
-  const top3 = DUMMY_RANKING.slice(0, 3)
-  const rest = DUMMY_RANKING.slice(3)
+  const [ranking, setRanking] = useState([])
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const users = await Firestore.list('users')
+        if (users && users.length > 0) {
+          const mapped = users
+            .filter(u => u.xp != null)
+            .sort((a, b) => (b.xp || 0) - (a.xp || 0))
+            .map((u) => ({
+              id: u.id,
+              name: u.name || u.email || 'Anónimo',
+              xp: u.xp || 0,
+              streak: u.streak || 0,
+              level: getLevelInfo(u.xp || 0).level,
+            }))
+          setRanking(mapped)
+          setLoading(false)
+          return
+        }
+      } catch {}
+      setRanking(DUMMY_RANKING.map((d) => ({
+        id: `dummy-${Math.random().toString(36).slice(2)}`, name: `Usuario ${Math.floor(Math.random() * 100)}`, ...d,
+        level: getLevelInfo(d.xp).level,
+      })))
+      setLoading(false)
+    })()
+  }, [])
+
+  const display = loading ? [] : ranking
+  const top3 = display.slice(0, 3)
+  const rest = display.slice(3)
 
   const getMedalColor = (index) => {
     if (index === 0) return '#FFD700' // Oro
@@ -51,32 +80,48 @@ export function PageRanking({ user }) {
         <PodiumItem user={top3[2]} rank={3} height={110} color={getMedalColor(2)} />
       </div>
 
-      {/* Tu posición (Mockup) */}
-      <div className="card" style={{ 
-        padding: '16px 24px', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 16,
-        background: `linear-gradient(90deg, ${T.card}, rgba(0, 230, 118, 0.08))`,
-        borderColor: T.green
-      }}>
-        <div style={{ fontSize: 20, fontWeight: 800, width: 40, textAlign: 'center', color: T.green }}>42</div>
-        <div style={{ 
-          width: 40, height: 40, borderRadius: '50%', background: 'rgba(0, 230, 118, 0.2)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.green, fontWeight: 700
-        }}>
-          {user?.name?.[0]?.toUpperCase() || 'T'}
-        </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: 16 }}>{user?.name?.split(' ')[0] || 'Tú'}</div>
-          <div style={{ fontSize: 12, color: T.muted }}>Nivel actual</div>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-          <div className="mono" style={{ fontSize: 18, fontWeight: 700, color: T.green }}>1,450 XP</div>
-        </div>
-      </div>
+      {/* Tu posición */}
+        {user && !loading && (() => {
+          const myIdx = ranking.findIndex(u => u.email === user.email || u.name === user.name)
+          const me = myIdx >= 0 ? ranking[myIdx] : null
+          if (!me) return null
+          const isDummy = me.id && me.id.startsWith('dummy-')
+          return (
+            <div className="card" onClick={() => { if (!isDummy) navigate(`/dashboard/perfil/${me.id}`) }} style={{
+              cursor: isDummy ? 'default' : 'pointer',
+              padding: '16px 24px', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 16,
+              background: `linear-gradient(90deg, ${T.card}, rgba(0, 230, 118, 0.08))`,
+              borderColor: T.green,
+            }}>
+            <div style={{ fontSize: 20, fontWeight: 800, width: 40, textAlign: 'center', color: T.green }}>
+              {myIdx + 1}
+            </div>
+            <div style={{
+              width: 40, height: 40, borderRadius: '50%', background: 'rgba(0, 230, 118, 0.2)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.green, fontWeight: 700,
+            }}>
+              {me.name?.[0]?.toUpperCase() || 'T'}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700, fontSize: 16 }}>{me.name?.split(' ')[0] || 'Tú'}</div>
+              <div style={{ fontSize: 12, color: T.muted }}>Nivel {me.level}</div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div className="mono" style={{ fontSize: 18, fontWeight: 700, color: T.green }}>
+                {me.xp.toLocaleString()} <span style={{ fontSize: 10, color: T.faint }}>XP</span>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* Lista del resto */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {rest.map((u, i) => (
-          <div key={u.id} className="card card-hover" style={{ 
+        {rest.map((u, i) => {
+          const isDummy = u.id && u.id.startsWith('dummy-')
+          return (
+          <div key={u.id} className="card card-hover" onClick={() => { if (!isDummy) navigate(`/dashboard/perfil/${u.id}`) }} style={{ 
+            cursor: isDummy ? 'default' : 'pointer',
             padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 16,
             transition: 'transform 0.2s'
           }}>
@@ -100,7 +145,7 @@ export function PageRanking({ user }) {
               {u.xp.toLocaleString()} <span style={{ fontSize: 10, color: T.faint }}>XP</span>
             </div>
           </div>
-        ))}
+        )})}
       </div>
     </div>
   )
@@ -109,9 +154,12 @@ export function PageRanking({ user }) {
 function PodiumItem({ user, rank, height, color }) {
   if (!user) return null;
   const isFirst = rank === 1;
+  const navigate = useNavigate();
+  const isDummy = user.id && user.id.startsWith('dummy-')
 
   return (
-    <div className="anim-up" style={{ 
+    <div className="anim-up" onClick={() => { if (!isDummy) navigate(`/dashboard/perfil/${user.id}`) }} style={{ 
+      cursor: isDummy ? 'default' : 'pointer',
       display: 'flex', flexDirection: 'column', alignItems: 'center', width: 100,
       animationDelay: `${rank * 100}ms`
     }}>
