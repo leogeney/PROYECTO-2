@@ -15,6 +15,7 @@ const inp = {
 
 export default function Login({ onLoginSuccess }) {
   const [mode, setMode] = useState('login')
+  const [showTerms, setShowTerms] = useState(false)
 
   const {
     form, errors, loading, googleLoading, serverError,
@@ -266,11 +267,47 @@ export default function Login({ onLoginSuccess }) {
 
         <p style={{ textAlign: 'center', fontSize: 11, color: T.faint, marginTop: 16 }}>
           Al continuar aceptas los{' '}
-          <span style={{ color: T.muted, textDecoration: 'underline', cursor: 'pointer' }}>
+          <span onClick={() => setShowTerms(true)} style={{ color: T.muted, textDecoration: 'underline', cursor: 'pointer' }}>
             Términos de uso
           </span>
         </p>
       </div>
+
+      {/* Terms modal */}
+      {showTerms && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(7,9,15,0.92)', backdropFilter: 'blur(6px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+        }} onClick={() => setShowTerms(false)}>
+          <div style={{
+            background: T.surface, border: `1px solid ${T.border}`, borderRadius: 18,
+            maxWidth: 520, width: '100%', maxHeight: '80vh', overflowY: 'auto',
+            padding: '28px 32px',
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 800, color: T.text, margin: 0 }}>Términos de uso</h2>
+              <button onClick={() => setShowTerms(false)} style={{
+                background: 'none', border: 'none', color: T.muted, fontSize: 20, cursor: 'pointer', padding: 4,
+              }}>✕</button>
+            </div>
+            <div style={{ fontSize: 13, color: T.muted, lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <p>Al utilizar esta plataforma, aceptas los siguientes términos y condiciones:</p>
+              <p><strong style={{ color: T.text }}>1. Uso responsable</strong><br />
+              La información proporcionada es con fines educativos sobre seguridad vial y normas de tránsito en Colombia. No constituye asesoría legal.</p>
+              <p><strong style={{ color: T.text }}>2. Privacidad</strong><br />
+              Tus datos personales se almacenan de forma segura y no se comparten con terceros sin tu consentimiento explícito.</p>
+              <p><strong style={{ color: T.text }}>3. Contenido generado</strong><br />
+              Eres responsable del contenido que publicas en el foro y reportes. No se permite contenido ofensivo, engañoso o ilegal.</p>
+              <p><strong style={{ color: T.text }}>4. Precisión</strong><br />
+              Aunque nos esforzamos por mantener la información actualizada, las normas de tránsito pueden cambiar. Verifica siempre con fuentes oficiales.</p>
+              <p><strong style={{ color: T.text }}>5. Modificaciones</strong><br />
+              Nos reservamos el derecho de actualizar estos términos en cualquier momento. Los cambios serán notificados en la plataforma.</p>
+              <p style={{ fontSize: 11, color: T.faint, marginTop: 8 }}>Última actualización: mayo 2025</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`@keyframes login-float { 0%,100% { transform: translateY(0) scale(1) } 50% { transform: translateY(-24px) scale(1.06) } }`}</style>
     </div>

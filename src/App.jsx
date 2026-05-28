@@ -1,5 +1,5 @@
 // App.jsx
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from './config/firebase'
@@ -10,9 +10,13 @@ import { AchievementsProvider } from './games/GameAchievements'
 import { Icon } from './components/ui/Icon'
 
 import { DashboardLayout } from './components/layout/DashboardLayout'
+import { AdminLayout } from './components/layout/AdminLayout'
 import { AccessibilityProvider } from './context/AccessibilityContext'
 import { AccessibilityPanel } from './components/ui/AccessibilityPanel'
 import PageResetPassword from './pages/PageResetPassword'
+import { LandingPage } from './pages/LandingPage'
+import { ActivityLogger } from './services/activityLogger'
+
 import { T } from './styles/tokens'
 
 const GLOBAL_CSS = `
@@ -76,7 +80,7 @@ function App() {
   // Load profile from Firestore and merge with auth user
   const loadProfile = useCallback(async (fb) => {
     if (!fb) { setUser(null); setChecking(false); return }
-    const base = { email: fb.email, name: fb.displayName || fb.email, isAdmin: fb.email === 'admin@transi.com' }
+    const base = { email: fb.email, name: fb.displayName || fb.email, isAdmin: fb.email === 'f18490363@gmail.com' }
     try {
       const data = await Firestore.get('users', fb.uid)
       if (data?.name) base.name = data.name
@@ -88,9 +92,16 @@ function App() {
     setChecking(false)
   }, [])
 
+  const prevUid = useRef(null)
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (fb) => {
       loadProfile(fb)
+      if (fb && prevUid.current === null) {
+        ActivityLogger.log('login', { method: 'email' }).catch(() => {})
+        Firestore.update('users', fb.uid, { lastLogin: Date.now() }).catch(() => {})
+      }
+      if (!fb && prevUid.current !== null) ActivityLogger.log('logout').catch(() => {})
+      prevUid.current = fb?.uid || null
     })
     return unsub
   }, [loadProfile])
@@ -103,10 +114,12 @@ function App() {
       <UserContext.Provider value={{ user, refresh: () => { const fb = auth.currentUser; if (fb) loadProfile(fb) } }}>
       <AccessibilityProvider>
       <Routes>
+        <Route path="/"               element={user ? <Navigate to="/dashboard/inicio" replace /> : <LandingPage />} />
         <Route path="/login"          element={user ? <Navigate to="/dashboard/inicio" replace /> : <Login />} />
         <Route path="/reset-password" element={<PageResetPassword />} />
-        <Route path="/dashboard/*"    element={user ? <DashboardLayout user={user} onLogout={() => signOut(auth)} /> : <Navigate to="/login" replace />} />
-        <Route path="*"               element={<Navigate to={user ? '/dashboard/inicio' : '/login'} replace />} />
+        <Route path="/dashboard/*"    element={user ? <DashboardLayout user={user} onLogout={() => signOut(auth)} /> : <Navigate to="/" replace />} />
+        <Route path="/admin/*"        element={user?.isAdmin ? <AdminLayout user={user} onLogout={() => signOut(auth)} /> : <Navigate to="/" replace />} />
+        <Route path="*"               element={<Navigate to={user ? '/dashboard/inicio' : '/'} replace />} />
       </Routes>
       <AccessibilityPanel />
       </AccessibilityProvider>

@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useMemo, useCallback, u
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '../config/firebase'
 import { Firestore } from '../services/firestore'
+import { ActivityLogger } from '../services/activityLogger'
 
 export function getLevelInfo(totalXp) {
   let level = 1
@@ -121,16 +122,19 @@ export function ProgressProvider({ children }) {
     }
   }, [xp, streak, completedLessons, userId])
 
-  const addXp = useCallback((amount) => {
+  const addXp = useCallback((amount, source) => {
     setXp(prev => prev + amount)
+    try { ActivityLogger.log('xp_gained', { xp: amount, source: source || 'general' }) } catch {}
   }, [])
 
-  const completeLesson = useCallback((id) => {
+  const completeLesson = useCallback(async (id) => {
     setCompletedLessons(prev => {
       const exists = prev.some(l => (typeof l === 'object' ? l.id : l) === id)
       if (exists) return prev
       return [...prev, { id, date: Date.now() }]
     })
+    try { await ActivityLogger.log('lesson_completed', { lesson: id, xp: 50 }) } catch {}
+    try { await ActivityLogger.log('xp_gained', { xp: 50, source: 'lesson' }) } catch {}
   }, [])
 
   const levelInfo = useMemo(() => getLevelInfo(xp), [xp])

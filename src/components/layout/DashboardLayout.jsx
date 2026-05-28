@@ -1,5 +1,7 @@
 // línea 1 de DashboardLayout.jsx
+import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, NavLink } from 'react-router-dom'
+import { Firestore } from '../../services/firestore'
 
 import { PageModulo } from '../../pages/PageModulo'
 
@@ -48,15 +50,43 @@ export function DashboardLayout({ user, onLogout }) {
   const { xp, streak, levelInfo } = useProgress()
   const { theme, toggleTheme } = useTheme()
   const { settings, setOption } = useAccessibility()
+  const [platform, setPlatform] = useState(null)
+
+  useEffect(() => {
+    Firestore.get('config', 'platform').then(d => {
+      if (d) setPlatform(d)
+    }).catch(() => {})
+  }, [])
+
+  const forumEnabled = platform?.forumEnabled !== false
+  const newsEnabled = platform?.newsEnabled !== false
+  const maintenanceMode = platform?.maintenanceMode === true
+
+  const filteredNav = NAV_ITEMS.filter(n => {
+    if (n.to === '/dashboard/foro') return forumEnabled
+    if (n.to === '/dashboard/noticias') return newsEnabled
+    return true
+  })
 
   return (
     <>
       <DashboardStyles />
+      {maintenanceMode && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999,
+          background: '#ff5252', color: '#fff', textAlign: 'center',
+          padding: '8px 16px', fontSize: 12, fontWeight: 600,
+        }}>
+          <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: 6 }}></i>
+          Modo mantenimiento activo — algunas funciones pueden no estar disponibles
+        </div>
+      )}
       <div style={{
         minHeight: '100vh', background: T.bg,
         display: 'grid',
         gridTemplateColumns: '220px 1fr',
         gridTemplateRows: '56px 1fr',
+        paddingTop: maintenanceMode ? 32 : 0,
       }}>
         {/* Header */}
         <header style={{
@@ -98,7 +128,24 @@ export function DashboardLayout({ user, onLogout }) {
             <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.04)' }} />
             <StatChip icon={<span style={{ fontSize: 13 }}>⚡</span>} value={xp}     label="xp"    color={T.green} />
           </div>
-          <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.06)' }} />
+          {user.isAdmin && (
+            <>
+              <NavLink to="/admin" style={{
+                fontSize: 11, color: T.green, textDecoration: 'none',
+                padding: '5px 12px', borderRadius: 6,
+                border: `1px solid ${T.green}33`,
+                display: 'flex', alignItems: 'center', gap: 5,
+                fontWeight: 600,
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = T.green + '15' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+              >
+                <i className="fa-solid fa-shield-halved"></i>
+                Panel Admin
+              </NavLink>
+              <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.06)' }} />
+            </>
+          )}
           <div style={{ position: 'relative' }}>
             <button
               onClick={() => { toggleTheme(); setOption('lightMode', theme === 'dark') }}
@@ -143,7 +190,7 @@ export function DashboardLayout({ user, onLogout }) {
           background: T.surface, borderRight: `1px solid ${T.border}`,
           padding: '14px 10px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto',
         }}>
-          {NAV_ITEMS.map(n => (
+          {filteredNav.map(n => (
             <NavLink key={n.to} to={n.to} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
               <span style={{ fontSize: 16, width: 22, textAlign: 'center' }}>{n.icon}</span>
               {n.label}
@@ -207,7 +254,7 @@ export function DashboardLayout({ user, onLogout }) {
               <Route path="ranking" element={<PageRanking user={user} />} />
               <Route path="perfil/:uid" element={<PublicProfile />} />
               <Route path="foro" element={<PageForo />} />
-              <Route path="soporte" element={<PageSoporte isAdmin={user.isAdmin} />} />
+              <Route path="soporte" element={<PageSoporte />} />
               <Route path="chatbot" element={<PageBot />} />
             </Routes>
           </ForumProvider>

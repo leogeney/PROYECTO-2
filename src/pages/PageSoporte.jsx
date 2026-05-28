@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { auth } from '../config/firebase'
 import { useSupport } from '../context/SupportContext'
+import { useUser } from '../context/UserContext'
 import { T } from '../styles/tokens'
 
 const SS = `
@@ -205,8 +207,10 @@ function ReportCard({ report, onDelete }) {
   )
 }
 
-export function PageSoporte({ isAdmin }) {
+export function PageSoporte() {
+  const { user } = useUser() || {}
   const { reports, addReport, deleteReport, CATEGORIES } = useSupport()
+  const isAdmin = user?.isAdmin
   const [showForm, setShowForm] = useState(false)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -511,6 +515,59 @@ export function PageSoporte({ isAdmin }) {
               <i className="fa-solid fa-paper-plane"></i> Enviar
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Mis reportes (usuario normal) */}
+      {!isAdmin && (
+        <div style={{ marginTop: 16 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <i className="fa-regular fa-clock" style={{ color: T.green }}></i>
+            Mis reportes
+          </h3>
+          {reports.filter(r => r.authorId === auth.currentUser?.uid).length === 0 ? (
+            <div style={{ padding: '24px 16px', borderRadius: 14, background: T.card, border: `1px solid ${T.border}`, textAlign: 'center', color: T.faint, fontSize: 12 }}>
+              No has enviado ningún reporte aún.
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {reports.filter(r => r.authorId === auth.currentUser?.uid).map(r => (
+                <div key={r.id} style={{
+                  padding: '14px 16px', borderRadius: 12,
+                  background: T.card, border: `1px solid ${T.border}`,
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{r.title}</div>
+                    <span style={{
+                      fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
+                      background: r.adminReply ? `${T.green}18` : `${T.orange}18`,
+                      color: r.adminReply ? T.green : T.orange,
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {r.adminReply ? 'Respondido' : 'Pendiente'}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 11, color: T.muted, whiteSpace: 'pre-wrap', marginBottom: r.adminReply ? 8 : 0 }}>
+                    {r.content}
+                  </div>
+                  {r.adminReply && (
+                    <div style={{
+                      padding: '10px 12px', borderRadius: 8,
+                      background: `${T.green}08`, border: `1px solid ${T.green}22`,
+                      marginTop: 8,
+                    }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: T.green, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <i className="fa-solid fa-reply"></i> Respuesta del admin
+                      </div>
+                      <div style={{ fontSize: 12, color: T.muted, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+                        {r.adminReply}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

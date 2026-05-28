@@ -1,40 +1,16 @@
-import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '../config/firebase'
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
+import { auth, db } from '../config/firebase'
 import { Firestore } from '../services/firestore'
+import { ActivityLogger } from '../services/activityLogger'
 
 const SupportContext = createContext(null)
 const CATEGORIES = { error: 'Error', sugerencia: 'Sugerencia', otro: 'Otro' }
 
-const OLD_KEY = 'transi_support'
-
-function storageKey(userId) {
-  return userId ? `transi_support_${userId}` : 'transi_support_guest'
-}
-
-function loadLocal(userId) {
-  try {
-    const key = storageKey(userId)
-    const saved = localStorage.getItem(key)
-    if (saved) return JSON.parse(saved)
-    if (userId) {
-      const old = localStorage.getItem(OLD_KEY)
-      if (old) {
-        const data = JSON.parse(old)
-        localStorage.setItem(key, old)
-        localStorage.removeItem(OLD_KEY)
-        return data
-      }
-    }
-  } catch {}
-  return null
-}
-
 export function SupportProvider({ children, user }) {
   const [reports, setReports] = useState([])
   const [userId, setUserId] = useState(null)
-  const initRef = useRef(true)
-  const prevUserIdRef = useRef(null)
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (fb) => {
@@ -43,66 +19,47 @@ export function SupportProvider({ children, user }) {
     return unsub
   }, [])
 
-  // Trigger reload on every userId change
+  // Real-time listener for support_reports
   useEffect(() => {
-    if (prevUserIdRef.current !== userId) {
-      initRef.current = false
-    }
-    prevUserIdRef.current = userId
+    if (!userId) { setReports([]); return }
+    const q = query(collection(db, 'support_reports'), orderBy('date', 'desc'))
+    const unsub = onSnapshot(q, (snap) => {
+      setReports(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+    return unsub
   }, [userId])
-
-  useEffect(() => {
-    if (initRef.current) return
-    if (!userId) { initRef.current = true; return }
-    ;(async () => {
-      let loaded = false
-      try {
-        const data = await Firestore.list('support_reports')
-        if (data && data.length > 0) {
-          setReports(data)
-          loaded = true
-        }
-      } catch {}
-      if (!loaded) {
-        const local = loadLocal(userId)
-        if (local) setReports(local)
-      }
-      initRef.current = true
-    })()
-  }, [userId])
-
-  useEffect(() => {
-    if (!initRef.current) return
-    localStorage.setItem(storageKey(userId), JSON.stringify(reports))
-  }, [reports, userId])
 
   const addReport = useCallback(async (title, content, category) => {
+    if (!userId) return
     const report = {
       title: title.trim(),
       content: content.trim(),
       category: category || 'otro',
       author: user?.name || 'Anónimo',
+      authorId: userId,
       date: Date.now(),
     }
-    if (userId) {
-      try {
-        const id = await Firestore.add('support_reports', report)
-        setReports(prev => [{ id, ...report }, ...prev])
-        return
-      } catch {}
-    }
-    const localReport = { id: Date.now().toString(36), ...report }
-    setReports(prev => [localReport, ...prev])
+    try {
+      await Firestore.add('support_reports', report)
+      ActivityLogger.log('support_report', { title: report.title, category: report.category }).catch(() => {})
+    } catch {}
   }, [user, userId])
 
   const deleteReport = useCallback(async (id) => {
-    setReports(prev => prev.filter(r => r.id !== id))
     if (userId) {
       Firestore.del('support_reports', id).catch(() => {})
     }
   }, [userId])
 
-  const value = useMemo(() => ({ reports, addReport, deleteReport, CATEGORIES }), [reports, addReport, deleteReport])
+  const replyToReport = useCallback(async (id, content) => {
+    if (userId) {
+      try {
+        await Firestore.update('support_reports', id, { adminReply: content.trim(), adminReplyDate: Date.now() })
+      } catch {}
+    }
+  }, [userId])
+
+  const value = useMemo(() => ({ reports, addReport, deleteReport, replyToReport, CATEGORIES }), [reports, addReport, deleteReport, replyToReport])
 
   return (
     <SupportContext.Provider value={value}>
