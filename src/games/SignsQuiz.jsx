@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { ResultScreen, ScoreBadge, Lives } from './GameShared'
 import { useNotification } from '../context/NotificationContext'
 import { Icon } from '../components/ui/Icon'
+import { T } from '../styles/tokens'
 
 // Wikimedia Commons REST API — devuelve URL directa del archivo
 const WIKIMEDIA_API = 'https://commons.wikimedia.org/w/api.php'
@@ -420,8 +421,8 @@ export function SignsQuiz({ onBack }) {
 
         {/* Sign card */}
         <div key={slideKey} className="sq-sign-enter" style={{
-          background: '#0e1118',
-          border: '1px solid rgba(255,255,255,0.04)',
+          background: T.surface,
+          border: `1px solid ${T.border}`,
           borderRadius: 16, padding: '28px 24px',
           marginBottom: 14, position: 'relative', overflow: 'hidden',
         }}>

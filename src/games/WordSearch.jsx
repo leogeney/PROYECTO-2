@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { T, ResultScreen, ScoreBadge, ProgressBar } from './GameShared'
+import { T } from '../styles/tokens'
+import { ResultScreen, ScoreBadge, ProgressBar } from './GameShared'
 import { useNotification } from '../context/NotificationContext'
 import { Icon } from '../components/ui/Icon'
 

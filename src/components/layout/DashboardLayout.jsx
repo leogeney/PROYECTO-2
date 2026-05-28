@@ -14,7 +14,6 @@ import { SupportProvider } from '../../context/SupportContext'
 import { Logo } from '../ui/Logo'
 import { XpBar } from '../ui/XpBar'
 import { StatChip } from '../ui/Cards'
-import { Icon } from '../ui/Icon'
 import { DashboardStyles } from './DashboardStyles'
 import { PageNoticias } from '../../pages/PageNoticias'
 
@@ -26,19 +25,21 @@ import { PageRanking } from '../../pages/PageRanking'
 import { PageForo } from '../../pages/PageForo'
 import { PageSoporte } from '../../pages/PageSoporte'
 import { PublicProfile } from '../../pages/PublicProfile'
+import { PageBot } from '../../pages/PageChatbot'
 import { T } from '../../styles/tokens'
 
 const NAV_ITEMS = [
-  { icon: <i className="fa-solid fa-house"></i>,  label: 'Inicio',    to: '/dashboard/inicio'    },
-  { icon: <Icon icon="📚" size={16} />, label: 'Pruebas', to: '/dashboard/lecciones' },
-  { icon: <Icon icon="🪧" size={16} />, label: 'Biblioteca',to: '/dashboard/biblioteca' },
-  { icon: <Icon icon="🏆" size={16} />, label: 'Logros',    to: '/dashboard/logros'    },
-  { icon: <Icon icon="🏅" size={16} />, label: 'Ranking',   to: '/dashboard/ranking'   },
-  { icon: <Icon icon="👤" size={16} />, label: 'Perfil',    to: '/dashboard/perfil'    },
-  { icon: <Icon icon="🎮" size={16} />, label: 'Juegos',    to: '/dashboard/juegos'    },
-  { icon: <Icon icon="📰" size={16} />, label: 'Noticias', to: '/dashboard/noticias' },
-  { icon: <i className="fa-solid fa-comments"></i>,  label: 'Foro',     to: '/dashboard/foro'      },
-  { icon: <i className="fa-solid fa-circle-question"></i>,  label: 'Soporte', to: '/dashboard/soporte' },
+  { icon: <i className="fa-solid fa-house"></i>,       label: 'Inicio',    to: '/dashboard/inicio'    },
+  { icon: <i className="fa-solid fa-pen-to-square"></i>, label: 'Pruebas',  to: '/dashboard/lecciones' },
+  { icon: <i className="fa-solid fa-book"></i>,        label: 'Biblioteca',to: '/dashboard/biblioteca' },
+  { icon: <i className="fa-solid fa-trophy"></i>,      label: 'Logros',    to: '/dashboard/logros'    },
+  { icon: <i className="fa-solid fa-medal"></i>,       label: 'Ranking',   to: '/dashboard/ranking'   },
+  { icon: <i className="fa-solid fa-user"></i>,        label: 'Perfil',    to: '/dashboard/perfil'    },
+  { icon: <i className="fa-solid fa-gamepad"></i>,     label: 'Juegos',    to: '/dashboard/juegos'    },
+  { icon: <i className="fa-solid fa-newspaper"></i>,   label: 'Noticias', to: '/dashboard/noticias' },
+  { icon: <i className="fa-solid fa-comments"></i>,    label: 'Foro',     to: '/dashboard/foro'      },
+  { icon: <i className="fa-solid fa-circle-question"></i>, label: 'Soporte', to: '/dashboard/soporte' },
+  { icon: <i className="fa-solid fa-robot"></i>,       label: 'Chatbot',  to: '/dashboard/chatbot'   },
 ]
 
 export function DashboardLayout({ user, onLogout }) {
@@ -179,6 +180,7 @@ export function DashboardLayout({ user, onLogout }) {
               <Route path="perfil/:uid" element={<PublicProfile />} />
               <Route path="foro" element={<PageForo />} />
               <Route path="soporte" element={<PageSoporte isAdmin={user.isAdmin} />} />
+              <Route path="chatbot" element={<PageBot />} />
             </Routes>
           </ForumProvider>
           </SupportProvider>

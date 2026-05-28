@@ -2,19 +2,9 @@
 import { useState } from 'react'
 import { useLogin } from './useLogin'
 import { Icon } from '../ui/Icon'
+import { T } from '../../styles/tokens'
 
-const C = {
-  bg:       '#0d1117',
-  surface:  '#161b22',
-  border:   'rgba(255,255,255,0.08)',
-  green:    '#3fb950',
-  greenDk:  '#238636',
-  text:     '#e6edf3',
-  muted:    '#8b949e',
-  faint:    '#484f58',
-  red:      '#f85149',
-  gold:     '#e3b341',
-}
+const C = T
 
 const inp = {
   width: '100%', padding: '10px 12px',

@@ -1,25 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useProgress } from '../context/ProgressContext'
 import { Icon } from '../components/ui/Icon'
-
-export const T = {
-  bg:       '#07090f',
-  surface:  '#0e1118',
-  card:     '#131720',
-  border:   'rgba(255,255,255,0.06)',
-  borderHi: 'rgba(255,255,255,0.12)',
-  green:    '#00e676',
-  greenDim: '#00c853',
-  blue:     '#448aff',
-  gold:     '#ffd740',
-  red:      '#ff5252',
-  cyan:     '#18ffff',
-  orange:   '#ff7043',
-  purple:   '#ea80fc',
-  text:     '#f0f4f8',
-  muted:    '#6b7a8d',
-  faint:    '#3a4455',
-}
+import { T } from '../styles/tokens'
 
 const GAME_CSS = `
   @keyframes bounce-in {

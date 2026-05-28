@@ -10,14 +10,17 @@ import { AchievementsProvider } from './games/GameAchievements'
 import { Icon } from './components/ui/Icon'
 
 import { DashboardLayout } from './components/layout/DashboardLayout'
+import { AccessibilityProvider } from './context/AccessibilityContext'
+import { AccessibilityPanel } from './components/ui/AccessibilityPanel'
+import { T, THEMES } from './styles/tokens'
 
-const T = {
-  bg: '#07090f', surface: '#0e1118', card: '#131720',
-  border: 'rgba(255,255,255,0.06)', green: '#00e676', faint: '#3a4455', text: '#f0f4f8',
-}
+const ROOT_VARS = Object.entries(THEMES.dark).map(([k, v]) => `${k}: ${v};`).join('\n  ')
 
 const GLOBAL_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+  :root {
+    ${ROOT_VARS}
+  }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: ${T.bg}; color: ${T.text}; font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
   ::-webkit-scrollbar { width: 4px; }
@@ -102,11 +105,14 @@ function App() {
     <>
       <GlobalStyles />
       <UserContext.Provider value={{ user, refresh: () => { const fb = auth.currentUser; if (fb) loadProfile(fb) } }}>
+      <AccessibilityProvider>
       <Routes>
         <Route path="/login"       element={user ? <Navigate to="/dashboard/inicio" replace /> : <Login />} />
         <Route path="/dashboard/*" element={user ? <DashboardLayout user={user} onLogout={() => signOut(auth)} /> : <Navigate to="/login" replace />} />
         <Route path="*"            element={<Navigate to={user ? '/dashboard/inicio' : '/login'} replace />} />
       </Routes>
+      <AccessibilityPanel />
+      </AccessibilityProvider>
       </UserContext.Provider>
     </>
   )

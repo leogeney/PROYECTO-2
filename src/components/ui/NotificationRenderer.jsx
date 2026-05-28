@@ -1,36 +1,31 @@
 import React from 'react'
 import { useNotification } from '../../context/NotificationContext'
 import { Icon } from './Icon'
-
-const T = {
-  bg: '#07090f', surface: '#0e1118', card: '#131720',
-  border: 'rgba(255,255,255,0.1)', green: '#00e676', text: '#f0f4f8',
-  blue: '#2979FF', purple: '#D500F9', yellow: '#FFD600', orange: '#FF9100'
-}
+import { T } from '../../styles/tokens'
 
 // Configuración visual por tipo de notificación
 const TYPE_CONFIG = {
   performance: {
     icon: <Icon icon="🌟" size={24} />,
-    color: T.yellow,
+    color: '#FFD600',
     title: '¡Desempeño!',
     bgGradient: 'linear-gradient(135deg, rgba(255, 214, 0, 0.1), rgba(255, 214, 0, 0.05))'
   },
   inactivity: {
     icon: <Icon icon="👀" size={24} />,
-    color: T.blue,
+    color: '#2979FF',
     title: '¡Hola!',
     bgGradient: 'linear-gradient(135deg, rgba(41, 121, 255, 0.1), rgba(41, 121, 255, 0.05))'
   },
   progress: {
     icon: <Icon icon="🚀" size={24} />,
-    color: T.purple,
+    color: '#D500F9',
     title: '¡Progreso!',
     bgGradient: 'linear-gradient(135deg, rgba(213, 0, 249, 0.1), rgba(213, 0, 249, 0.05))'
   },
   default: {
     icon: <Icon icon="🔔" size={24} />,
-    color: T.green,
+    color: '#00e676',
     title: 'Notificación',
     bgGradient: 'linear-gradient(135deg, rgba(0, 230, 118, 0.1), rgba(0, 230, 118, 0.05))'
   }

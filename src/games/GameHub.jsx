@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react'
-import { T, GameStyles } from './GameShared'
+import { T } from '../styles/tokens'
+import { GameStyles } from './GameShared'
 import { useAchievements, AchievementsProvider } from './GameAchievements'
 import { WordSearch } from './WordSearch'
 import { MemoryMatch } from './MemoryMatch'
