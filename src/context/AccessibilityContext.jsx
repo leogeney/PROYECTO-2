@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { THEMES } from '../styles/tokens'
+
 
 const A11Y_KEY = 'transi_a11y'
 
@@ -42,6 +42,9 @@ const LIGHT_OVERRIDES = `
 /* ── HARDCODED DARK BGS → LIGHT ── */
 [style*="background: #1a1a1a"] { background: #eef0f4 !important; }
 [style*="background: #0a0a0a"] { background: #e8eaee !important; }
+[style*="background: #0d1117"] { background: #eef0f4 !important; }
+[style*="background: rgba(15,15,15,"] { background: #ffffff !important; }
+[style*="background: rgba(13,17,23,"] { background: #eef0f4 !important; }
 
 /* ── DARK MODAL OVERLAYS → LIGHTER ── */
 [style*="background: rgba(0,0,0,0.8)"] { background: rgba(0,0,0,0.04) !important; }
@@ -49,14 +52,23 @@ const LIGHT_OVERRIDES = `
 [style*="background: rgba(0,0,0,0.7)"] { background: rgba(0,0,0,0.03) !important; }
 
 /* ── WHITE TEXT ON DARK → DARK TEXT ── */
-[style*="#f0f4f8"] { color: #1a1a2e !important; }
-[style*="rgba(255,255,255,0.35)"], [style*="rgba(255, 255, 255, 0.35)"] { color: rgba(0,0,0,0.55) !important; }
-[style*="rgba(255,255,255,0.3)"],  [style*="rgba(255, 255, 255, 0.3)"]  { color: rgba(0,0,0,0.45) !important; }
-[style*="rgba(255,255,255,0.25)"], [style*="rgba(255, 255, 255, 0.25)"] { color: rgba(0,0,0,0.4) !important; }
-[style*="rgba(255,255,255,0.2)"],  [style*="rgba(255, 255, 255, 0.2)"]  { color: rgba(0,0,0,0.35) !important; }
-[style*="rgba(255,255,255,0.4)"],  [style*="rgba(255, 255, 255, 0.4)"]  { color: rgba(0,0,0,0.6) !important; }
-[style*="color: rgba(255,255,255,"] { color: rgba(0,0,0,0.55) !important; }
-[style*="color: #0a0a0a"] { color: #1a1a2e !important; }
+[style*="color: #f0f4f8"] { color: #000000 !important; }
+[style*="color: #edf2f9"] { color: #000000 !important; }
+[style*="color: rgba(255,255,255,0.35)"], [style*="color: rgba(255, 255, 255, 0.35)"] { color: #000000 !important; }
+[style*="color: rgba(255,255,255,0.3)"],  [style*="color: rgba(255, 255, 255, 0.3)"]  { color: #000000 !important; }
+[style*="color: rgba(255,255,255,0.25)"], [style*="color: rgba(255, 255, 255, 0.25)"] { color: #000000 !important; }
+[style*="color: rgba(255,255,255,0.2)"],  [style*="color: rgba(255, 255, 255, 0.2)"]  { color: #000000 !important; }
+[style*="color: rgba(255,255,255,0.4)"],  [style*="color: rgba(255, 255, 255, 0.4)"]  { color: #000000 !important; }
+[style*="color: rgba(255,255,255,0.5)"],  [style*="color: rgba(255, 255, 255, 0.5)"]  { color: #000000 !important; }
+[style*="color: rgba(255,255,255,0.6)"],  [style*="color: rgba(255, 255, 255, 0.6)"]  { color: #000000 !important; }
+[style*="color: rgba(255,255,255,"] { color: #000000 !important; }
+[style*="color: #0a0a0a"] { color: #000000 !important; }
+
+/* ── HARDCODED LIGHT TEXT → BLACK ── */
+[style*="color: #ffffff"], [style*="color: #fff"] { color: #000000 !important; }
+[style*="color: #e8e8e8"] { color: #000000 !important; }
+[style*="color: #f1f2f6"] { color: #000000 !important; }
+[style*="color: #ffeaa7"] { color: #000000 !important; }
 
 /* ── SVG STROKES ── */
 [style*="stroke: rgba(255,255,255,0.04)"], [style*="stroke: rgba(255, 255, 255, 0.04)"] { stroke: rgba(0,0,0,0.08) !important; }
@@ -200,38 +212,32 @@ function removeStyles() {
   document.querySelector('#a11y-colorblind-svg')?.remove()
 }
 
-function cssVarsToBlock(vars) {
-  return Object.entries(vars).map(([k, v]) => `${k}: ${v};`).join('\n')
-}
-
 function buildCSS(settings) {
-  let rootVars = cssVarsToBlock(THEMES.dark)
-  let extra = ''
+  let css = ''
 
   if (settings.lightMode) {
-    rootVars = cssVarsToBlock(THEMES.light)
-    extra += LIGHT_OVERRIDES
+    css += LIGHT_OVERRIDES
   }
 
   if (settings.dyslexicFont) {
-    extra += `
+    css += `
       body, * { font-family: 'Comic Sans MS', 'Trebuchet MS', 'Verdana', sans-serif !important;
         letter-spacing: 0.04em !important; word-spacing: 0.08em !important; line-height: 1.6 !important; }`
   }
 
   if (settings.lineSpacing !== 1.3) {
-    extra += `
+    css += `
       body, p, div, li, td, th { line-height: ${settings.lineSpacing} !important; }
       button, a, input, textarea, select, label { line-height: ${Math.min(settings.lineSpacing, 1.6)} !important; }`
   }
 
   if (settings.reducedMotion) {
-    extra += `
+    css += `
       *, *::before, *::after { animation-duration: 0.001ms !important;
         animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }`
   }
 
-  return `:root {\n${rootVars}}\n${extra}`
+  return css
 }
 
 let guideCleanup = null
@@ -276,11 +282,11 @@ export function AccessibilityProvider({ children }) {
     root.classList.toggle('a11y-light-mode', !!settings.lightMode)
     root.classList.toggle('a11y-reduced-motion', !!settings.reducedMotion)
 
-    const anyOn = Object.values(settings).some(v => v !== false && v !== 'none' && v !== 1.3)
-    if (anyOn) {
-      injectStyles(buildCSS(settings))
+    const css = buildCSS(settings)
+    if (css) {
+      injectStyles(css)
     } else {
-      injectStyles(`:root {\n${cssVarsToBlock(THEMES.dark)}\n}`)
+      removeStyles()
     }
 
     // Colorblind filter

@@ -1,30 +1,25 @@
-// components/Login/Login.jsx
 import { useState } from 'react'
 import { useLogin } from './useLogin'
 import { Icon } from '../ui/Icon'
 import { T } from '../../styles/tokens'
 
-const C = T
-
 const inp = {
-  width: '100%', padding: '10px 12px',
-  background: '#0d1117',
-  border: `1px solid ${C.border}`,
-  borderRadius: 8, color: C.text,
+  width: '100%', padding: '10px 12px 10px 36px',
+  background: T.bg,
+  border: `1px solid ${T.border}`,
+  borderRadius: 9, color: T.text,
   fontSize: 13, fontFamily: 'inherit',
-  outline: 'none', transition: 'border-color 0.2s',
+  outline: 'none', transition: 'all 0.2s',
   boxSizing: 'border-box',
 }
 
 export default function Login({ onLoginSuccess }) {
-  const [mode, setMode] = useState('login') // 'login' | 'register' | 'reset'
+  const [mode, setMode] = useState('login')
 
   const {
     form, errors, loading, googleLoading, serverError,
     handleChange, handleSubmit, handleGoogleLogin,
-    // register
     handleRegister, registerLoading, registerSuccess,
-    // reset
     handleReset, resetLoading, resetSent,
   } = useLogin(onLoginSuccess)
 
@@ -34,60 +29,65 @@ export default function Login({ onLoginSuccess }) {
 
   return (
     <div style={{
-      minHeight: '100vh', background: C.bg,
+      minHeight: '100vh', background: T.bg,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'Sora', 'Segoe UI', sans-serif", padding: 16,
+      fontFamily: "'DM Sans', sans-serif", padding: 16,
     }}>
-      {/* Fondo decorativo */}
       <div style={{
         position: 'fixed', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0,
       }}>
-        {['#3fb95015', '#58a6ff10', '#e3b34108'].map((c, i) => (
+        {[
+          { color: T.green, size: 420, t: '-120px', l: '-100px', d: '0s' },
+          { color: T.blue, size: 320, t: 'auto', b: '-80px', l: 'auto', r: '-80px', d: '-3s' },
+          { color: T.gold, size: 260, t: '50%', l: '55%', d: '-5s' },
+        ].map((blob, i) => (
           <div key={i} style={{
             position: 'absolute',
-            width: 400 + i * 100, height: 400 + i * 100,
-            borderRadius: '50%', background: c,
-            top: `${10 + i * 25}%`, left: `${5 + i * 30}%`,
+            width: blob.size, height: blob.size,
+            borderRadius: '50%',
+            background: blob.color, opacity: 0.12,
+            top: blob.t, left: blob.l, bottom: blob.b, right: blob.r,
             filter: 'blur(80px)',
+            animation: 'login-float 8s ease-in-out infinite',
+            animationDelay: blob.d,
           }} />
         ))}
       </div>
 
       <div style={{ width: '100%', maxWidth: 380, position: 'relative', zIndex: 1 }}>
-        {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{
-            width: 48, height: 48, background: C.greenDk, borderRadius: 14,
+            width: 48, height: 48,
+            background: T.green, borderRadius: 14,
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 26, marginBottom: 10, boxShadow: '0 4px 20px rgba(63,185,80,0.3)',
-          }}><Icon icon="☸" size={26} /></div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: C.text, letterSpacing: '-0.02em' }}>
-            TRANSI<span style={{ color: C.green }}>+</span>
+            fontSize: 22, marginBottom: 10, color: '#000',
+            boxShadow: `0 4px 20px ${T.green}44`,
+          }}><i className="fa-solid fa-motorcycle"></i></div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: T.text, letterSpacing: '-0.02em' }}>
+            TRANSI<span style={{ color: T.green }}>+</span>
           </div>
-          <div style={{ fontSize: 12, color: C.faint, marginTop: 3 }}>
+          <div style={{ fontSize: 12, color: T.faint, marginTop: 3 }}>
             Aprende las normas de tránsito
           </div>
         </div>
 
-        {/* Card */}
         <div style={{
-          background: C.surface,
-          border: `1px solid ${C.border}`,
+          background: T.surface,
+          border: `1px solid ${T.border}`,
           borderRadius: 16, padding: '28px 28px 24px',
           boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
         }}>
-          {/* Tabs Login / Registro */}
           {!isReset && (
             <div style={{
-              display: 'flex', background: '#0d1117',
+              display: 'flex', background: T.bg,
               borderRadius: 10, padding: 3, marginBottom: 24,
             }}>
               {[['login', 'Iniciar sesión'], ['register', 'Registrarse']].map(([val, lbl]) => (
                 <button key={val} onClick={() => setMode(val)} style={{
                   flex: 1, padding: '7px', borderRadius: 8,
-                  background: mode === val ? C.surface : 'transparent',
-                  border: mode === val ? `1px solid ${C.border}` : '1px solid transparent',
-                  color: mode === val ? C.text : C.faint,
+                  background: mode === val ? T.surface : 'transparent',
+                  border: mode === val ? `1px solid ${T.border}` : '1px solid transparent',
+                  color: mode === val ? T.text : T.faint,
                   fontSize: 12, fontWeight: 700, fontFamily: 'inherit',
                   cursor: 'pointer', transition: 'all 0.2s',
                 }}>{lbl}</button>
@@ -95,36 +95,48 @@ export default function Login({ onLoginSuccess }) {
             </div>
           )}
 
-          {/* ── MODO RESET ─────────────────────────────────── */}
           {isReset && (
             <>
               <div style={{ textAlign: 'center', marginBottom: 20 }}>
-                <div style={{ fontSize: 28 }}><Icon icon="🔑" size={28} /></div>
-                <h2 style={{ fontSize: 16, fontWeight: 700, color: C.text, margin: '6px 0 4px' }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 12,
+                  background: `${T.green}18`, display: 'inline-flex',
+                  alignItems: 'center', justifyContent: 'center',
+                  fontSize: 18, color: T.green, marginBottom: 8,
+                }}>
+                  <i className="fa-solid fa-key"></i>
+                </div>
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: T.text, margin: '0 0 4px' }}>
                   Recuperar contraseña
                 </h2>
-                <p style={{ fontSize: 12, color: C.muted, margin: 0 }}>
-                  Te enviamos un correo con el enlace
+                <p style={{ fontSize: 12, color: T.muted, margin: 0 }}>
+                  Te enviaremos un enlace a tu correo
                 </p>
               </div>
 
               {resetSent ? (
                 <div style={{
-                  padding: '14px', background: 'rgba(63,185,80,0.1)',
-                  border: '1px solid rgba(63,185,80,0.3)', borderRadius: 10,
-                  textAlign: 'center', fontSize: 13, color: C.green,
+                  padding: '16px', background: `${T.green}11`,
+                  border: `1px solid ${T.green}44`, borderRadius: 10,
+                  textAlign: 'center',
                 }}>
-                  <Icon icon="✅" size={14} /> ¡Correo enviado! Revisa tu bandeja.
+                  <div style={{ fontSize: 14, fontWeight: 700, color: T.green, marginBottom: 4 }}>
+                    <i className="fa-regular fa-circle-check" style={{ marginRight: 6 }}></i>
+                    ¡Correo enviado!
+                  </div>
+                  <div style={{ fontSize: 12, color: T.muted }}>
+                    Revisa tu bandeja de entrada y sigue las instrucciones.
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  <Field label="Correo electrónico" error={errors.email}>
+                  <Field label="Correo electrónico" error={errors.email} icon={<i className="fa-regular fa-envelope"></i>}>
                     <input
                       name="email" type="email" placeholder="tu@correo.com"
                       value={form.email} onChange={handleChange}
-                      style={{ ...inp, borderColor: errors.email ? C.red : C.border }}
-                      onFocus={e => e.target.style.borderColor = C.green}
-                      onBlur={e => e.target.style.borderColor = errors.email ? C.red : C.border}
+                      style={{ ...inp, borderColor: errors.email ? T.red : T.border }}
+                      onFocus={e => { e.currentTarget.style.borderColor = T.green; e.currentTarget.style.boxShadow = `0 0 0 3px ${T.green}22` }}
+                      onBlur={e => { e.currentTarget.style.borderColor = errors.email ? T.red : T.border; e.currentTarget.style.boxShadow = 'none' }}
                     />
                   </Field>
                   {serverError && <ErrorMsg msg={serverError} />}
@@ -135,37 +147,41 @@ export default function Login({ onLoginSuccess }) {
               <button onClick={() => setMode('login')} style={{
                 display: 'block', width: '100%', marginTop: 14,
                 background: 'transparent', border: 'none',
-                color: C.muted, fontSize: 12, cursor: 'pointer',
+                color: T.muted, fontSize: 12, cursor: 'pointer',
                 fontFamily: 'inherit', padding: '6px',
               }}>
-                ← Volver al inicio de sesión
+                <i className="fa-solid fa-arrow-left" style={{ marginRight: 4 }}></i>
+                Volver al inicio de sesión
               </button>
             </>
           )}
 
-          {/* ── MODO LOGIN ─────────────────────────────────── */}
           {isLogin && (
             <>
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <Field label="Correo electrónico" error={errors.email}>
+                <Field label="Correo electrónico" error={errors.email} icon={<i className="fa-regular fa-envelope"></i>}>
                   <input
                     name="email" type="email" placeholder="tu@correo.com"
                     value={form.email} onChange={handleChange} autoComplete="email"
-                    style={{ ...inp, borderColor: errors.email ? C.red : C.border }}
-                    onFocus={e => e.target.style.borderColor = C.green}
-                    onBlur={e => e.target.style.borderColor = errors.email ? C.red : C.border}
+                    style={{ ...inp, borderColor: errors.email ? T.red : T.border }}
+                    onFocus={e => { e.currentTarget.style.borderColor = T.green; e.currentTarget.style.boxShadow = `0 0 0 3px ${T.green}22` }}
+                    onBlur={e => { e.currentTarget.style.borderColor = errors.email ? T.red : T.border; e.currentTarget.style.boxShadow = 'none' }}
                   />
                 </Field>
-                <Field label="Contraseña" error={errors.password}>
+                <Field label="Contraseña" error={errors.password} icon={<i className="fa-solid fa-lock"></i>}>
                   <PasswordInput name="password" value={form.password} onChange={handleChange} error={errors.password} />
                 </Field>
 
                 <div style={{ textAlign: 'right', marginTop: -6 }}>
                   <button type="button" onClick={() => setMode('reset')} style={{
-                    background: 'none', border: 'none', color: C.muted,
+                    background: 'none', border: 'none', color: T.green,
                     fontSize: 11, cursor: 'pointer', fontFamily: 'inherit',
-                    textDecoration: 'underline',
-                  }}>
+                    transition: 'opacity 0.2s',
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+                    onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                  >
+                    <i className="fa-regular fa-circle-question" style={{ marginRight: 4 }}></i>
                     ¿Olvidaste tu contraseña?
                   </button>
                 </div>
@@ -179,25 +195,31 @@ export default function Login({ onLoginSuccess }) {
             </>
           )}
 
-          {/* ── MODO REGISTRO ──────────────────────────────── */}
           {isRegister && (
             <>
               {registerSuccess ? (
                 <div style={{
-                  padding: '16px', background: 'rgba(63,185,80,0.1)',
-                  border: '1px solid rgba(63,185,80,0.3)', borderRadius: 10,
+                  padding: '16px', background: `${T.green}11`,
+                  border: `1px solid ${T.green}44`, borderRadius: 10,
                   textAlign: 'center',
                 }}>
-                  <div style={{ fontSize: 28, marginBottom: 8 }}><Icon icon="🎉" size={28} /></div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: C.green, marginBottom: 4 }}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12,
+                    background: `${T.green}18`, display: 'inline-flex',
+                    alignItems: 'center', justifyContent: 'center',
+                    fontSize: 20, color: T.green, marginBottom: 8,
+                  }}>
+                    <i className="fa-solid fa-check"></i>
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: T.green, marginBottom: 4 }}>
                     ¡Cuenta creada!
                   </div>
-                  <div style={{ fontSize: 12, color: C.muted }}>
+                  <div style={{ fontSize: 12, color: T.muted }}>
                     Ya puedes iniciar sesión con tu nuevo acceso.
                   </div>
                   <button onClick={() => setMode('login')} style={{
                     marginTop: 14, padding: '8px 20px',
-                    background: C.greenDk, color: '#fff',
+                    background: T.green, color: '#000',
                     border: 'none', borderRadius: 8,
                     fontSize: 12, fontWeight: 700, fontFamily: 'inherit', cursor: 'pointer',
                   }}>
@@ -206,33 +228,33 @@ export default function Login({ onLoginSuccess }) {
                 </div>
               ) : (
                 <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  <Field label="Nombre completo" error={errors.name}>
+                  <Field label="Nombre completo" error={errors.name} icon={<i className="fa-regular fa-user"></i>}>
                     <input
                       name="name" type="text" placeholder="Tu nombre"
                       value={form.name || ''} onChange={handleChange} autoComplete="name"
-                      style={{ ...inp, borderColor: errors.name ? C.red : C.border }}
-                      onFocus={e => e.target.style.borderColor = C.green}
-                      onBlur={e => e.target.style.borderColor = errors.name ? C.red : C.border}
+                      style={{ ...inp, borderColor: errors.name ? T.red : T.border }}
+                      onFocus={e => { e.currentTarget.style.borderColor = T.green; e.currentTarget.style.boxShadow = `0 0 0 3px ${T.green}22` }}
+                      onBlur={e => { e.currentTarget.style.borderColor = errors.name ? T.red : T.border; e.currentTarget.style.boxShadow = 'none' }}
                     />
                   </Field>
-                  <Field label="Correo electrónico" error={errors.email}>
+                  <Field label="Correo electrónico" error={errors.email} icon={<i className="fa-regular fa-envelope"></i>}>
                     <input
                       name="email" type="email" placeholder="tu@correo.com"
                       value={form.email} onChange={handleChange} autoComplete="email"
-                      style={{ ...inp, borderColor: errors.email ? C.red : C.border }}
-                      onFocus={e => e.target.style.borderColor = C.green}
-                      onBlur={e => e.target.style.borderColor = errors.email ? C.red : C.border}
+                      style={{ ...inp, borderColor: errors.email ? T.red : T.border }}
+                      onFocus={e => { e.currentTarget.style.borderColor = T.green; e.currentTarget.style.boxShadow = `0 0 0 3px ${T.green}22` }}
+                      onBlur={e => { e.currentTarget.style.borderColor = errors.email ? T.red : T.border; e.currentTarget.style.boxShadow = 'none' }}
                     />
                   </Field>
-                  <Field label="Contraseña" error={errors.password}>
+                  <Field label="Contraseña" error={errors.password} icon={<i className="fa-solid fa-lock"></i>}>
                     <PasswordInput name="password" value={form.password} onChange={handleChange} error={errors.password} />
                   </Field>
-                  <Field label="Confirmar contraseña" error={errors.confirmPassword}>
+                  <Field label="Confirmar contraseña" error={errors.confirmPassword} icon={<i className="fa-solid fa-lock"></i>}>
                     <PasswordInput name="confirmPassword" value={form.confirmPassword || ''} onChange={handleChange} error={errors.confirmPassword} placeholder="Repite tu contraseña" />
                   </Field>
 
                   {serverError && <ErrorMsg msg={serverError} />}
-                  <SubmitBtn loading={registerLoading} label="Crear cuenta" color={C.greenDk} />
+                  <SubmitBtn loading={registerLoading} label="Crear cuenta" />
                 </form>
               )}
 
@@ -242,22 +264,31 @@ export default function Login({ onLoginSuccess }) {
           )}
         </div>
 
-        {/* Footer */}
-        <p style={{ textAlign: 'center', fontSize: 11, color: C.faint, marginTop: 16 }}>
-          Al continuar aceptas los <span style={{ color: C.muted, textDecoration: 'underline', cursor: 'pointer' }}>Términos de uso</span>
+        <p style={{ textAlign: 'center', fontSize: 11, color: T.faint, marginTop: 16 }}>
+          Al continuar aceptas los{' '}
+          <span style={{ color: T.muted, textDecoration: 'underline', cursor: 'pointer' }}>
+            Términos de uso
+          </span>
         </p>
       </div>
+
+      <style>{`@keyframes login-float { 0%,100% { transform: translateY(0) scale(1) } 50% { transform: translateY(-24px) scale(1.06) } }`}</style>
     </div>
   )
 }
 
-// ── Helpers UI ────────────────────────────────────────────────────
-function Field({ label, error, children }) {
+function Field({ label, error, children, icon }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-      <label style={{ fontSize: 12, fontWeight: 600, color: C.muted }}>{label}</label>
-      {children}
-      {error && <span style={{ fontSize: 11, color: C.red }}>{error}</span>}
+      <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>{label}</label>
+      <div style={{ position: 'relative' }}>
+        {icon && <span style={{
+          position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
+          fontSize: 13, color: T.faint, pointerEvents: 'none', zIndex: 1, display: 'flex',
+        }}>{icon}</span>}
+        {children}
+      </div>
+      {error && <span style={{ fontSize: 11, color: T.red }}>{error}</span>}
     </div>
   )
 }
@@ -270,16 +301,20 @@ function PasswordInput({ name, value, onChange, error, placeholder = '•••�
         name={name} type={show ? 'text' : 'password'}
         placeholder={placeholder} value={value} onChange={onChange}
         autoComplete={name === 'password' ? 'current-password' : 'new-password'}
-        style={{ ...inp, paddingRight: 40, borderColor: error ? C.red : C.border }}
-        onFocus={e => e.target.style.borderColor = C.green}
-        onBlur={e => e.target.style.borderColor = error ? C.red : C.border}
+        style={{ ...inp, paddingRight: 40, borderColor: error ? T.red : T.border }}
+        onFocus={e => { e.currentTarget.style.borderColor = T.green; e.currentTarget.style.boxShadow = `0 0 0 3px ${T.green}22` }}
+        onBlur={e => { e.currentTarget.style.borderColor = error ? T.red : T.border; e.currentTarget.style.boxShadow = 'none' }}
       />
+      <span style={{
+        position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
+        fontSize: 13, color: T.faint, pointerEvents: 'none', zIndex: 1, display: 'flex',
+      }}><i className="fa-solid fa-lock"></i></span>
       <button type="button" onClick={() => setShow(s => !s)} style={{
         position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-        background: 'none', border: 'none', cursor: 'pointer', color: C.faint,
+        background: 'none', border: 'none', cursor: 'pointer', color: T.faint,
         fontSize: 14, padding: 0, display: 'flex', alignItems: 'center',
       }}>
-        {show ? <Icon icon="🙈" size={14} /> : <Icon icon="👁️" size={14} />}
+        {show ? <i className="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}
       </button>
     </div>
   )
@@ -288,9 +323,9 @@ function PasswordInput({ name, value, onChange, error, placeholder = '•••�
 function ErrorMsg({ msg }) {
   return (
     <div style={{
-      padding: '10px 12px', background: 'rgba(248,81,73,0.1)',
-      border: '1px solid rgba(248,81,73,0.3)', borderRadius: 8,
-      fontSize: 12, color: C.red,
+      padding: '10px 12px', background: `${T.red}11`,
+      border: `1px solid ${T.red}33`, borderRadius: 8,
+      fontSize: 12, color: T.red,
     }}>
       {msg}
     </div>
@@ -300,11 +335,13 @@ function ErrorMsg({ msg }) {
 function SubmitBtn({ loading, label }) {
   return (
     <button type="submit" disabled={loading} style={{
-      width: '100%', padding: '11px', background: loading ? '#21262d' : C.greenDk,
-      color: '#fff', border: 'none', borderRadius: 10,
+      width: '100%', padding: '11px',
+      background: loading ? T.faint : T.green,
+      color: '#000', border: 'none', borderRadius: 10,
       fontSize: 13, fontWeight: 700, fontFamily: 'inherit',
-      cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.2s',
+      cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+      opacity: loading ? 0.5 : 1,
     }}>
       {loading ? <Spinner /> : label}
     </button>
@@ -315,14 +352,14 @@ function GoogleBtn({ loading, onClick }) {
   return (
     <button type="button" onClick={onClick} disabled={loading} style={{
       width: '100%', padding: '10px', background: 'transparent',
-      border: `1px solid ${C.border}`, borderRadius: 10,
-      color: C.text, fontSize: 13, fontWeight: 600, fontFamily: 'inherit',
-      cursor: loading ? 'not-allowed' : 'pointer', transition: 'border-color 0.2s',
+      border: `1px solid ${T.border}`, borderRadius: 10,
+      color: T.text, fontSize: 13, fontWeight: 600, fontFamily: 'inherit',
+      cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
       opacity: loading ? 0.6 : 1,
     }}
-      onMouseEnter={e => !loading && (e.currentTarget.style.borderColor = '#58a6ff')}
-      onMouseLeave={e => e.currentTarget.style.borderColor = C.border}
+      onMouseEnter={e => !loading && (e.currentTarget.style.borderColor = T.blue)}
+      onMouseLeave={e => e.currentTarget.style.borderColor = T.border}
     >
       {loading ? <Spinner /> : (
         <>
@@ -342,9 +379,9 @@ function GoogleBtn({ loading, onClick }) {
 function Divider() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '18px 0' }}>
-      <div style={{ flex: 1, height: 1, background: C.border }} />
-      <span style={{ fontSize: 11, color: C.faint }}>o</span>
-      <div style={{ flex: 1, height: 1, background: C.border }} />
+      <div style={{ flex: 1, height: 1, background: T.border }} />
+      <span style={{ fontSize: 11, color: T.faint }}>o</span>
+      <div style={{ flex: 1, height: 1, background: T.border }} />
     </div>
   )
 }
@@ -353,11 +390,9 @@ function Spinner() {
   return (
     <span style={{
       display: 'inline-block', width: 14, height: 14,
-      border: '2px solid rgba(255,255,255,0.2)',
-      borderTopColor: '#fff', borderRadius: '50%',
+      border: '2px solid rgba(0,0,0,0.15)',
+      borderTopColor: '#000', borderRadius: '50%',
       animation: 'spin 0.7s linear infinite',
-    }}>
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
-    </span>
+    }} />
   )
 }

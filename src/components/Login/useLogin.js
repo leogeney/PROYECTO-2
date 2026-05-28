@@ -152,7 +152,10 @@ export function useLogin(onLoginSuccess) {
     setResetLoading(true)
     setServerError('')
     try {
-      await sendPasswordResetEmail(auth, form.email)
+      await sendPasswordResetEmail(auth, form.email, {
+        url: `${window.location.origin}/reset-password`,
+        handleCodeInApp: true,
+      })
       setResetSent(true)
     } catch (error) {
       setServerError(firebaseErrorMessage(error.code))

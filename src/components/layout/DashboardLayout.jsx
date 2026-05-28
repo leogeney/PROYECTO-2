@@ -27,6 +27,8 @@ import { PageSoporte } from '../../pages/PageSoporte'
 import { PublicProfile } from '../../pages/PublicProfile'
 import { PageBot } from '../../pages/PageChatbot'
 import { T } from '../../styles/tokens'
+import { useTheme } from '../../context/ThemeContext'
+import { useAccessibility } from '../../context/AccessibilityContext'
 
 const NAV_ITEMS = [
   { icon: <i className="fa-solid fa-house"></i>,       label: 'Inicio',    to: '/dashboard/inicio'    },
@@ -44,6 +46,8 @@ const NAV_ITEMS = [
 
 export function DashboardLayout({ user, onLogout }) {
   const { xp, streak, levelInfo } = useProgress()
+  const { theme, toggleTheme } = useTheme()
+  const { settings, setOption } = useAccessibility()
 
   return (
     <>
@@ -93,6 +97,30 @@ export function DashboardLayout({ user, onLogout }) {
             <StatChip icon={<span style={{ fontSize: 13 }}>❤️</span>} value="4/5"  color={T.red} />
             <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.04)' }} />
             <StatChip icon={<span style={{ fontSize: 13 }}>⚡</span>} value={xp}     label="xp"    color={T.green} />
+          </div>
+          <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.06)' }} />
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => { toggleTheme(); setOption('lightMode', theme === 'dark') }}
+              title={theme === 'dark' ? 'Modo claro (beta)' : 'Modo oscuro'}
+              style={{
+                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: 8, color: T.faint, cursor: 'pointer',
+                fontSize: 16, padding: '7px 10px', lineHeight: 1,
+                transition: 'all 0.2s', fontFamily: "'DM Sans', sans-serif",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = T.text; e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = T.faint; e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+            >
+              {theme === 'dark' ? <i className="fa-regular fa-sun"></i> : <i className="fa-regular fa-moon"></i>}
+            </button>
+            <span style={{
+              position: 'absolute', top: -6, right: -8,
+              fontSize: 8, fontWeight: 800, letterSpacing: '0.04em',
+              background: T.gold, color: '#000',
+              padding: '1px 5px', borderRadius: 4,
+              lineHeight: '14px',
+            }}>BETA</span>
           </div>
           <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.06)' }} />
           <button
