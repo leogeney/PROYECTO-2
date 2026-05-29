@@ -154,7 +154,6 @@ export function useLogin(onLoginSuccess) {
     try {
       await sendPasswordResetEmail(auth, form.email, {
         url: `${window.location.origin}/reset-password`,
-        handleCodeInApp: true,
       })
       setResetSent(true)
     } catch (error) {
