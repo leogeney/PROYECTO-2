@@ -54,6 +54,15 @@ const suggestions = [
   '¿Qué significa zona escolar?',
 ]
 
+function renderBold(text) {
+  const parts = text.split(/\*\*(.*?)\*\*/g)
+  return parts.map((p, i) =>
+    i % 2 === 1
+      ? <strong key={i} style={{ color: '#00ff88', fontWeight: 700, fontSize: 'inherit' }}>{p}</strong>
+      : p
+  )
+}
+
 function MessageBubble({ msg }) {
   const isUser = msg.role === 'user'
   return (
@@ -79,12 +88,12 @@ function MessageBubble({ msg }) {
         borderRadius: isUser ? '18px 18px 6px 18px' : '18px 18px 18px 6px',
         background: isUser ? T.green : T.card,
         color: isUser ? '#000000' : T.text,
-        fontSize: 13,
-        lineHeight: 1.5,
-        fontWeight: 500,
+        fontSize: 14,
+        lineHeight: 1.7,
+        fontWeight: 400,
         border: isUser ? 'none' : `1px solid ${T.border}`,
       }}>
-        {msg.text}
+        {msg.role === 'bot' ? renderBold(msg.text) : msg.text}
       </div>
       {isUser && (
         <div style={{
